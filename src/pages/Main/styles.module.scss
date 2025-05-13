@@ -1,0 +1,44 @@
+@use "../../UI/styles/variables";
+
+.main {
+  & .title {
+    font-weight: 600;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  & .totalAmountAllPortfolio,
+  & .totalAmountDepositsAllPortfolios {
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: 400;
+
+    .difference {
+      color: variables.$red;
+      &:global(._isGreen) {
+        color: variables.$green;
+      }
+    }
+  }
+
+  & .accounts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  & .account {
+    background: #fcc769;
+    border-radius: 24px;
+    color: #3d619e;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    align-items: center;
+    color: inherit;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    color: #222;
+  }
+}

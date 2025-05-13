@@ -1,0 +1,63 @@
+import { useEffect, useState } from "react";
+import { TFPortfolioState } from "../../../store/slices/portfolio.slice";
+import { calcSummOfAllDeposits, calcSummOfTotalAmountPortfolio, formattedMoneySupply } from "../../../utils";
+import { TFFormattPrice } from "../../../types/common";
+import { TFOperationsState } from "../../../store/slices/operations.slice";
+import { useDispatch, useSelector } from "react-redux";
+import { setTotalAmountAllPortfolio, setTotalAmountDepositsAllPortfolios } from "../../../store/slices/general.slice";
+import { StateType } from "../../../store/root-reducer";
+
+interface IUseMainProps {
+    portfolios: TFPortfolioState,
+    operations: TFOperationsState,
+}
+
+type TFPricePercent = {
+    percent: string;
+}
+
+type TFUseMain = (props: IUseMainProps) => {
+    /** Сумма всех пополнений */
+    totalAmountDepositsAllPortfolios: TFFormattPrice
+    /** Сумма всех брокерсих счетов */
+    totalAmountAllPortfolio: TFFormattPrice
+    /** Насколько портфель обгоняет пополнения или не догоняет */
+    portfoliosReturns: TFFormattPrice & TFPricePercent,
+}
+
+export const useMain: TFUseMain = ({ portfolios, operations }) => {
+    const dispatch = useDispatch();
+    const general = useSelector((state: StateType) => state.general);
+    const [portfoliosReturns, setPortfoliosReturns] = useState<TFFormattPrice>({
+        formatt: '',
+        value: 0,
+    })
+    const [differentPercent, setDifferentPercent] = useState<string>('0%');
+    useEffect(() => {
+        if (portfolios) {
+            dispatch(setTotalAmountDepositsAllPortfolios(formattedMoneySupply(calcSummOfAllDeposits(operations.data || []))))
+            dispatch(setTotalAmountAllPortfolio(formattedMoneySupply(calcSummOfTotalAmountPortfolio(portfolios.data || []))))
+        }
+    }, [dispatch, operations.data, portfolios])
+
+    useEffect(() => {
+        setPortfoliosReturns(formattedMoneySupply(general.totalAmountAllPortfolio.value - general.totalAmountDepositsAllPortfolios.value))
+    }, [general.totalAmountDepositsAllPortfolios, general.totalAmountAllPortfolio])
+
+    useEffect(() => {
+        if (portfoliosReturns.value !== 0 || general.totalAmountDepositsAllPortfolios.value !== 0) {
+            setDifferentPercent(`${((portfoliosReturns.value / general.totalAmountDepositsAllPortfolios.value) * 100).toFixed(2)}%`)
+        }
+
+    }, [portfoliosReturns, general.totalAmountDepositsAllPortfolios])
+
+    return {
+        totalAmountDepositsAllPortfolios: general.totalAmountDepositsAllPortfolios,
+        totalAmountAllPortfolio: general.totalAmountAllPortfolio,
+        portfoliosReturns: {
+            formatt: portfoliosReturns.formatt,
+            value: portfoliosReturns.value,
+            percent: differentPercent,
+        }
+    }
+}

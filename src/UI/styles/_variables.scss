@@ -1,0 +1,61 @@
+$darkBlue: #2a394f;
+$middleBlue: #42506b;
+$lightBlue: #3d619e;
+$lightGray: #e9e8eb;
+$middleGray: #c1b9ae;
+$red: #ef4b4e;
+$orange: #fa8d70;
+$violet: #71617d;
+$gold: #fcc769;
+$green: green;
+
+@mixin greyBlock {
+  background: $lightGray;
+  color: $lightBlue;
+}
+
+@mixin redBlock {
+  background: $red;
+  color: $lightGray;
+}
+
+@mixin blueBlock {
+  background: $lightBlue;
+  color: $lightGray;
+}
+
+@mixin orangeBlock {
+  background: $orange;
+  color: $lightGray;
+}
+
+@mixin yellowBlock {
+  background: $gold;
+  color: $lightBlue;
+}
+
+@mixin purpuleBlock {
+  background: $violet;
+  color: #fff;
+}
+
+@mixin beigeBlock {
+  background: $middleGray;
+  color: $lightBlue;
+}
+
+@mixin inputBaseStyles {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 18px;
+  width: 100%;
+  color: $middleBlue;
+  font-size: 16px;
+  background: rgb(255, 255, 255);
+}
+
+@mixin phone {
+  @media screen and (max-width: 700px) {
+    @content;
+  }
+}

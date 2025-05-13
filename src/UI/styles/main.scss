@@ -1,0 +1,46 @@
+@use "reset";
+@use "variables";
+
+#root {
+  min-height: 100vh;
+  background: variables.$darkBlue;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #ffffff;
+  background: #fff;
+}
+
+* {
+  box-sizing: border-box;
+  outline: none;
+
+  scrollbar-width: auto;
+  scrollbar-color: #dddddd;
+}
+
+.container {
+  max-width: 1040px;
+  padding: 20px 10px;
+  margin: 0 auto;
+  height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+::-webkit-scrollbar-thumb {
+  background: variables.$gold;
+  border-radius: 10px;
+}
