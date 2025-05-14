@@ -1,0 +1,94 @@
+@use "../../UI/styles/variables";
+
+.portfolio {
+  font-size: 16px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &_data {
+    @include variables.standartBlock;
+    @include variables.middleBlueBlock;
+    display: flex;
+    justify-content: space-between;
+  }
+  &_info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  &_name {
+    font-size: 28px;
+  }
+  &_amount {
+    color: variables.$red;
+    &:global(._isGreen) {
+      color: variables.$green;
+    }
+  }
+  &_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  &_start {
+  }
+  &_calendar {
+  }
+  &_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    & > div {
+      align-items: center;
+      display: flex;
+      flex-basis: auto;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 1;
+      justify-content: center;
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+      strong {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      span {
+        font-size: 24px;
+      }
+    }
+  }
+  &_investments {
+    @include variables.standartBlock;
+    @include variables.greyBlock;
+    align-items: center;
+    border-radius: 5px;
+    display: flex;
+    flex-basis: auto;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+  }
+  &_comissions,
+  &_taxes {
+    @include variables.redBlock;
+    @include variables.standartBlock;
+  }
+  &_coupons,
+  &_dividends {
+    @include variables.blueBlock;
+    @include variables.standartBlock;
+  }
+  &_profitability {
+    @include variables.greyBlock;
+    @include variables.standartBlock;
+  }
+}

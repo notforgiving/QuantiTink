@@ -9,12 +9,26 @@
 
   & .totalAmountAllPortfolio,
   & .totalAmountDepositsAllPortfolios {
-    font-size: 20px;
-    margin-bottom: 10px;
-    font-weight: 400;
+    @include variables.beigeBlock;
+    padding: 20px;
+    border-bottom: 1px solid variables.$darkBlue;
+
+    strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    span {
+      font-size: 20px;
+    }
 
     .difference {
       color: variables.$red;
+      font-size: 16px;
+      @include variables.phone {
+        display: block;
+        margin-top: 5px;
+      }
       &:global(._isGreen) {
         color: variables.$green;
       }
@@ -22,23 +36,9 @@
   }
 
   & .accounts {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  & .account {
-    background: #fcc769;
-    border-radius: 24px;
-    color: #3d619e;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    align-items: center;
-    color: inherit;
+    margin-top: 20px;
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    color: #222;
+    flex-direction: column;
+    gap: 10px;
   }
 }

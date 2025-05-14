@@ -9,39 +9,72 @@ $violet: #71617d;
 $gold: #fcc769;
 $green: green;
 
+@mixin standartBlock {
+  padding: 10px;
+  border-radius: 5px;
+}
+
 @mixin greyBlock {
   background: $lightGray;
   color: $lightBlue;
+  &:hover {
+    background: lighten($lightGray, 10%);
+  }
 }
 
 @mixin redBlock {
   background: $red;
   color: $lightGray;
+  &:hover {
+    background: lighten($red, 10%);
+  }
 }
 
 @mixin blueBlock {
   background: $lightBlue;
   color: $lightGray;
+  &:hover {
+    background: lighten($lightBlue, 10%);
+  }
 }
 
 @mixin orangeBlock {
   background: $orange;
   color: $lightGray;
+  &:hover {
+    background: lighten($orange, 10%);
+  }
 }
 
 @mixin yellowBlock {
   background: $gold;
   color: $lightBlue;
+  transition: 0.3s;
+
+  &:hover {
+    background: lighten($gold, 10%);
+  }
 }
 
 @mixin purpuleBlock {
   background: $violet;
   color: #fff;
+  &:hover {
+    background: lighten($purpuleBlock, 10%);
+  }
 }
 
 @mixin beigeBlock {
   background: $middleGray;
   color: $lightBlue;
+  &:hover {
+    background: lighten($middleGray, 10%);
+  }
+}
+
+@mixin middleBlueBlock {
+  background: $middleBlue;
+  color: $lightGray;
 }
 
 @mixin inputBaseStyles {

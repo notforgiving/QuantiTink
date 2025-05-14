@@ -34,8 +34,5 @@ export async function fetchGetPortfolioAPI(id: string) {
     if (data.status === 500) {
         throw data.error;
     }
-    return {
-        ...data,
-        totalAmountDeposits: 0,
-    };
+    return data
 }

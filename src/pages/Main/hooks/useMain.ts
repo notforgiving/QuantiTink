@@ -32,10 +32,20 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
         formatt: '',
         value: 0,
     })
+
     const [differentPercent, setDifferentPercent] = useState<string>('0%');
+
     useEffect(() => {
-        if (portfolios) {
-            dispatch(setTotalAmountDepositsAllPortfolios(formattedMoneySupply(calcSummOfAllDeposits(operations.data || []))))
+        if (operations.data && !!operations.data.length && portfolios.data) {
+            const allDepositsData: TFFormattPrice[] = [];
+            const summ = operations.data.reduce((acc, item) => {
+                const temp = formattedMoneySupply(calcSummOfAllDeposits([item]))
+                allDepositsData.push(temp)
+                return acc + temp.value;
+            }, 0)
+            /** Считаем сумму всех пополнений для всех брокерских счетов */
+            dispatch(setTotalAmountDepositsAllPortfolios(formattedMoneySupply(summ)))
+            /** Считаем цену всех брокерских счетов */
             dispatch(setTotalAmountAllPortfolio(formattedMoneySupply(calcSummOfTotalAmountPortfolio(portfolios.data || []))))
         }
     }, [dispatch, operations.data, portfolios])

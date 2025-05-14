@@ -80,7 +80,17 @@ export function searchPortfolioInArrayData<T>(
   /** По какому ключу смотреть совпадение в исходном массиве */
   key: string,
   /** Значение с которым сравнивать */
-  value: string,
+  value: string
 ): T | null {
   return data.filter((el: any) => el[key] === value)[0] || null;
 }
+
+export const getDeclensionWordMonth = (value: number) => {
+  if (value === 1) {
+    return "месяц";
+  }
+  if (value >= 2 && value < 5) {
+    return "месяца";
+  }
+  return "месяцев";
+};

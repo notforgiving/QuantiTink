@@ -22,6 +22,7 @@ export type TFOperations = {
 
 export type TFOperation = {
     currency: TFCurrency;
+    date: string;
     figi: string;
     instrumentType: TFInstrumentType;
     childOperations: {

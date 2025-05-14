@@ -42,17 +42,8 @@ export const portfoliosSlice = createSlice({
         ) => {
             state.isLoading = false;
             state.errors = error;
-        },
-        setPortfolioTotalAmountDeposits: (
-            state: TFPortfolioState,
-            { payload: portfolioId }: PayloadAction<string>
-        ) => {
-            console.log(state, portfolioId, 'portfolioId');
-
         }
     },
 });
-
-export const { setPortfolioTotalAmountDeposits } = portfoliosSlice.actions
 
 export default portfoliosSlice.reducer;

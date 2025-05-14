@@ -37,7 +37,6 @@ export type TFPortfolio = {
     totalAmountEtf: TFAmount;
     totalAmountPortfolio: TFAmount;
     totalAmountShares: TFAmount;
-    totalAmountDeposits: number;
 }
 
 export const PORTFOLIOS = 'portfolios';

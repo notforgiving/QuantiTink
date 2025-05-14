@@ -1,38 +1,20 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import Container from "../../UI/components/Container";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
-import { operationsSlice } from "../../store/slices/operations.slice";
-import { portfoliosSlice } from "../../store/slices/portfolio.slice";
 import css from "./styles.module.scss";
 import { useMain } from "./hooks/useMain";
-import {
-  formattedMoneySupply,
-  getNumberMoney,
-  searchPortfolioInArrayData,
-} from "../../utils";
+import { searchPortfolioInArrayData } from "../../utils";
 import { TFAmount } from "../../types/portfolio.type";
-import { accountsSlice } from "../../store/slices/accoutns.slice";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
+import Account from "../../components/Account";
+import { NavLink } from "react-router-dom";
 
 const Main: FC = () => {
   const accounts = useSelector((state: StateType) => state.accounts);
   const portfolios = useSelector((state: StateType) => state.portfolios);
   const operations = useSelector((state: StateType) => state.operations);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(accountsSlice.actions.getaccountsListAction());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (accounts.data && !!accounts.data?.length) {
-      dispatch(portfoliosSlice.actions.getPortfoliosListAction(accounts.data));
-      dispatch(operationsSlice.actions.getOperationsListAction(accounts.data));
-    }
-  }, [accounts.data, dispatch]);
 
   const {
     totalAmountDepositsAllPortfolios,
@@ -47,8 +29,13 @@ const Main: FC = () => {
     <Container>
       <div className={css.main}>
         <h1 className={css.title}>Брокерские счета</h1>
+        <div className={css.totalAmountDepositsAllPortfolios}>
+          <strong>Вложено средств: </strong>
+          <span>{totalAmountDepositsAllPortfolios.formatt}</span>
+        </div>
         <div className={css.totalAmountAllPortfolio}>
-          Текущая стоимость портфелей: {totalAmountAllPortfolio.formatt}{" "}
+          <strong>Текущая цена: </strong>
+          <span>{totalAmountAllPortfolio.formatt} </span>
           <span
             className={cn(css.difference, {
               _isGreen: portfoliosReturns.value > 0,
@@ -56,10 +43,6 @@ const Main: FC = () => {
           >
             ( {portfoliosReturns.formatt} / {portfoliosReturns.percent} )
           </span>
-        </div>
-        <div className={css.totalAmountDepositsAllPortfolios}>
-          Общая сумма вложенных средств: {" "}
-          {totalAmountDepositsAllPortfolios.formatt}
         </div>
         <div className={css.accounts}>
           {accounts.data?.map((account: TFAccount) => {
@@ -73,17 +56,14 @@ const Main: FC = () => {
               : ({} as TFAmount);
 
             return (
-              <div key={account.id} className={css.account}>
-                <div className={css.account_name}>{account.name}</div>
-                {targetPortfolio && (
-                  <div className={css.account_money}>
-                    {
-                      formattedMoneySupply(getNumberMoney(totalAmountPortfolio))
-                        .formatt
-                    }
-                  </div>
-                )}
-              </div>
+              <NavLink to={`/account/${account.id}`} key={account.id}>
+                <Account
+                  name={account.name}
+                  totalAmountPortfolio={
+                    targetPortfolio ? totalAmountPortfolio : undefined
+                  }
+                />
+              </NavLink>
             );
           })}
         </div>
