@@ -28,7 +28,7 @@ body {
   max-width: 1040px;
   padding: 20px 10px;
   margin: 0 auto;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 ::-webkit-scrollbar {
