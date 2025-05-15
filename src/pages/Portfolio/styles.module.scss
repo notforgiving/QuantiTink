@@ -12,6 +12,10 @@
     @include variables.middleBlueBlock;
     display: flex;
     justify-content: space-between;
+
+    @include variables.phone {
+      gap: 10px;
+    }
   }
   &_info {
     display: flex;
@@ -20,19 +24,37 @@
   }
   &_name {
     font-size: 28px;
+    @include variables.phone {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
   }
   &_amount {
-    color: variables.$red;
+    color: lighten(variables.$red, 20%);
     &:global(._isGreen) {
       color: variables.$green;
+    }
+    @include variables.phone {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
   }
   &_actions {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    @include variables.phone {
+      justify-content: space-between;
+    }
   }
   &_start {
+    @include variables.phone {
+      span {
+        display: block;
+        text-align: right;
+      }
+    }
   }
   &_calendar {
   }

@@ -25,6 +25,7 @@
     .difference {
       color: variables.$red;
       font-size: 16px;
+      font-weight: 600;
       @include variables.phone {
         display: block;
         margin-top: 5px;

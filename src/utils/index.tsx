@@ -8,14 +8,15 @@ export const getNumberMoney: TGetNumberMoney = (initialData) => {
   if (!initialData) {
     return 0;
   }
-  const minus = initialData.units.includes("-") ? -1 : 1;
+  const minus = String(initialData.nano).includes("-") ? "-" : "";
   const lengthNano = 9;
-  const rub = `${Number(initialData.units) * minus}`;
-  const cent =
-    String(initialData.nano * minus).length < lengthNano
-      ? `0${String(initialData.nano * minus)}`
-      : String(initialData.nano * minus);
-  return Number(`${rub}.${cent}`);
+  const rub =
+    Number(initialData.units) === 0
+      ? 0
+      : String(initialData.units).replace("-", "");
+  const cent2 = String(initialData.nano).replace("-", "");
+  const cent3 = cent2.length < lengthNano ? `0${cent2}` : cent2;
+  return Number(`${minus}${rub}.${cent3}`);
 };
 
 type TCalcSummOfTotalAmountPortfolio = (initialData: TFPortfolio[]) => number;
@@ -45,7 +46,7 @@ export const calcSummOfAllDeposits: TCalcSummOfAllDeposits = (initialData) => {
         value.operationType !== "OPERATION_TYPE_OUT_MULTI"
       ) {
         const numberMoney = getNumberMoney(value.payment);
-        return accumulator - numberMoney;
+        return accumulator + numberMoney;
       }
 
       return accumulator;

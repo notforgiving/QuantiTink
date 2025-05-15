@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { TFPortfolioState } from "../../../store/slices/portfolio.slice";
 import { calcSummOfAllDeposits, calcSummOfTotalAmountPortfolio, formattedMoneySupply } from "../../../utils";
 import { TFFormattPrice } from "../../../types/common";
-import { TFOperationsState } from "../../../store/slices/operations.slice";
+import { TFUnionOperations } from "../../../store/slices/operations.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { setTotalAmountAllPortfolio, setTotalAmountDepositsAllPortfolios } from "../../../store/slices/general.slice";
 import { StateType } from "../../../store/root-reducer";
+import { TFPortfolio } from "../../../types/portfolio.type";
 
 interface IUseMainProps {
-    portfolios: TFPortfolioState,
-    operations: TFOperationsState,
+    portfolios: TFPortfolio[] | null,
+    operations: TFUnionOperations[] | null,
 }
 
 type TFPricePercent = {
@@ -36,9 +36,9 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
     const [differentPercent, setDifferentPercent] = useState<string>('0%');
 
     useEffect(() => {
-        if (operations.data && !!operations.data.length && portfolios.data) {
+        if (operations && !!operations.length && portfolios) {
             const allDepositsData: TFFormattPrice[] = [];
-            const summ = operations.data.reduce((acc, item) => {
+            const summ = operations.reduce((acc, item) => {
                 const temp = formattedMoneySupply(calcSummOfAllDeposits([item]))
                 allDepositsData.push(temp)
                 return acc + temp.value;
@@ -46,9 +46,9 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
             /** Считаем сумму всех пополнений для всех брокерских счетов */
             dispatch(setTotalAmountDepositsAllPortfolios(formattedMoneySupply(summ)))
             /** Считаем цену всех брокерских счетов */
-            dispatch(setTotalAmountAllPortfolio(formattedMoneySupply(calcSummOfTotalAmountPortfolio(portfolios.data || []))))
+            dispatch(setTotalAmountAllPortfolio(formattedMoneySupply(calcSummOfTotalAmountPortfolio(portfolios || []))))
         }
-    }, [dispatch, operations.data, portfolios])
+    }, [dispatch, operations, portfolios])
 
     useEffect(() => {
         setPortfoliosReturns(formattedMoneySupply(general.totalAmountAllPortfolio.value - general.totalAmountDepositsAllPortfolios.value))

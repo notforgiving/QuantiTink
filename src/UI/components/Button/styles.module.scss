@@ -6,4 +6,9 @@
   border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
+
+  @include variables.phone {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
 }

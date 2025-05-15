@@ -125,12 +125,13 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
             let temptax = 0;
             let tempcoup = 0;
             let tempdiv = 0;
+
             operations.forEach((el) => {
                 if (el.type === 'Удержание налога') {
                     temptax += getNumberMoney(el.payment);
                 }
                 if (el.type === 'Удержание комиссии за операцию') {
-                    tempcom += getNumberMoney(el.payment);
+                    tempcom += getNumberMoney(el.payment) * (-1);
                 }
                 if (el.type === 'Выплата купонов') {
                     tempcoup += getNumberMoney(el.payment);

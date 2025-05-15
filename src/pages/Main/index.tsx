@@ -10,19 +10,24 @@ import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
 import Account from "../../components/Account";
 import { NavLink } from "react-router-dom";
+import Load from "../../UI/components/Load";
 
 const Main: FC = () => {
   const accounts = useSelector((state: StateType) => state.accounts);
-  const portfolios = useSelector((state: StateType) => state.portfolios);
-  const operations = useSelector((state: StateType) => state.operations);
+  const {
+    portfolios: { data: portfoliosData, isLoading: isLoadingPortfolios },
+  } = useSelector((state: StateType) => state);
+  const {
+    operations: { data: operationsData, isLoading: isLoadingOperations },
+  } = useSelector((state: StateType) => state);
 
   const {
     totalAmountDepositsAllPortfolios,
     totalAmountAllPortfolio,
     portfoliosReturns,
   } = useMain({
-    portfolios,
-    operations,
+    portfolios: portfoliosData,
+    operations: operationsData,
   });
 
   return (
@@ -31,23 +36,50 @@ const Main: FC = () => {
         <h1 className={css.title}>Брокерские счета</h1>
         <div className={css.totalAmountDepositsAllPortfolios}>
           <strong>Вложено средств: </strong>
-          <span>{totalAmountDepositsAllPortfolios.formatt}</span>
+          {isLoadingPortfolios ||
+          !portfoliosData?.length ||
+          isLoadingOperations ||
+          !operationsData?.length ? (
+            <Load
+              style={{
+                width: "106px",
+                height: "21.5px",
+              }}
+            />
+          ) : (
+            <span>{totalAmountDepositsAllPortfolios.formatt}</span>
+          )}
         </div>
         <div className={css.totalAmountAllPortfolio}>
           <strong>Текущая цена: </strong>
-          <span>{totalAmountAllPortfolio.formatt} </span>
-          <span
-            className={cn(css.difference, {
-              _isGreen: portfoliosReturns.value > 0,
-            })}
-          >
-            ( {portfoliosReturns.formatt} / {portfoliosReturns.percent} )
-          </span>
+          {isLoadingPortfolios ||
+          !portfoliosData?.length ||
+          isLoadingOperations ||
+          !operationsData?.length ? (
+            <Load
+              style={{
+                width: "275px",
+                height: "21.5px",
+              }}
+            />
+          ) : (
+            <>
+              {" "}
+              <span>{totalAmountAllPortfolio.formatt} </span>
+              <span
+                className={cn(css.difference, {
+                  _isGreen: portfoliosReturns.value > 0,
+                })}
+              >
+                ( {portfoliosReturns.formatt} / {portfoliosReturns.percent} )
+              </span>
+            </>
+          )}
         </div>
         <div className={css.accounts}>
           {accounts.data?.map((account: TFAccount) => {
             const targetPortfolio = searchPortfolioInArrayData(
-              portfolios.data || [],
+              portfoliosData || [],
               "accountId",
               account.id
             );
@@ -62,6 +94,7 @@ const Main: FC = () => {
                   totalAmountPortfolio={
                     targetPortfolio ? totalAmountPortfolio : undefined
                   }
+                  loadingMoney={isLoadingPortfolios || !portfoliosData?.length}
                 />
               </NavLink>
             );

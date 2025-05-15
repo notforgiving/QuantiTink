@@ -101,7 +101,7 @@ const Portfolio: FC = () => {
           </div>
            <div className={css.portfolio_profitability} title="Без учета доходности по телу портфеля">
             <strong>Годовая доходность (прогноз)</strong>
-            <span>{`${Number(currentProfitability) * 12}%`}</span>
+            <span>{`${(Number(currentProfitability) * 12).toFixed(2)}%`}</span>
           </div>
         </div>
       </div>
