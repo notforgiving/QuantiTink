@@ -131,7 +131,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                     temptax += getNumberMoney(el.payment);
                 }
                 if (el.type === 'Удержание комиссии за операцию') {
-                    tempcom += getNumberMoney(el.payment) * (-1);
+                    tempcom += getNumberMoney(el.payment);
                 }
                 if (el.type === 'Выплата купонов') {
                     tempcoup += getNumberMoney(el.payment);
@@ -140,8 +140,9 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                     tempdiv += getNumberMoney(el.payment);
                 }
             })
-            setCommissions(formattedMoneySupply(tempcom))
-            setTaxes(formattedMoneySupply(temptax))
+
+            setCommissions(formattedMoneySupply(tempcom === 0 ? 0 : tempcom * (-1)))
+            setTaxes(formattedMoneySupply(temptax === 0 ? 0 : temptax * (-1)))
             setCoupons(formattedMoneySupply(tempcoup))
             setDividends(formattedMoneySupply(tempdiv))
         }

@@ -1,6 +1,11 @@
 import { TFUnionOperations } from "../store/slices/operations.slice";
 import { TFFormattPrice } from "../types/common";
-import { TFAmount, TFCurrency, TFPortfolio } from "../types/portfolio.type";
+import {
+  TFAmount,
+  TFCurrency,
+  TFPortfolio,
+  TFPosition,
+} from "../types/portfolio.type";
 
 type TGetNumberMoney = (initialData: TFAmount | null) => number;
 /** Выводим адекватный вид для средств */
@@ -8,15 +13,17 @@ export const getNumberMoney: TGetNumberMoney = (initialData) => {
   if (!initialData) {
     return 0;
   }
-  const minus = String(initialData.nano).includes("-") ? "-" : "";
+  const minus =
+    String(initialData.nano).includes("-") ||
+    String(initialData.units).includes("-")
+      ? "-"
+      : "";
   const lengthNano = 9;
-  const rub =
-    Number(initialData.units) === 0
-      ? 0
-      : String(initialData.units).replace("-", "");
-  const cent2 = String(initialData.nano).replace("-", "");
-  const cent3 = cent2.length < lengthNano ? `0${cent2}` : cent2;
-  return Number(`${minus}${rub}.${cent3}`);
+  const rub = String(initialData.units).replace("-", "");
+  const cent1 = String(initialData.nano).replace("-", "");
+  const cent2 = cent1.length < lengthNano ? `0${cent1}` : cent1;
+  const result = Number(`${minus}${rub}.${cent2}`);
+  return result;
 };
 
 type TCalcSummOfTotalAmountPortfolio = (initialData: TFPortfolio[]) => number;
@@ -86,7 +93,8 @@ export function searchPortfolioInArrayData<T>(
   return data.filter((el: any) => el[key] === value)[0] || null;
 }
 
-export const getDeclensionWordMonth = (value: number) => {
+/** Склоняем слово Месяц в зависимости от числа */
+export const getDeclensionWordMonth = (value: number): string => {
   if (value === 1) {
     return "месяц";
   }
@@ -95,3 +103,20 @@ export const getDeclensionWordMonth = (value: number) => {
   }
   return "месяцев";
 };
+
+/** Поиск в позициях только облигаций */
+export const getOnlyBondPositionsByPortfolio = (
+  positions: TFPosition[]
+): TFPosition[] => {
+  return positions.filter((el) => el.instrumentType === "bond") || [];
+};
+
+/** Поиск в локал сторадже данных и отдача их в читаемом виде*/
+export function searchInLocalStorageByKey<T>(key: string): T | null {
+  const storage = localStorage.getItem(key);
+  if (storage) {
+    return JSON.parse(storage);
+  }
+
+  return null;
+}

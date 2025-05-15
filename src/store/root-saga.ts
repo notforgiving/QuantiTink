@@ -3,13 +3,15 @@ import { watchGetAccounts } from './sagas/accounts.saga';
 import { watchGetPortfolios } from './sagas/portfolios.saga';
 import { watchGetOperations } from './sagas/operations.saga';
 import { watchGetCurrencys } from './sagas/currencys.saga';
+import { watchGetEvents } from './sagas/events.saga';
 
 const rootSaga = function* () {
   yield all([
     fork(watchGetAccounts),
     fork(watchGetPortfolios),
     fork(watchGetOperations),
-    fork(watchGetCurrencys)
+    fork(watchGetCurrencys),
+    fork(watchGetEvents),
   ]);
 };
 

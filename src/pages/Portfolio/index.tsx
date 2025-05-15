@@ -67,10 +67,18 @@ const Portfolio: FC = () => {
           <div className={css.portfolio_actions}>
             <div className={css.portfolio_start}>
               <span>{portfolioStart} / </span>
-              <span>{`${investmentPeriod} ${getDeclensionWordMonth(investmentPeriod || 0)}`}</span>
+              <span>{`${investmentPeriod} ${getDeclensionWordMonth(
+                investmentPeriod || 0
+              )}`}</span>
             </div>
             <div className={css.portfolio_calendar}>
-              <Button text='Календарь инвестора'/>
+              <Button
+                text="Календарь инвестора"
+                buttonAttributes={{
+                  type: "button",
+                  onClick: () => navigate(`/account/${accountId}/calendar`),
+                }}
+              />
             </div>
           </div>
         </div>
@@ -95,13 +103,19 @@ const Portfolio: FC = () => {
             <strong>Получено дивидендов за всё время:</strong>
             <span>{dividends.formatt}</span>
           </div>
-          <div className={css.portfolio_profitability} title="Без учета доходности по телу портфеля">
+          <div
+            className={css.portfolio_profitability}
+            title="Без учета доходности по телу портфеля"
+          >
             <strong>Текущая доходность</strong>
             <span>{`${currentProfitability}%`}</span>
           </div>
-           <div className={css.portfolio_profitability} title="Без учета доходности по телу портфеля">
+          <div
+            className={css.portfolio_profitability}
+            title="Без учета доходности по телу портфеля"
+          >
             <strong>Годовая доходность (прогноз)</strong>
-            <span>{`${(Number(currentProfitability) * 12).toFixed(2)}%`}</span>
+            <span>{`${(Number(currentProfitability) / (investmentPeriod ?? 1) * 12).toFixed(2)}%`}</span>
           </div>
         </div>
       </div>

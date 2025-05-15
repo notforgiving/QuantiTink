@@ -7,6 +7,7 @@ import { StateType } from "./store/root-reducer";
 import { accountsSlice } from "./store/slices/accoutns.slice";
 import { operationsSlice } from "./store/slices/operations.slice";
 import { portfoliosSlice } from "./store/slices/portfolio.slice";
+import Calendar from "./pages/Calendar";
 
 function App() {
   const accounts = useSelector((state: StateType) => state.accounts);
@@ -26,6 +27,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="account/:id" element={<Portfolio />} />
+        <Route path="account/:id/calendar" element={<Calendar />} />
         {/* <Route path="dashboard" element={<Dashboard />}>
           <Route index element={<RecentActivity />} />
           <Route path="project/:id" element={<Project />} />
