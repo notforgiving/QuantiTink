@@ -147,7 +147,7 @@ const Portfolio: FC = () => {
           {etfArray &&
             etfArray.length &&
             etfArray.map((etf) => (
-              <div className={css.portfolio_etf}>
+              <div className={css.portfolio_etf} key={etf.name}>
                 <strong>{etf.name}</strong>
                 <span>
                   {etf.formatt} ({etf.percent}%)

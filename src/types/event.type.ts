@@ -1,4 +1,5 @@
-import { TFAmount } from "./portfolio.type";
+import { TBrand } from "./common";
+import { TFAmount, TFQuantity } from "./portfolio.type";
 
 export const EVENTS = 'events';
 export const GET_EVENTS_LIST = `${EVENTS}/getEventsListAction`;
@@ -13,7 +14,10 @@ export type TEventsResponse = {
 export type TEvents = {
     operationType: TEventType,
     payDate: string;
+    paymentDate: string;
     payOneBond: TFAmount,
+    dividendNet: TFAmount,
+    dividendType: string;
 }
 
 export type TEventFigi = {
@@ -26,4 +30,18 @@ export type TEventsState = {
     accountId: string;
     portfolioEvents: TPortfolioEvents[];
     dateApi: string;
+}
+
+
+export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'Погашение'
+
+export type TPayOutsEvent = {
+    figi: string;
+    paymentDate: string;
+    name: string;
+    operationType: TOperationTypeEvent;
+    payOneLot: TFAmount,
+    quantity: TFQuantity;
+    oneLot: number;
+    brand: TBrand;
 }

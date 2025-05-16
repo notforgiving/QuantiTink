@@ -14,3 +14,9 @@ export type TFFormattPrice = {
   formatt: string;
   value: number;
 }
+
+export type TBrand = {
+  logoName: string,
+  logoBaseColor: string,
+  textColor: string,
+}

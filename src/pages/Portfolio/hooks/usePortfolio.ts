@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { bondsSlice } from "../../../store/slices/bonds.slice";
 import { TInstrumentObject } from "../../../types/bonds.type";
 import { etfsSlice } from "../../../store/slices/etfs.slice";
+import { sharesSlice } from "../../../store/slices/share.slice";
 
 interface IUsePortfolio {
     accountId: string;
@@ -215,6 +216,18 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                     dispatch(etfsSlice.actions.getEtfsListSuccessOnly(localDataEtfsSlice))
                 } else {
                     dispatch(etfsSlice.actions.getEtfsListAction({ etfPositions, accountId }))
+                }
+            }
+            const sharesPositions = portfolio?.positions.filter((el) => el.instrumentType === 'share') || [];
+            const localDataSharesSlice: TInstrumentObject | null = searchInLocalStorageByKey('sharesSlice');
+            if (localDataSharesSlice === null) {
+                dispatch(sharesSlice.actions.getSharesListAction({ sharesPositions, accountId }))
+            } else {
+                const data = searchItemInArrayData([localDataEtfsSlice], 'accountId', accountId || '0');
+                if (data) {
+                    dispatch(sharesSlice.actions.getSharesListSuccessOnly(localDataSharesSlice))
+                } else {
+                    dispatch(sharesSlice.actions.getSharesListAction({ sharesPositions, accountId }))
                 }
             }
         }

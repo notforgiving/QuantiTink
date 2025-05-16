@@ -6,6 +6,7 @@ import { watchGetCurrencys } from './sagas/currencys.saga';
 import { watchGetEvents } from './sagas/events.saga';
 import { watchGetBonds } from './sagas/bonds.saga';
 import { watchGetEtfs } from './sagas/etfs.saga';
+import { watchGetShares } from './sagas/shares.saga';
 
 const rootSaga = function* () {
   yield all([
@@ -16,6 +17,7 @@ const rootSaga = function* () {
     fork(watchGetEvents),
     fork(watchGetBonds),
     fork(watchGetEtfs),
+    fork(watchGetShares),
   ]);
 };
 

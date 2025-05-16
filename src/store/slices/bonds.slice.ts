@@ -5,7 +5,7 @@ import { BONDS, TInstrumentObject } from "../../types/bonds.type";
 
 export type TFBondsState = IEntityState<TInstrumentObject>
 
-const eventsInitialState: TFBondsState = {
+const bondsInitialState: TFBondsState = {
     data: {
         accountId: '0',
         instrument: [],
@@ -17,7 +17,7 @@ const eventsInitialState: TFBondsState = {
 
 export const bondsSlice = createSlice({
     name: BONDS,
-    initialState: eventsInitialState,
+    initialState: bondsInitialState,
     reducers: {
         getBondsListAction: (state: TFBondsState, { payload: _ }: PayloadAction<{ bondPositions: TFPosition[], accountId: string, }>) => {
             state.isLoading = true;

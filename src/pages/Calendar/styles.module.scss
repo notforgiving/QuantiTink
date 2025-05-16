@@ -1,0 +1,66 @@
+@use "../../UI/styles/variables";
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.item {
+  @include variables.standartBlock;
+  @include variables.greyBlock;
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  padding: 20px 10px 10px;
+  position: relative;
+  &_left {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  &_date {
+    font-size: 26px;
+  }
+  &_body {
+    flex: 1;
+  }
+  &_info {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  &_name {
+    font-size: 20px;
+  }
+  &_price {
+    @include variables.standartBlock;
+    @include variables.orangeBlock;
+    align-items: center;
+    display: flex;
+    font-size: 22px;
+    justify-content: center;
+
+    &:global(._isDividend) {
+      @include variables.standartBlock;
+      @include variables.redBlock;
+    }
+  }
+
+  &_type {
+    @include variables.standartBlock;
+    @include variables.orangeBlock;
+    left: 10px;
+    padding: 2px 5px;
+    position: absolute;
+    top: 5px;
+
+    &:global(._isDividend) {
+      @include variables.standartBlock;
+      @include variables.redBlock;
+      padding: 2px 5px;
+    }
+  }
+}

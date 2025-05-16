@@ -1,3 +1,4 @@
+import { TBrand } from "./common";
 import { TFAmount, TFCurrency } from "./portfolio.type";
 
 export const BONDS = 'bonds';
@@ -19,4 +20,5 @@ export type TInstrument = {
     nominal: TFAmount;
     ticker: string;
     currency: TFCurrency;
+    brand: TBrand;
 }
