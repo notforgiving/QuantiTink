@@ -1,4 +1,4 @@
-import { TBrand } from "./common";
+import { TBrand, TFFormattPrice } from "./common";
 import { TFAmount, TFQuantity } from "./portfolio.type";
 
 export const EVENTS = 'events';
@@ -18,6 +18,7 @@ export type TEvents = {
     payOneBond: TFAmount,
     dividendNet: TFAmount,
     dividendType: string;
+    eventType: string;
 }
 
 export type TEventFigi = {
@@ -44,4 +45,5 @@ export type TPayOutsEvent = {
     quantity: TFQuantity;
     oneLot: number;
     brand: TBrand;
+    totalAmount: TFFormattPrice;
 }

@@ -126,24 +126,30 @@ const Portfolio: FC = () => {
           </div>
         </div>
         <div className={css.portfolio_balance}>
-          <div className={css.portfolio_shares}>
-            <strong>Акции:</strong>
-            <span>
-              {shares.formatt} ({shares.percent}%)
-            </span>
-          </div>
-          <div className={css.portfolio_rubBonds}>
-            <strong>Рублевые облигации:</strong>
-            <span>
-              {rubBonds.formatt} ({rubBonds.percent}%)
-            </span>
-          </div>
-          <div className={css.portfolio_usdBonds}>
-            <strong>Валютные облигации:</strong>
-            <span>
-              {usdBonds.formatt} ({usdBonds.percent}%)
-            </span>
-          </div>
+          {shares.value !== 0 && (
+            <div className={css.portfolio_shares}>
+              <strong>Акции:</strong>
+              <span>
+                {shares.formatt} ({shares.percent}%)
+              </span>
+            </div>
+          )}
+          {rubBonds.value !== 0 && (
+            <div className={css.portfolio_rubBonds}>
+              <strong>Рублевые облигации:</strong>
+              <span>
+                {rubBonds.formatt} ({rubBonds.percent}%)
+              </span>
+            </div>
+          )}
+          {usdBonds.value !== 0 && (
+            <div className={css.portfolio_usdBonds}>
+              <strong>Валютные облигации:</strong>
+              <span>
+                {usdBonds.formatt} ({usdBonds.percent}%)
+              </span>
+            </div>
+          )}
           {etfArray &&
             etfArray.length &&
             etfArray.map((etf) => (
