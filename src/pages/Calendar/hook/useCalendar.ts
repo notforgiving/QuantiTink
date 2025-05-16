@@ -36,15 +36,12 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
         const eventsPositions = getOnlyEventsPositionsByPortfolio(portfolio?.positions || [])
         const localData: TEventsState[] | null = searchInLocalStorageByKey('eventsSlice');
         if (localData === null) {
-            console.log('useCalendar localData === null');
             handleDispatchEventsData(eventsPositions)
         } else {
             const data = searchItemInArrayData(localData, 'accountId', accountId || '0');
             if (data && moment().diff(moment(data.dateApi), 'hours') <= 6) {
-                console.log(data?.portfolioEvents,'useCalendar data found');
                 dispatch(eventsSlice.actions.getEventsListSuccessOnly(localData))
             } else {
-                console.log('data not found');
                 handleDispatchEventsData(eventsPositions)
             }
         }

@@ -251,7 +251,6 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         if (etfData && etfData.instrument) {
             const formattEtfs = etfData.instrument.map(etf => {
                 const etfAsPortfolioPosition = searchItemInArrayData(portfolio?.positions || [], 'figi', etf.figi)
-                console.log(etfAsPortfolioPosition, 'etfAsPortfolioPosition');
                 const currentPriceLot = formattedMoneySupply(getNumberMoney(etfAsPortfolioPosition?.currentPrice || null))
                 const quantityLots = Number(etfAsPortfolioPosition?.quantityLots.units);
                 const totalPrice = formattedMoneySupply(currentPriceLot.value * quantityLots)
