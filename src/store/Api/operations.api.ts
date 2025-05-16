@@ -12,7 +12,7 @@ export async function fetchAllGetOperationsAPI(accountsList: TFAccount[]) {
             return results;
         });
     } catch (e) {
-        throw new Error(`fetchAllGetPortfolioAPI went wrong`);
+        throw new Error(`fetchAllGetOperationsAPI went wrong`);
     };
 };
 

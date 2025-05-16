@@ -6,9 +6,9 @@ import { fetchAllGetEventsAPI } from "../Api/events.api";
 import { TFPosition } from "../../types/portfolio.type";
 import moment from "moment";
 
-function* getEventsListSaga({ payload: { bondPositions, accountId, empty } }: PayloadAction<{ bondPositions: TFPosition[], accountId: string, empty: boolean }>) {
+function* getEventsListSaga({ payload: { positions, accountId } }: PayloadAction<{ positions: TFPosition[], accountId: string }>) {
     try {
-        const response: TPortfolioEvents[][] = yield fetchAllGetEventsAPI(bondPositions);
+        const response: TPortfolioEvents[][] = yield fetchAllGetEventsAPI(positions);
         const newRsponse: TEventsState = {
             accountId,
             portfolioEvents: [],
@@ -19,8 +19,7 @@ function* getEventsListSaga({ payload: { bondPositions, accountId, empty } }: Pa
                 newRsponse.portfolioEvents.push(event)
             })
         })
-
-        yield put(empty ? eventsSlice.actions.getEventsListSuccessAction(newRsponse) : eventsSlice.actions.getEventsListSuccessActionAdditional(newRsponse));
+        yield put(eventsSlice.actions.getEventsListSuccessAction(newRsponse));
     } catch (error) {
         yield put(eventsSlice.actions.getEventsListErrorAction(error as string));
     }

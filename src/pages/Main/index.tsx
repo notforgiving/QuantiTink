@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
 import css from "./styles.module.scss";
 import { useMain } from "./hooks/useMain";
-import { searchPortfolioInArrayData } from "../../utils";
+import { searchItemInArrayData } from "../../utils";
 import { TFAmount } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
@@ -78,7 +78,7 @@ const Main: FC = () => {
         </div>
         <div className={css.accounts}>
           {accounts.data?.map((account: TFAccount) => {
-            const targetPortfolio = searchPortfolioInArrayData(
+            const targetPortfolio = searchItemInArrayData(
               portfoliosData || [],
               "accountId",
               account.id

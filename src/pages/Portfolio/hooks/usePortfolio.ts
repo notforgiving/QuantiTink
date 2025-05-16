@@ -1,11 +1,15 @@
 import { useSelector } from "react-redux";
 import { StateType } from "../../../store/root-reducer";
-import { calcSummOfAllDeposits, formattedMoneySupply, getNumberMoney, searchPortfolioInArrayData } from "../../../utils";
+import { calcSummOfAllDeposits, formattedMoneySupply, getNumberMoney, getPercentByTarget, searchInLocalStorageByKey, searchItemInArrayData } from "../../../utils";
 import { TFAccount } from "../../../types/accounts.type";
 import { TFPortfolio } from "../../../types/portfolio.type";
 import { useEffect, useState } from "react";
 import { TFFormattPrice } from "../../../types/common";
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { bondsSlice } from "../../../store/slices/bonds.slice";
+import { TInstrumentObject } from "../../../types/bonds.type";
+import { etfsSlice } from "../../../store/slices/etfs.slice";
 
 interface IUsePortfolio {
     accountId: string;
@@ -19,7 +23,7 @@ type TUsePortfolio = (props: IUsePortfolio) => {
     /** Текущая цена портфеля */
     currentPrice: TFFormattPrice
     /** Доходность в проентах */
-    differencePercent: string;
+    differencePercent: number;
     /** Дата начала инвестирования */
     portfolioStart: string;
     /** Срок инвестирования */
@@ -33,10 +37,19 @@ type TUsePortfolio = (props: IUsePortfolio) => {
     /** Получено дивидендов */
     dividends: TFFormattPrice;
     /** Текущая доходность */
-    currentProfitability: string;
+    currentProfitability: number;
+    /** Сумма всех акций и процент от портфеля */
+    shares: TFFormattPrice & { percent: number }
+    /** Сумма всех рублевых облигаций и процент от портфеля */
+    rubBonds: TFFormattPrice & { percent: number }
+    /** Сумма всех валютых облигаций и процент от портфеля */
+    usdBonds: TFFormattPrice & { percent: number }
+    /** Все фонды */
+    etfArray: (TFFormattPrice & { percent: number, name: string })[]
 }
 
 export const usePortfolio: TUsePortfolio = ({ accountId }) => {
+    const dispatch = useDispatch()
     const [currentPrice, setCurrentPrice] = useState<TFFormattPrice>({
         formatt: '',
         value: 0,
@@ -61,14 +74,30 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         formatt: '',
         value: 0,
     })
-    const [currentProfitability, setCurrentProfitability] = useState<string>('0');
-    const [differencePercent, setDifferencePercent] = useState<string>('0');
+    const [shares, setShares] = useState<TFFormattPrice & { percent: number }>({
+        formatt: '',
+        value: 0,
+        percent: 0,
+    })
+    const [rubBonds, setRubBonds] = useState<TFFormattPrice & { percent: number }>({
+        formatt: '',
+        value: 0,
+        percent: 0,
+    })
+    const [usdBonds, setUsdBonds] = useState<TFFormattPrice & { percent: number }>({
+        formatt: '',
+        value: 0,
+        percent: 0,
+    })
+    const [etfArray, setEtfArray] = useState<(TFFormattPrice & { percent: number, name: string })[]>([])
+    const [currentProfitability, setCurrentProfitability] = useState<number>(0);
+    const [differencePercent, setDifferencePercent] = useState<number>(0);
     const [portfolioStart, setPortfolioStart] = useState<string>('0');
     const [investmentPeriod, setInvestmentPeriod] = useState<number | null>(null);
 
     const account = useSelector((state: StateType) => {
         if (state.accounts.data && !!state.accounts.data?.length) {
-            return searchPortfolioInArrayData(
+            return searchItemInArrayData(
                 state.accounts.data,
                 "id",
                 accountId || "0"
@@ -78,7 +107,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
     });
     const portfolio = useSelector((state: StateType) => {
         if (state.portfolios.data && !!state.portfolios.data?.length) {
-            return searchPortfolioInArrayData(
+            return searchItemInArrayData(
                 state.portfolios.data,
                 "accountId",
                 accountId || "0"
@@ -88,7 +117,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
     });
     const operations = useSelector((state: StateType) => {
         if (state.operations.data && !!state.operations.data?.length) {
-            return searchPortfolioInArrayData(
+            return searchItemInArrayData(
                 state.operations.data,
                 "accountId",
                 accountId || "0"
@@ -96,13 +125,23 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         }
         return null;
     });
+    const { data: etfData } = useSelector((state: StateType) => state.etfs);
+    const { data: bondsData } = useSelector((state: StateType) => state.bonds);
 
     useEffect(() => {
         if (portfolio) {
             setCurrentPrice(formattedMoneySupply(
                 getNumberMoney(portfolio.totalAmountPortfolio)
             ))
-            setDifferencePercent((((currentPrice.value - amountInvestments.value) / amountInvestments.value) * 100).toFixed(2))
+            setDifferencePercent(getPercentByTarget(currentPrice.value - amountInvestments.value, amountInvestments.value))
+            const formatShares = formattedMoneySupply(
+                getNumberMoney(portfolio?.totalAmountShares)
+            )
+            setShares({
+                formatt: formatShares.formatt,
+                value: formatShares.value,
+                percent: getPercentByTarget(formatShares.value, currentPrice.value),
+            })
         }
     }, [amountInvestments.value, currentPrice.value, portfolio])
 
@@ -149,8 +188,84 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
     }, [operations])
 
     useEffect(() => {
-        setCurrentProfitability((((coupons.value + dividends.value) / amountInvestments.value) * 100).toFixed(2))
+        setCurrentProfitability(getPercentByTarget(coupons.value + dividends.value, amountInvestments.value))
     }, [amountInvestments.value, coupons, dividends])
+
+    useEffect(() => {
+        if (portfolio?.positions.length !== 0) {
+            const bondPositions = portfolio?.positions.filter((el) => el.instrumentType === "bond") || []
+            const localDataBondsSlice: TInstrumentObject | null = searchInLocalStorageByKey('bondsSlice');
+            if (localDataBondsSlice === null) {
+                dispatch(bondsSlice.actions.getBondsListAction({ bondPositions, accountId }))
+            } else {
+                const data = searchItemInArrayData([localDataBondsSlice], 'accountId', accountId || '0');
+                if (data) {
+                    dispatch(bondsSlice.actions.getBondsListSuccessOnly(localDataBondsSlice))
+                } else {
+                    dispatch(bondsSlice.actions.getBondsListAction({ bondPositions, accountId }))
+                }
+            }
+            const etfPositions = portfolio?.positions.filter((el) => el.instrumentType === 'etf') || [];
+            const localDataEtfsSlice: TInstrumentObject | null = searchInLocalStorageByKey('etfsSlice');
+            if (localDataEtfsSlice === null) {
+                dispatch(etfsSlice.actions.getEtfsListAction({ etfPositions, accountId }))
+            } else {
+                const data = searchItemInArrayData([localDataEtfsSlice], 'accountId', accountId || '0');
+                if (data) {
+                    dispatch(etfsSlice.actions.getEtfsListSuccessOnly(localDataEtfsSlice))
+                } else {
+                    dispatch(etfsSlice.actions.getEtfsListAction({ etfPositions, accountId }))
+                }
+            }
+        }
+    }, [accountId, dispatch, portfolio])
+
+    useEffect(() => {
+        if (bondsData) {
+            let rubBonds = 0;
+            let usdBonds = 0;
+            bondsData.instrument.forEach((bond) => {
+                const positionItem = searchItemInArrayData(portfolio?.positions || [], 'figi', bond.figi)
+                const quantity = Number(positionItem?.quantity.units);
+                const currentPrice = getNumberMoney(positionItem?.currentPrice || null)
+                if (bond.nominal.currency === 'rub') {
+                    rubBonds += quantity * currentPrice
+                } else {
+                    usdBonds += quantity * currentPrice
+                }
+            })
+            setUsdBonds({
+                formatt: formattedMoneySupply(usdBonds).formatt,
+                value: usdBonds,
+                percent: getPercentByTarget(usdBonds, currentPrice.value)
+            })
+            setRubBonds({
+                formatt: formattedMoneySupply(rubBonds).formatt,
+                value: rubBonds,
+                percent: getPercentByTarget(rubBonds, currentPrice.value)
+            })
+        }
+    }, [bondsData, currentPrice.value, portfolio?.positions])
+
+    useEffect(() => {
+        if (etfData && etfData.instrument) {
+            const formattEtfs = etfData.instrument.map(etf => {
+                const etfAsPortfolioPosition = searchItemInArrayData(portfolio?.positions || [], 'figi', etf.figi)
+                console.log(etfAsPortfolioPosition, 'etfAsPortfolioPosition');
+                const currentPriceLot = formattedMoneySupply(getNumberMoney(etfAsPortfolioPosition?.currentPrice || null))
+                const quantityLots = Number(etfAsPortfolioPosition?.quantityLots.units);
+                const totalPrice = formattedMoneySupply(currentPriceLot.value * quantityLots)
+                const resultObj = {
+                    name: etf.name,
+                    formatt: totalPrice.formatt,
+                    value: totalPrice.value,
+                    percent: getPercentByTarget(totalPrice.value, currentPrice.value),
+                }
+                return resultObj;
+            })
+            setEtfArray(formattEtfs)
+        }
+    }, [currentPrice.value, etfData, portfolio?.positions])
 
     return {
         account,
@@ -165,5 +280,9 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         coupons,
         dividends,
         currentProfitability,
+        shares,
+        rubBonds,
+        usdBonds,
+        etfArray,
     }
 }

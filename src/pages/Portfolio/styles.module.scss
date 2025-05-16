@@ -30,9 +30,12 @@
     }
   }
   &_amount {
-    color: lighten(variables.$red, 20%);
+    background: variables.$red;
+    padding: 5px;
+    border-radius: 5px;
+    width: fit-content;
     &:global(._isGreen) {
-      color: variables.$green;
+      background: variables.$green;
     }
     @include variables.phone {
       display: flex;
@@ -77,6 +80,32 @@
       strong {
         font-size: 16px;
         font-weight: 700;
+        margin-bottom: 4px;
+      }
+      span {
+        font-size: 24px;
+      }
+    }
+  }
+  &_balance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    & > div {
+      align-items: center;
+      display: flex;
+      flex-basis: auto;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 1;
+      justify-content: center;
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+      strong {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
       }
       span {
         font-size: 24px;
@@ -112,5 +141,21 @@
   &_profitability {
     @include variables.greyBlock;
     @include variables.standartBlock;
+  }
+  &_shares {
+    @include variables.standartBlock;
+    @include variables.orangeBlock;
+  }
+  &_rubBonds {
+    @include variables.standartBlock;
+    @include variables.purpuleBlock;
+  }
+  &_usdBonds {
+    @include variables.standartBlock;
+    @include variables.beigeBlock;
+  }
+  &_etf {
+    @include variables.standartBlock;
+    @include variables.yellowBlock;
   }
 }

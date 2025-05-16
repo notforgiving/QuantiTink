@@ -82,7 +82,7 @@ export const formattedMoneySupply: TFormattedMoneySupply = (
 };
 
 /** Функция поиска и возврата элемента массива по условию */
-export function searchPortfolioInArrayData<T>(
+export function searchItemInArrayData<T>(
   /** В каком массиве искать */
   data: T[],
   /** По какому ключу смотреть совпадение в исходном массиве */
@@ -104,11 +104,15 @@ export const getDeclensionWordMonth = (value: number): string => {
   return "месяцев";
 };
 
-/** Поиск в позициях только облигаций */
-export const getOnlyBondPositionsByPortfolio = (
+/** Поиск в позициях только облигаций или акций */
+export const getOnlyEventsPositionsByPortfolio = (
   positions: TFPosition[]
 ): TFPosition[] => {
-  return positions.filter((el) => el.instrumentType === "bond") || [];
+  return (
+    positions.filter(
+      (el) => el.instrumentType === "bond" || el.instrumentType === "share"
+    ) || []
+  );
 };
 
 /** Поиск в локал сторадже данных и отдача их в читаемом виде*/
@@ -120,3 +124,8 @@ export function searchInLocalStorageByKey<T>(key: string): T | null {
 
   return null;
 }
+
+/** Получение процента от числа */
+export const getPercentByTarget = (base: number, target: number): number => {
+  return Number(((base / target) * 100).toFixed(2));
+};

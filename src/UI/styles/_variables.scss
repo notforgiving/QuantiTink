@@ -4,7 +4,7 @@ $lightBlue: #3d619e;
 $lightGray: #e9e8eb;
 $middleGray: #c1b9ae;
 $red: #c52e31;
-$orange: #fa8d70;
+$orange: #f8663f;
 $violet: #71617d;
 $gold: #fcc769;
 $green: green;
@@ -42,7 +42,7 @@ $green: green;
   background: $orange;
   color: $lightGray;
   &:hover {
-    background: lighten($orange, 10%);
+    background: darken($orange, 5%);
   }
 }
 
@@ -60,7 +60,7 @@ $green: green;
   background: $violet;
   color: #fff;
   &:hover {
-    background: lighten($purpuleBlock, 10%);
+    background: lighten($violet, 10%);
   }
 }
 

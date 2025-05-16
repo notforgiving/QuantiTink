@@ -24,6 +24,10 @@ const Portfolio: FC = () => {
     coupons,
     dividends,
     currentProfitability,
+    shares,
+    rubBonds,
+    usdBonds,
+    etfArray,
   } = usePortfolio({
     accountId: accountId || "0",
   });
@@ -115,8 +119,41 @@ const Portfolio: FC = () => {
             title="Без учета доходности по телу портфеля"
           >
             <strong>Годовая доходность (прогноз)</strong>
-            <span>{`${(Number(currentProfitability) / (investmentPeriod ?? 1) * 12).toFixed(2)}%`}</span>
+            <span>{`${(
+              (currentProfitability / (investmentPeriod ?? 1)) *
+              12
+            ).toFixed(2)}%`}</span>
           </div>
+        </div>
+        <div className={css.portfolio_balance}>
+          <div className={css.portfolio_shares}>
+            <strong>Акции:</strong>
+            <span>
+              {shares.formatt} ({shares.percent}%)
+            </span>
+          </div>
+          <div className={css.portfolio_rubBonds}>
+            <strong>Рублевые облигации:</strong>
+            <span>
+              {rubBonds.formatt} ({rubBonds.percent}%)
+            </span>
+          </div>
+          <div className={css.portfolio_usdBonds}>
+            <strong>Валютные облигации:</strong>
+            <span>
+              {usdBonds.formatt} ({usdBonds.percent}%)
+            </span>
+          </div>
+          {etfArray &&
+            etfArray.length &&
+            etfArray.map((etf) => (
+              <div className={css.portfolio_etf}>
+                <strong>{etf.name}</strong>
+                <span>
+                  {etf.formatt} ({etf.percent}%)
+                </span>
+              </div>
+            ))}
         </div>
       </div>
     </Container>

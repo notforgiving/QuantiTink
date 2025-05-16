@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { calcSummOfAllDeposits, calcSummOfTotalAmountPortfolio, formattedMoneySupply } from "../../../utils";
+import { calcSummOfAllDeposits, calcSummOfTotalAmountPortfolio, formattedMoneySupply, getPercentByTarget } from "../../../utils";
 import { TFFormattPrice } from "../../../types/common";
 import { TFUnionOperations } from "../../../store/slices/operations.slice";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,7 +56,7 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
 
     useEffect(() => {
         if (portfoliosReturns.value !== 0 || general.totalAmountDepositsAllPortfolios.value !== 0) {
-            setDifferentPercent(`${((portfoliosReturns.value / general.totalAmountDepositsAllPortfolios.value) * 100).toFixed(2)}%`)
+            setDifferentPercent(`${getPercentByTarget(portfoliosReturns.value,general.totalAmountDepositsAllPortfolios.value)}%`)
         }
 
     }, [portfoliosReturns, general.totalAmountDepositsAllPortfolios])
