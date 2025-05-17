@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: relative;
 
   &_data {
     @include variables.standartBlock;
@@ -157,5 +158,9 @@
   &_etf {
     @include variables.standartBlock;
     @include variables.yellowBlock;
+  }
+  &_rebalance {
+    padding: 20px 10px;
+    font-size: 20px;
   }
 }

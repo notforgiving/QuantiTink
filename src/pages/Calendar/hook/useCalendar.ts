@@ -113,7 +113,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
                         if (event.hasOwnProperty('payOneBond')) {
                             tempObject.paymentDate = event.payDate;
                             tempObject.payOneLot = event.payOneBond;
-                            tempObject.operationType = event.eventType === 'EVENT_TYPE_CPN' ? 'Купоны' : 'Погашение'
+                            tempObject.operationType = event.eventType === 'EVENT_TYPE_CPN' ? 'Купоны' : event.operationType === 'OA' ? 'Амортизация' : 'Погашение'
                             tempObject.name = bondInfo?.name || '';
                             tempObject.oneLot = 1;
                             tempObject.brand = {

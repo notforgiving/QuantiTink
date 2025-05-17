@@ -5,7 +5,9 @@ export const EVENTS = 'events';
 export const GET_EVENTS_LIST = `${EVENTS}/getEventsListAction`;
 export type TFPORTFOLIOS = typeof EVENTS;
 
-export type TEventType = 'Фиксированный' | 'Плавающий'
+/** OA - амортизация */
+/** OA - полное погашение */
+export type TEventType = 'Фиксированный' | 'Плавающий' | 'OM' | 'OA'
 
 export type TEventsResponse = {
     events: TEvents[]
@@ -34,7 +36,7 @@ export type TEventsState = {
 }
 
 
-export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'Погашение'
+export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'Погашение' | 'Амортизация'
 
 export type TPayOutsEvent = {
     figi: string;

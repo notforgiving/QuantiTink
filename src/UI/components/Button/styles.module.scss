@@ -6,6 +6,26 @@
   border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
+  transition: 0.3s;
+  background: variables.$lightGray;
+  color: variables.$lightBlue;
+
+  &:hover {
+    background: variables.$lightBlue;
+    color: variables.$lightGray;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    &:hover {
+      background: variables.$lightGray;
+      color: variables.$lightBlue;
+    }
+  }
+
+  &_body {
+  }
 
   @include variables.phone {
     font-size: 14px;

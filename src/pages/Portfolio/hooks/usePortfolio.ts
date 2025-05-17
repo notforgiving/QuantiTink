@@ -46,7 +46,7 @@ type TUsePortfolio = (props: IUsePortfolio) => {
     /** Сумма всех валютых облигаций и процент от портфеля */
     usdBonds: TFFormattPrice & { percent: number }
     /** Все фонды */
-    etfArray: (TFFormattPrice & { percent: number, name: string })[]
+    etfArray: (TFFormattPrice & { percent: number, name: string, ticker: string; })[]
 }
 
 export const usePortfolio: TUsePortfolio = ({ accountId }) => {
@@ -90,7 +90,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         value: 0,
         percent: 0,
     })
-    const [etfArray, setEtfArray] = useState<(TFFormattPrice & { percent: number, name: string })[]>([])
+    const [etfArray, setEtfArray] = useState<(TFFormattPrice & { percent: number, name: string, ticker: string; })[]>([])
     const [currentProfitability, setCurrentProfitability] = useState<number>(0);
     const [differencePercent, setDifferencePercent] = useState<number>(0);
     const [portfolioStart, setPortfolioStart] = useState<string>('0');
@@ -269,6 +269,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                 const totalPrice = formattedMoneySupply(currentPriceLot.value * quantityLots)
                 const resultObj = {
                     name: etf.name,
+                    ticker: etf.ticker,
                     formatt: totalPrice.formatt,
                     value: totalPrice.value,
                     percent: getPercentByTarget(totalPrice.value, currentPrice.value),

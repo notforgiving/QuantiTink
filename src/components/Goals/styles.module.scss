@@ -1,0 +1,95 @@
+@use "../../UI/styles/variables";
+
+.goals {
+  &:global(._isOpen) {
+    .goals_body {
+      transform: translateX(0px);
+    }
+  }
+  &_main {
+    @include variables.standartBlock;
+    @include variables.beigeBlock;
+    box-shadow: rgba(0, 0, 0, 0.51) 0px 1px 4px 2px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    position: fixed;
+    right: 0px;
+    top: 74px;
+    transform: translateX(10px);
+    z-index: 1;
+    border-radius: 5px 0px 0px 5px;
+    padding: 20px;
+    transition: 0.3s;
+
+    &:hover {
+      transform: translateX(0px);
+    }
+  }
+  &_body {
+    @include variables.standartBlock;
+    @include variables.beigeBlock;
+    box-shadow: rgba(42, 57, 79, 0.751) -5px 0px 20px 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 100vh;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    transform: translateX(110%);
+    z-index: 20;
+    border-radius: 5px 0px 0px 5px;
+    padding: 20px;
+    transition: 0.3s;
+  }
+  &_actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &_hint {
+    color: variables.$red;
+    font-size: 16px;
+    animation: 2s linear 0s infinite normal none running scale;
+    margin-bottom: 10px;
+  }
+  &_content {
+    flex: 1;
+  }
+  &_form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  &_modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    @include variables.standartBlock;
+    @include variables.beigeBlock;
+    transition: 0.5s;
+
+    &:global(._isOpen) {
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.522);
+    }
+  }
+}
+
+@keyframes scale {
+  0% {
+    ransform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    ransform: scale(1);
+  }
+}

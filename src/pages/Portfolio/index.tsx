@@ -6,6 +6,9 @@ import css from "./styles.module.scss";
 import { usePortfolio } from "./hooks/usePortfolio";
 import { formattedMoneySupply, getDeclensionWordMonth } from "../../utils";
 import cn from "classnames";
+import Goals from "../../components/Goals";
+import { useGoals } from "./hooks/useGoals";
+import GoalsModal from "../../components/Goals/components/GoalsModal";
 
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
@@ -29,6 +32,17 @@ const Portfolio: FC = () => {
     usdBonds,
     etfArray,
   } = usePortfolio({
+    accountId: accountId || "0",
+  });
+  const {
+    open,
+    setOpen,
+    formik,
+    error,
+    validateFillFields,
+    openPanel,
+    setOpenPanel,
+  } = useGoals({
     accountId: accountId || "0",
   });
 
@@ -161,7 +175,27 @@ const Portfolio: FC = () => {
               </div>
             ))}
         </div>
+        <Button
+          text="Докупить"
+          className={css.portfolio_rebalance}
+          buttonAttributes={{
+            onClick: () => {
+              validateFillFields();
+            },
+          }}
+        />
+        <GoalsModal openPanel={openPanel} setOpenPanel={setOpenPanel}/>
       </div>
+      <Goals
+        shares={shares.value !== 0}
+        rubBonds={rubBonds.value !== 0}
+        usdBonds={usdBonds.value !== 0}
+        etfs={etfArray}
+        open={open}
+        setOpen={setOpen}
+        formik={formik}
+        error={error}
+      />
     </Container>
   );
 };

@@ -1,0 +1,22 @@
+@use "../../../UI/styles/variables";
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  &_label {
+    font-size: 20px;
+  }
+  &_body {
+    border: none;
+    border-radius: 5px;
+    background: #fff;
+    padding: 5px 10px;
+    font-size: 14px;
+    min-height: 40px;
+    color: variables.$lightBlue;
+    &::placeholder {
+      color: variables.$lightBlue;
+    }
+  }
+}
