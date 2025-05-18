@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "./pages/Main";
@@ -12,7 +13,7 @@ import Calendar from "./pages/Calendar";
 function App() {
   const accounts = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch();
-
+  window.matchMedia("(display-mode: standalone)").matches;
   useEffect(() => {
     if (accounts.data && accounts.data.length === 0) {
       dispatch(accountsSlice.actions.getaccountsListAction());

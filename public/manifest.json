@@ -1,5 +1,6 @@
 {
   "name": "Tbalance_2.0",
   "description": "Контроль за портфелями",
-  "display": "fullscreen"
+  "display": "standalone",
+  "start_url": "/?standalone=true"
 }
