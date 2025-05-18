@@ -1,6 +1,5 @@
 {
   "name": "Tbalance_2.0",
   "description": "Контроль за портфелями",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay"]
+  "display": "fullscreen"
 }
