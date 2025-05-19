@@ -167,7 +167,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
             let tempdiv = 0;
 
             operations.forEach((el) => {
-                if (el.type === 'Удержание налога') {
+                if (el.type === 'Удержание налога' || el.type === 'Удержание налога по дивидендам') {
                     temptax += getNumberMoney(el.payment);
                 }
                 if (el.type === 'Удержание комиссии за операцию') {
@@ -176,8 +176,8 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                 if (el.type === 'Выплата купонов') {
                     tempcoup += getNumberMoney(el.payment);
                 }
-                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') {
-                    tempdiv += getNumberMoney(el.payment);
+                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') { 
+                    tempdiv += getNumberMoney(el.payment) * 0.87;
                 }
             })
 

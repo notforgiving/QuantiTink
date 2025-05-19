@@ -7,15 +7,15 @@ import css from "./styles.module.scss";
 import cn from "classnames";
 import moment from "moment";
 import { formattedMoneySupply } from "../../utils";
+import Load from "../../UI/components/Load";
 
 const Calendar: FC = () => {
   let { id: accountId } = useParams();
   const navigate = useNavigate();
-  const { payOuts, monthPayBonds, monthPayDiv, yearAllPay, additionalPayOuts } =
+  const { payOuts, monthPayBonds, monthPayDiv, yearAllPay, isLoadingCalc } =
     useCalendar({
       accountId,
     });
-  console.log(payOuts, "payOuts");
 
   return (
     <Container>
@@ -28,86 +28,121 @@ const Calendar: FC = () => {
       />
       <div className={css.total_wrapper}>
         <span>В течении мес.:</span>
-        <div className={css.total}>{monthPayBonds.formatt}</div>
-        <div className={cn(css.total, css.shares)}>{monthPayDiv.formatt}</div>
-        <div className={cn(css.total, css.all)}>
-          {
-            formattedMoneySupply(monthPayBonds.value + monthPayDiv.value)
-              .formatt
-          }
-        </div>
+
+        {isLoadingCalc ? (
+          <>
+            <Load
+              style={{
+                width: "106px",
+                height: "52px",
+              }}
+            />
+            <Load
+              style={{
+                width: "106px",
+                height: "52px",
+              }}
+            />
+            <Load
+              style={{
+                width: "106px",
+                height: "52px",
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <div className={css.total}>{monthPayBonds.formatt}</div>
+            <div className={cn(css.total, css.shares)}>
+              {monthPayDiv.formatt}
+            </div>
+            <div className={cn(css.total, css.all)}>
+              {
+                formattedMoneySupply(monthPayBonds.value + monthPayDiv.value)
+                  .formatt
+              }
+            </div>
+          </>
+        )}
       </div>
       <div className={css.total_wrapper}>
         <span>В течении года:</span>
-        <div className={cn(css.total, css.all)}>{yearAllPay.formatt}</div>
+        {isLoadingCalc ? (
+          <Load
+            style={{
+              width: "106px",
+              height: "52px",
+            }}
+          />
+        ) : (
+          <div className={cn(css.total, css.all)}>{yearAllPay.formatt}</div>
+        )}
       </div>
       <div className={css.grid}>
-        <>
-          {additionalPayOuts &&
-            !!additionalPayOuts.length &&
-            additionalPayOuts.map((el, index) => (
-              <div className={css.item} key={`${index}${el.figi}`}>
+        {isLoadingCalc && (
+          <>
+            <Load
+              style={{
+                width: "100%",
+                height: "78px",
+              }}
+            />
+            <Load
+              style={{
+                width: "100%",
+                height: "78px",
+              }}
+            />
+            <Load
+              style={{
+                width: "100%",
+                height: "78px",
+              }}
+            />
+          </>
+        )}
+        {!isLoadingCalc &&
+          payOuts &&
+          !!payOuts.length &&
+          payOuts.map((event, index) => {
+            console.log(moment(event.paymentDate).day(),event.name);
+            
+
+            return (
+              <div className={css.item} key={`${index}${event.figi}`}>
                 <div className={css.item_left}>
                   <div
                     className={cn(css.item_type, {
-                      _isDividend: el.operationType === "Дивиденды",
-                      _isRepayment: el.operationType === "Погашение",
-                    })}
-                  >
-                    {el.operationType}
-                  </div>
-                  <div className={css.item_date}>
-                    {moment(el.paymentDate).format("DD MMMM")}
-                  </div>
-                </div>
-                <div className={css.item_body}>
-                  <div className={css.item_info}>
-                    <div className={css.item_name}>{el.name}</div>
-                    <div
-                      className={cn(css.item_price, {
-                        _isDividend: el.operationType === "Дивиденды",
-                        _isRepayment: el.operationType === "Погашение",
-                      })}
-                    >
-                      {el.totalAmount.formatt}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </>
-        {payOuts &&
-          !!payOuts.length &&
-          payOuts.map((event, index) => (
-            <div className={css.item} key={`${index}${event.figi}`}>
-              <div className={css.item_left}>
-                <div
-                  className={cn(css.item_type, {
-                    _isDividend: event.operationType === "Дивиденды",
-                    _isRepayment: event.operationType === "Погашение",
-                  })}
-                >
-                  {event.operationType}
-                </div>
-                <div className={css.item_date}>
-                  {moment(event.paymentDate).format("DD MMMM")}
-                </div>
-              </div>
-              <div className={css.item_body}>
-                <div className={css.item_info}>
-                  <div className={css.item_name}>{event.name}</div>
-                  <div
-                    className={cn(css.item_price, {
                       _isDividend: event.operationType === "Дивиденды",
                       _isRepayment: event.operationType === "Погашение",
                     })}
                   >
-                    {event.totalAmount.formatt}
+                    {event.operationType}
+                  </div>
+                  <div className={css.item_date}>
+                    {moment(event.paymentDate).day() === 5
+                      ? moment(event.paymentDate).day() === 6
+                        ? moment(event.paymentDate).add(2, "d").format("DD MMMM")
+                        : moment(event.paymentDate).add(3, "d").format("DD MMMM")
+                      : moment(event.paymentDate).add(1, "d").format("DD MMMM")}
+                  </div>
+                </div>
+                <div className={css.item_body}>
+                  <div className={css.item_info}>
+                    <div className={css.item_name}>{event.name}</div>
+                    <div
+                      className={cn(css.item_price, {
+                        _isDividend: event.operationType === "Дивиденды",
+                        _isRepayment: event.operationType === "Погашение",
+                      })}
+                    >
+                      {event.totalAmount.formatt}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
       </div>
     </Container>
   );
