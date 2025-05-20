@@ -1,28 +1,50 @@
-import { useState } from "react";
-import { searchInLocalStorageByKey } from "../../../utils";
+import { useEffect, useState } from "react";
+import { searchInLocalStorageByKey, useCalcRebalancePortfolio } from "../../../utils";
 import { FormikProps, useFormik } from "formik";
+import { TFAmount } from "../../../types/portfolio.type";
+import { IPortfolioItem } from "./usePortfolio";
+import { TFFormattPrice } from "../../../types/common";
 
 export interface IGoalssForm {
     [x: string]: number | null;
 }
 
 interface IUseGoalsProps {
-    accountId: string
+    accountId: string;
+    totalAmountPortfolio: TFAmount;
+    totalAmountCurrencies: TFAmount;
+    shares: IPortfolioItem;
+    rubBonds: IPortfolioItem;
+    usdBonds: IPortfolioItem;
+    etfArray: (TFFormattPrice & {
+        percent: number;
+        name: string;
+        ticker: string;
+    })[]
 }
 
 type TUseGoals = (props: IUseGoalsProps) => {
-    open: boolean,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    openTargets: boolean,
+    setOpenTargets: React.Dispatch<React.SetStateAction<boolean>>
     formik: FormikProps<IGoalssForm>,
     error: string;
     validateFillFields: () => void;
     openPanel: boolean;
-    setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>
+    setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>;
+    freeAmountMoney: number;
+    setFreeAmountMoney: React.Dispatch<React.SetStateAction<number>>;
+    resultValues: {
+        [x: string]: number;
+    }
 }
-export const useGoals: TUseGoals = ({ accountId }) => {
+export const useGoals: TUseGoals = ({ accountId, totalAmountPortfolio, shares,
+    rubBonds,
+    usdBonds,
+    etfArray, totalAmountCurrencies }) => {
+    const [openTargets, setOpenTargets] = useState<boolean>(false);
     const [openPanel, setOpenPanel] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
-    const [open, setOpen] = useState<boolean>(false);
+    const [freeAmountMoney, setFreeAmountMoney] = useState<number>(0);
     const localStorageInfo: { [x: string]: IGoalssForm } | null =
         searchInLocalStorageByKey("TBalance_goals");
     const initialValues = localStorageInfo && localStorageInfo[accountId] ? localStorageInfo[accountId] : {};
@@ -45,7 +67,7 @@ export const useGoals: TUseGoals = ({ accountId }) => {
                     [accountId]: values,
                 }
                 localStorage.setItem("TBalance_goals", JSON.stringify(preliminary));
-                setOpen(false);
+                setOpenTargets(false);
             }
         },
     });
@@ -61,18 +83,34 @@ export const useGoals: TUseGoals = ({ accountId }) => {
         if (validateForm(formik.values)) {
             setOpenPanel(true)
         } else {
-            setOpen(true)
+            setOpenTargets(true)
             setError("Перед ребалансом надо задать все значения");
         }
-
     }
+
+    useEffect(() => {
+        if (openPanel && openTargets) {
+            setOpenTargets(false);
+        }
+    }, [openPanel, openTargets])
+
+    const resultValues = useCalcRebalancePortfolio({
+        freeAmountMoney, totalAmountPortfolio, totalAmountCurrencies, accountId, shares,
+        rubBonds,
+        usdBonds,
+        etfArray,
+    })
+
     return {
-        open,
-        setOpen,
+        openTargets,
+        setOpenTargets,
         formik,
         error,
         validateFillFields,
         openPanel,
         setOpenPanel,
+        freeAmountMoney,
+        setFreeAmountMoney,
+        resultValues,
     }
 }

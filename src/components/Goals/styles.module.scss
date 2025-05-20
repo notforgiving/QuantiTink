@@ -48,6 +48,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
   }
   &_hint {
     color: variables.$red;
@@ -74,11 +75,65 @@
     @include variables.standartBlock;
     @include variables.beigeBlock;
     transition: 0.5s;
+    max-width: 1040px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    @include variables.phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      left: 0;
+      top: 0;
+      transform: translate(0) scale(0);
+      padding: 20px;
+    }
 
     &:global(._isOpen) {
       transform: translate(-50%, -50%) scale(1);
       box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.522);
+
+      @include variables.phone {
+        transform: translate(0) scale(1);
+      }
     }
+
+    &_btn {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  &_input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    strong {
+      font-size: 18px;
+      @include variables.phone {
+        font-size: 14px;
+      }
+    }
+
+    :global(.input_component) {
+      flex: 1;
+    }
+  }
+  &_info {
+    &:nth-of-type(3) {
+      margin-bottom: 40px;
+    }
+    strong{
+      font-size: 18px;
+    }
+    span {
+      color: variables.$green;
+      font-size: 20px;
+    }
+  }
+  &_actions {
+
   }
 }
 

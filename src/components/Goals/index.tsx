@@ -16,8 +16,8 @@ interface IGoalsProps {
     name: string;
     ticker: string;
   })[];
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  openTargets: boolean;
+  setOpenTargets: React.Dispatch<React.SetStateAction<boolean>>;
   formik: FormikProps<IGoalssForm>;
   error: string;
 }
@@ -27,18 +27,18 @@ const Goals: FC<IGoalsProps> = ({
   rubBonds,
   usdBonds,
   etfs,
-  open,
-  setOpen,
+  openTargets,
+  setOpenTargets,
   formik,
   error,
 }) => {
   return (
     <div
       className={cn(css.goals, {
-        _isOpen: open,
+        _isOpen: openTargets,
       })}
     >
-      <div className={css.goals_main} onClick={() => setOpen(true)}>
+      <div className={css.goals_main} onClick={() => setOpenTargets(true)}>
         Цели
       </div>
       <div className={css.goals_body}>
@@ -50,7 +50,7 @@ const Goals: FC<IGoalsProps> = ({
                 {shares && (
                   <Input
                     label="Акции"
-                    buttonAttributes={{
+                    inputAttributes={{
                       placeholder: "Введите число...",
                       type: "number",
                       required: true,
@@ -63,7 +63,7 @@ const Goals: FC<IGoalsProps> = ({
                 {rubBonds && (
                   <Input
                     label="Рублевые облигации"
-                    buttonAttributes={{
+                    inputAttributes={{
                       placeholder: "Введите число...",
                       type: "number",
                       required: true,
@@ -79,7 +79,7 @@ const Goals: FC<IGoalsProps> = ({
                 {usdBonds && (
                   <Input
                     label="Валютные облигации"
-                    buttonAttributes={{
+                    inputAttributes={{
                       placeholder: "Введите число...",
                       type: "number",
                       required: true,
@@ -97,7 +97,7 @@ const Goals: FC<IGoalsProps> = ({
                     <Input
                       key={etf.ticker}
                       label={etf.name}
-                      buttonAttributes={{
+                      inputAttributes={{
                         placeholder: "Введите число...",
                         type: "number",
                         required: true,
@@ -119,7 +119,7 @@ const Goals: FC<IGoalsProps> = ({
           <Button
             text="Отменить"
             buttonAttributes={{
-              onClick: () => setOpen(false),
+              onClick: () => setOpenTargets(false),
             }}
           />
           <Button

@@ -4,17 +4,17 @@ import cn from "classnames";
 
 interface IInputProps {
   label?: string | ReactNode;
-  buttonAttributes?: InputHTMLAttributes<HTMLInputElement>;
+  inputAttributes?: InputHTMLAttributes<HTMLInputElement>;
 }
 
-const Input: FC<IInputProps> = ({ label, buttonAttributes }) => {
+const Input: FC<IInputProps> = ({ label, inputAttributes }) => {
   return (
     <div className={cn(css.input, "input_component")}>
       {label && (
         <div className={cn(css.input_label, "input_label")}>{label}</div>
       )}
       <input
-        {...buttonAttributes}
+        {...inputAttributes}
         className={cn(css.input_body, "input_body")}
       />
     </div>
