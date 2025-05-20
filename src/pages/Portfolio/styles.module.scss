@@ -146,6 +146,7 @@
   &_shares {
     @include variables.standartBlock;
     @include variables.orangeBlock;
+    cursor: pointer;
   }
   &_rubBonds {
     @include variables.standartBlock;

@@ -1,0 +1,88 @@
+@use "../../UI/styles/variables";
+
+.symbols {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 20px;
+  & > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    strong {
+      display: block;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+    }
+    span {
+      font-size: 16px;
+    }
+  }
+
+  & .green {
+    strong {
+      background: variables.$green;
+    }
+  }
+  & .red {
+    strong {
+      background: variables.$red;
+    }
+  }
+  & .threeYears {
+    strong {
+      background: variables.$gold;
+    }
+  }
+}
+
+.shares {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &_title {
+    font-size: 24px;
+  }
+  &_list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  &_item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    @include variables.standartBlock;
+    @include variables.middleBlueBlock;
+    padding: 6px 8px;
+
+    &:global(._isProfitablePurchase) {
+      background: variables.$green;
+    }
+    &:global(._isUnprofitablePurchase) {
+      background: variables.$red;
+    }
+
+    &_row {
+      display: grid;
+      grid-template-columns: 20px 100px 80px 80px repeat(4, 1fr);
+      gap: 4px;
+      &:global(._isHeader) {
+        border-bottom: 2px solid variables.$lightBlue;
+        padding-bottom: 4px;
+        padding: 6px 8px;
+      }
+      &:global(._isBody) {
+      }
+      @include variables.phone {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+    }
+  }
+}

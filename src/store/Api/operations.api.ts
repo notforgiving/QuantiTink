@@ -1,3 +1,4 @@
+import moment from "moment";
 import { TFAccount } from "../../types/accounts.type";
 import { TFUnionOperations } from "../slices/operations.slice";
 import { GetOperationsAPI, TOKEN } from "./common";
@@ -22,6 +23,8 @@ export async function fetchGetOperationsAPI(id: string) {
         method: "POST",
         body: JSON.stringify({
             accountId: id,
+            from: moment().add(-5, 'y').utc(),
+            to: moment().utc(),
             state: "OPERATION_STATE_EXECUTED",
         }),
         headers: {

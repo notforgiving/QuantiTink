@@ -105,9 +105,6 @@ const Calendar: FC = () => {
           payOuts &&
           !!payOuts.length &&
           payOuts.map((event, index) => {
-            console.log(moment(event.paymentDate).day(),event.name);
-            
-
             return (
               <div className={css.item} key={`${index}${event.figi}`}>
                 <div className={css.item_left}>

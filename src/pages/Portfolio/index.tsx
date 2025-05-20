@@ -151,7 +151,7 @@ const Portfolio: FC = () => {
         </div>
         <div className={css.portfolio_balance}>
           {shares.value !== 0 && (
-            <div className={css.portfolio_shares}>
+            <div className={css.portfolio_shares} onClick={() => navigate(`/account/${accountId}/shares`)}>
               <strong>Акции:</strong>
               <span>
                 {shares.formatt} ({shares.percent}%)
