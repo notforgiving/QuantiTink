@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import Container from "../../UI/components/Container";
 import Button from "../../UI/components/Button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,11 +6,16 @@ import css from "./styles.module.scss";
 import { useShares } from "./hook/useShares";
 import cn from "classnames";
 import Line from "./components/Line";
+import Input from "../../UI/components/Input";
 
 const Shares: FC = () => {
   let { id: accountId } = useParams();
   const navigate = useNavigate();
-  const { result } = useShares({ accountId: accountId || "0" });
+  const { result, withTax, setWithTax, comissionToggle, setComissionToggle } =
+    useShares({
+      accountId: accountId || "0",
+    });
+
   return (
     <Container>
       <Button
@@ -22,32 +27,57 @@ const Shares: FC = () => {
       />
       <div className={css.symbols}>
         <div className={css.green}>
-          <strong></strong><span>Прибыльная покупка</span>
+          <strong></strong>
+          <span>Прибыльная покупка</span>
         </div>
-          <div className={css.red}> 
-          <strong></strong><span>Убыточная покупка</span>
+        <div className={css.red}>
+          <strong></strong>
+          <span>Убыточная покупка</span>
         </div>
-          <div className={css.threeYears}>
-          <strong></strong><span>Есль льгота ЛДВ</span>
+        <div className={css.threeYears}>
+          <strong></strong>
+          <span>Есль льгота ЛДВ</span>
         </div>
       </div>
       <div className={css.shares}>
         <div className={css.shares_title}>Акции</div>
+        <div className={css.shares_actions}>
+          <Input
+            label="Рассчитать с учетом налога"
+            inputAttributes={{
+              id: "withTax",
+              type: "checkbox",
+              checked: withTax,
+              onChange: () => setWithTax(!withTax),
+            }}
+          />
+          <Input
+            label="Рассчитать с учетом комиссии"
+            inputAttributes={{
+              id: "comissionToggle",
+              type: "checkbox",
+              checked: comissionToggle,
+              onChange: () => setWithTax(!comissionToggle),
+            }}
+          />
+        </div>
         <div className={css.shares_header}>
           <div className={cn(css.shares_item_row, "_isHeader")}>
-            <div>№</div>
-            <div>Название</div>
-            <div>Дата покупки</div>
-            <div>Количество</div>
-            <div>Цена покупки одного лота</div>
-            <div>Итоговая цена покупки</div>
-            <div>Доходность этой операции сейчас</div>
-            <div>Срок владения покупкой</div>
+            <div className={css.number}>№</div>
+            <div className={css.name}>Название</div>
+            <div className={css.date}>Дата покупки</div>
+            <div className={css.quantity}>Количество</div>
+            <div className={css.priceTotal}>Сумма покупки</div>
+            <div className={css.priceActiality}>Стоимость сейчас</div>
+            <div className={css.profitabilityNow}>Доходность этой операции</div>
+            <div className={css.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
         <div className={css.shares_list}>
           {!!result.length &&
-            result.map((operation) => <Line operation={operation} key={operation.date}/>)}
+            result.map((operation) => (
+              <Line operation={operation} key={operation.date} />
+            ))}
         </div>
       </div>
     </Container>

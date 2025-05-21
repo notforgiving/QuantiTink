@@ -5,6 +5,7 @@ import moment from "moment";
 import { accordanceTariffAndComissions } from "../../../types/info.type";
 import { TFPosition } from "../../../types/portfolio.type";
 import { TFFormattPrice } from "../../../types/common";
+import { useState } from "react";
 
 export type TShareProfitability = {
     number: number,
@@ -12,8 +13,8 @@ export type TShareProfitability = {
     date: string,
     quantity: string,
     currentPrice: TFFormattPrice,
-    priceLot: TFFormattPrice,
     priceTotal: TFFormattPrice,
+    priceActiality: TFFormattPrice,
     ownershipPeriod: number,
     profitabilityNow: {
         percent: number,
@@ -26,12 +27,17 @@ interface IUseSharesProps {
 }
 
 type TFUseShares = (peops: IUseSharesProps) => {
-    result: TShareProfitability[]
+    result: TShareProfitability[],
+    withTax: boolean,
+    setWithTax: React.Dispatch<React.SetStateAction<boolean>>,
+    comissionToggle: boolean,
+    setComissionToggle: React.Dispatch<React.SetStateAction<boolean>>,
 }
 export const useShares: TFUseShares = ({ accountId }) => {
+    const [withTax, setWithTax] = useState<boolean>(false);
+    const [comissionToggle, setComissionToggle] = useState<boolean>(false);
     let result: TShareProfitability[] = [];
     const tariff = useSelector((state: StateType) => state.info.data?.tariff || 'investor');
-    const comissionBase = accordanceTariffAndComissions[tariff] / 100;
     const postitions = useSelector((state: StateType) => {
         if (state.portfolios.data && !!state.portfolios.data?.length) {
             return searchItemInArrayData(
@@ -63,13 +69,19 @@ export const useShares: TFUseShares = ({ accountId }) => {
             percent: 0,
             money: {} as TFFormattPrice,
         };
+
         const positioninfo = searchItemInArrayData(positionsByShares, 'figi', item.figi) || {} as TFPosition;
         const currentPrice = formattedMoneySupply(getNumberMoney(positioninfo.currentPrice));
         const buyPrice = formattedMoneySupply(getNumberMoney(item.price));
-        profitabilityNow.money = formattedMoneySupply(currentPrice.value - buyPrice.value);
+        const taxBase = withTax ? currentPrice.value - buyPrice.value < 0 ? 1 : 1.13 : 0;
+        const comissionBase = accordanceTariffAndComissions[tariff] / 100;
+        const correctionPrice = taxBase === 1 && comissionBase === 1 ? 0 : (currentPrice.value * comissionBase * taxBase)
+
         if (moment().diff(moment(item.date), 'year') > 3) {
-            profitabilityNow.percent = Number(((currentPrice.value - buyPrice.value / buyPrice.value) * 100).toFixed(2));
+            profitabilityNow.money = formattedMoneySupply(currentPrice.value - buyPrice.value - (currentPrice.value * comissionBase));
+            profitabilityNow.percent = Number(((currentPrice.value - buyPrice.value - (currentPrice.value * comissionBase) / buyPrice.value) * 100).toFixed(2));
         } else {
+            profitabilityNow.money = formattedMoneySupply(currentPrice.value - buyPrice.value - (currentPrice.value * comissionBase));
             profitabilityNow.percent = Number((((currentPrice.value - buyPrice.value - (currentPrice.value * comissionBase)) / buyPrice.value) * 100).toFixed(2));
         }
         const temp: TShareProfitability = {} as TShareProfitability;
@@ -78,13 +90,15 @@ export const useShares: TFUseShares = ({ accountId }) => {
         temp.date = item.date;
         temp.quantity = item.quantity;
         temp.currentPrice = currentPrice;
-        temp.priceLot = formattedMoneySupply(getNumberMoney(item.price));
         temp.priceTotal = formattedMoneySupply(getNumberMoney(item.price) * Number(item.quantity));
+        temp.priceActiality = formattedMoneySupply(currentPrice.value * Number(item.quantity));
         temp.ownershipPeriod = moment().diff(moment(item.date), 'month');
         temp.profitabilityNow = profitabilityNow;
+        // console.log(temp.number, temp.name, currentPrice.value - buyPrice.value);
+        // console.log(comissionToggle,'comissionToggle');
+
         result.push(temp)
     })
-    console.log(result, 'result');
 
-    return { result }
+    return { result, withTax, setWithTax, comissionToggle, setComissionToggle }
 }
