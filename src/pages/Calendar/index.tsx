@@ -117,11 +117,24 @@ const Calendar: FC = () => {
                     {event.operationType}
                   </div>
                   <div className={css.item_date}>
-                    {moment(event.paymentDate).day() === 5
-                      ? moment(event.paymentDate).day() === 6
-                        ? moment(event.paymentDate).add(2, "d").format("DD MMMM")
-                        : moment(event.paymentDate).add(3, "d").format("DD MMMM")
-                      : moment(event.paymentDate).add(1, "d").format("DD MMMM")}
+                    {event.operationType === "Дивиденды" &&
+                    moment(event.paymentDate) < moment() ? (
+                      "Ожидаются"
+                    ) : (
+                      <>
+                        {moment(event.paymentDate).day() === 5
+                          ? moment(event.paymentDate).day() === 6
+                            ? moment(event.paymentDate)
+                                .add(2, "d")
+                                .format("DD MMMM")
+                            : moment(event.paymentDate)
+                                .add(3, "d")
+                                .format("DD MMMM")
+                          : moment(event.paymentDate)
+                              .add(1, "d")
+                              .format("DD MMMM")}
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className={css.item_body}>
@@ -138,7 +151,7 @@ const Calendar: FC = () => {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
       </div>
     </Container>
