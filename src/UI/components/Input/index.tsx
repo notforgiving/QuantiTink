@@ -8,22 +8,21 @@ interface IInputProps {
 }
 
 const Input: FC<IInputProps> = ({ label, inputAttributes }) => {
-  console.log(inputAttributes?.checked, inputAttributes?.id);
-
   if (inputAttributes && inputAttributes.type === "checkbox") {
     return (
-      <div className={cn(css.input, css.checkbox, "input_component")}>
-        <label
-          className={cn(css.input_label, "input_label")}
-          htmlFor={inputAttributes?.id || inputAttributes?.name}
+      <div className={cn(css.input, css.checkbox, "input_component")} onClick={inputAttributes.onClick}>
+        <div
+          className={cn(css.checkbox, {
+            _isChecked: inputAttributes.checked,
+          })}
         >
-          <input
-            {...inputAttributes}
-            id={inputAttributes?.id || inputAttributes?.name}
-            className={cn(css.input_body, "input_body")}
-          />
-          <span>{label}</span>
-        </label>
+          <div className={css.checkbox_square} {...inputAttributes} />
+          {label && (
+            <label className={cn(css.input_label, "input_label")}>
+              {label}
+            </label>
+          )}
+        </div>
       </div>
     );
   }

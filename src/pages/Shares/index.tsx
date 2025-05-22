@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import Container from "../../UI/components/Container";
 import Button from "../../UI/components/Button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,19 +45,17 @@ const Shares: FC = () => {
           <Input
             label="Рассчитать с учетом налога"
             inputAttributes={{
-              id: "withTax",
               type: "checkbox",
               checked: withTax,
-              onChange: () => setWithTax(!withTax),
+              onClick: () => setWithTax(!withTax),
             }}
           />
           <Input
             label="Рассчитать с учетом комиссии"
             inputAttributes={{
-              id: "comissionToggle",
               type: "checkbox",
               checked: comissionToggle,
-              onChange: () => setWithTax(!comissionToggle),
+              onClick: () => setComissionToggle(!comissionToggle),
             }}
           />
         </div>
