@@ -11,10 +11,17 @@ import Input from "../../UI/components/Input";
 const Shares: FC = () => {
   let { id: accountId } = useParams();
   const navigate = useNavigate();
-  const { result, withTax, setWithTax, comissionToggle, setComissionToggle } =
-    useShares({
-      accountId: accountId || "0",
-    });
+  const {
+    result,
+    withTax,
+    setWithTax,
+    comissionToggle,
+    setComissionToggle,
+    search,
+    setSearch,
+  } = useShares({
+    accountId: accountId || "0",
+  });
 
   return (
     <Container>
@@ -58,6 +65,14 @@ const Shares: FC = () => {
               onClick: () => setComissionToggle(!comissionToggle),
             }}
           />
+          <Input
+            inputAttributes={{
+              type: "text",
+              placeholder: "Искать...",
+              value: search || "",
+              onChange: (e) => setSearch(e.target.value),
+            }}
+          />
         </div>
         <div className={css.shares_header}>
           <div className={cn(css.shares_item_row, "_isHeader")}>
@@ -73,9 +88,11 @@ const Shares: FC = () => {
         </div>
         <div className={css.shares_list}>
           {!!result.length &&
-            result.map((operation) => (
-              <Line operation={operation} key={operation.date} />
-            ))}
+            result
+              .filter((el) => el.name.toLowerCase().includes(search.toLowerCase()))
+              .map((operation) => (
+                <Line operation={operation} key={operation.date} />
+              ))}
         </div>
       </div>
     </Container>

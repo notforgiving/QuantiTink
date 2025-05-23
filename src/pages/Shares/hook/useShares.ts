@@ -32,8 +32,11 @@ type TFUseShares = (peops: IUseSharesProps) => {
     setWithTax: React.Dispatch<React.SetStateAction<boolean>>,
     comissionToggle: boolean,
     setComissionToggle: React.Dispatch<React.SetStateAction<boolean>>,
+    search: string,
+    setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 export const useShares: TFUseShares = ({ accountId }) => {
+    const [search, setSearch] = useState<string>('');
     const [withTax, setWithTax] = useState<boolean>(true);
     const [comissionToggle, setComissionToggle] = useState<boolean>(true);
     let result: TShareProfitability[] = [];
@@ -94,5 +97,5 @@ export const useShares: TFUseShares = ({ accountId }) => {
         result.push(temp)
     })
 
-    return { result, withTax, setWithTax, comissionToggle, setComissionToggle }
+    return { result, withTax, setWithTax, comissionToggle, setComissionToggle, search, setSearch }
 }
