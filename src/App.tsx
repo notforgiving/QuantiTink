@@ -12,8 +12,7 @@ import Shares from "./pages/Shares";
 import { infoSlice } from "./store/slices/info.slice";
 
 function App() {
-  console.log(process.env.REACT_APP_TBANK, process.env.CLIENT_KEY);
-  
+  console.log(process.env.REACT_APP_TBANK);
   const accounts = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch();
   useEffect(() => {
