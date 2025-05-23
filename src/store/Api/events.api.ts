@@ -27,7 +27,7 @@ export async function fetchGetBondsEventsAPI(figi: string) {
     const response = await fetch(GetBondEventsAPI, {
         method: "POST",
         body: JSON.stringify({
-            from: moment().utc(),
+            from: moment().add(-3, 'd').utc(),
             to: moment().add(1, 'y').utc(),
             instrumentId: figi,
             type: "EVENT_TYPE_CPN,EVENT_TYPE_MTY"
@@ -53,7 +53,7 @@ export async function fetchGetDividendsEventsAPI(figi: string) {
     const response = await fetch(GetDividendsAPI, {
         method: "POST",
         body: JSON.stringify({
-            from: moment().utc(),
+            from: moment().startOf('year').utc(),
             to: moment().add(1, 'y').utc(),
             instrumentId: figi,
         }),

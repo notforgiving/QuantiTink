@@ -21,6 +21,7 @@ export type TEvents = {
     dividendNet: TFAmount,
     dividendType: string;
     eventType: string;
+    createdAt: string;
 }
 
 export type TEventFigi = {

@@ -4,6 +4,8 @@ const MAINPARTURL = 'https://invest-public-api.tinkoff.ru/rest/tinkoff.public.in
 
 export const GetAccountsAPI = MAINPARTURL + "UsersService/GetAccounts";
 
+export const GetInfoAPI = MAINPARTURL + "UsersService/GetInfo";
+
 export const GetPortfolioAPI = MAINPARTURL + "OperationsService/GetPortfolio";
 
 export const GetOperationsAPI = MAINPARTURL + "OperationsService/GetOperations";

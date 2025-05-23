@@ -4,6 +4,7 @@ import currencySlice, { TFCurrencyState } from "./slices/currency.slice";
 import etfsSlice, { TFEtfsState } from "./slices/etfs.slice";
 import eventsSlice, { TFEventsState } from "./slices/events.slice";
 import generalSlice, { TFGeneralState } from "./slices/general.slice";
+import infoSlice, { TFInfoState } from "./slices/info.slice";
 import operationsSlice, { TFOperationsState } from "./slices/operations.slice";
 import portfolioSlice, { TFPortfolioState } from "./slices/portfolio.slice";
 import sharesSlice, { TFSharesState } from "./slices/share.slice";
@@ -18,6 +19,7 @@ export type StateType = {
   bonds: TFBondsState,
   etfs: TFEtfsState,
   shares: TFSharesState,
+  info: TFInfoState,
 };
 
 const rootReducers = {
@@ -30,6 +32,7 @@ const rootReducers = {
   bonds: bondsSlice,
   etfs: etfsSlice,
   shares: sharesSlice,
+  info: infoSlice,
 };
 
 export default rootReducers;

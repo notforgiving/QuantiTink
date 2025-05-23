@@ -16,6 +16,8 @@ interface IUsePortfolio {
     accountId: string;
 }
 
+export type IPortfolioItem = TFFormattPrice & { percent: number };
+
 type TUsePortfolio = (props: IUsePortfolio) => {
     account: TFAccount | null
     portfolio: TFPortfolio | null,
@@ -40,11 +42,11 @@ type TUsePortfolio = (props: IUsePortfolio) => {
     /** Текущая доходность */
     currentProfitability: number;
     /** Сумма всех акций и процент от портфеля */
-    shares: TFFormattPrice & { percent: number }
+    shares: IPortfolioItem;
     /** Сумма всех рублевых облигаций и процент от портфеля */
-    rubBonds: TFFormattPrice & { percent: number }
+    rubBonds: IPortfolioItem;
     /** Сумма всех валютых облигаций и процент от портфеля */
-    usdBonds: TFFormattPrice & { percent: number }
+    usdBonds: IPortfolioItem;
     /** Все фонды */
     etfArray: (TFFormattPrice & { percent: number, name: string, ticker: string; })[]
 }
@@ -167,7 +169,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
             let tempdiv = 0;
 
             operations.forEach((el) => {
-                if (el.type === 'Удержание налога') {
+                if (el.type === 'Удержание налога' || el.type === 'Удержание налога по дивидендам') {
                     temptax += getNumberMoney(el.payment);
                 }
                 if (el.type === 'Удержание комиссии за операцию') {
@@ -176,8 +178,8 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                 if (el.type === 'Выплата купонов') {
                     tempcoup += getNumberMoney(el.payment);
                 }
-                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') {
-                    tempdiv += getNumberMoney(el.payment);
+                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') { 
+                    tempdiv += getNumberMoney(el.payment) * 0.87;
                 }
             })
 

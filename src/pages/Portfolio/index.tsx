@@ -9,6 +9,7 @@ import cn from "classnames";
 import Goals from "../../components/Goals";
 import { useGoals } from "./hooks/useGoals";
 import GoalsModal from "../../components/Goals/components/GoalsModal";
+import { TFAmount } from "../../types/portfolio.type";
 
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
@@ -35,15 +36,24 @@ const Portfolio: FC = () => {
     accountId: accountId || "0",
   });
   const {
-    open,
-    setOpen,
+    openTargets,
+    setOpenTargets,
     formik,
     error,
     validateFillFields,
     openPanel,
     setOpenPanel,
+    freeAmountMoney,
+    setFreeAmountMoney,
+    resultValues,
   } = useGoals({
     accountId: accountId || "0",
+    totalAmountPortfolio: portfolio?.totalAmountPortfolio || ({} as TFAmount),
+    totalAmountCurrencies: portfolio?.totalAmountCurrencies || ({} as TFAmount),
+    shares,
+    rubBonds,
+    usdBonds,
+    etfArray,
   });
 
   return (
@@ -141,7 +151,7 @@ const Portfolio: FC = () => {
         </div>
         <div className={css.portfolio_balance}>
           {shares.value !== 0 && (
-            <div className={css.portfolio_shares}>
+            <div className={css.portfolio_shares} onClick={() => navigate(`/account/${accountId}/shares`)}>
               <strong>Акции:</strong>
               <span>
                 {shares.formatt} ({shares.percent}%)
@@ -165,7 +175,7 @@ const Portfolio: FC = () => {
             </div>
           )}
           {etfArray &&
-            etfArray.length &&
+            !!etfArray.length &&
             etfArray.map((etf) => (
               <div className={css.portfolio_etf} key={etf.name}>
                 <strong>{etf.name}</strong>
@@ -184,15 +194,24 @@ const Portfolio: FC = () => {
             },
           }}
         />
-        <GoalsModal openPanel={openPanel} setOpenPanel={setOpenPanel}/>
+        <GoalsModal
+          openPanel={openPanel}
+          setOpenPanel={setOpenPanel}
+          freeAmountMoney={freeAmountMoney}
+          setFreeAmountMoney={setFreeAmountMoney}
+          portfolioAmountMoney={
+            portfolio?.totalAmountCurrencies || ({} as TFAmount)
+          }
+          resultValues={resultValues}
+        />
       </div>
       <Goals
         shares={shares.value !== 0}
         rubBonds={rubBonds.value !== 0}
         usdBonds={usdBonds.value !== 0}
         etfs={etfArray}
-        open={open}
-        setOpen={setOpen}
+        openTargets={openTargets}
+        setOpenTargets={setOpenTargets}
         formik={formik}
         error={error}
       />

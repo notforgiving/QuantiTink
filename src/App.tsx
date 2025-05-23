@@ -8,11 +8,16 @@ import { accountsSlice } from "./store/slices/accoutns.slice";
 import { operationsSlice } from "./store/slices/operations.slice";
 import { portfoliosSlice } from "./store/slices/portfolio.slice";
 import Calendar from "./pages/Calendar";
+import Shares from "./pages/Shares";
+import { infoSlice } from "./store/slices/info.slice";
 
 function App() {
+  console.log(process.env.REACT_APP_TBANK, process.env.CLIENT_KEY);
+  
   const accounts = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(infoSlice.actions.getInfoAction());
     if (accounts.data && accounts.data.length === 0) {
       dispatch(accountsSlice.actions.getaccountsListAction());
     }
@@ -27,6 +32,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="account/:id" element={<Portfolio />} />
         <Route path="account/:id/calendar" element={<Calendar />} />
+        <Route path="account/:id/shares" element={<Shares />} />
         {/* <Route path="dashboard" element={<Dashboard />}>
           <Route index element={<RecentActivity />} />
           <Route path="project/:id" element={<Project />} />

@@ -4,17 +4,35 @@ import cn from "classnames";
 
 interface IInputProps {
   label?: string | ReactNode;
-  buttonAttributes?: InputHTMLAttributes<HTMLInputElement>;
+  inputAttributes?: InputHTMLAttributes<HTMLInputElement>;
 }
 
-const Input: FC<IInputProps> = ({ label, buttonAttributes }) => {
+const Input: FC<IInputProps> = ({ label, inputAttributes }) => {
+  if (inputAttributes && inputAttributes.type === "checkbox") {
+    return (
+      <div className={cn(css.input, css.checkbox, "input_component")} onClick={inputAttributes.onClick}>
+        <div
+          className={cn(css.checkbox, {
+            _isChecked: inputAttributes.checked,
+          })}
+        >
+          <div className={css.checkbox_square} {...inputAttributes} />
+          {label && (
+            <label className={cn(css.input_label, "input_label")}>
+              {label}
+            </label>
+          )}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={cn(css.input, "input_component")}>
       {label && (
-        <div className={cn(css.input_label, "input_label")}>{label}</div>
+        <label className={cn(css.input_label, "input_label")}>{label}</label>
       )}
       <input
-        {...buttonAttributes}
+        {...inputAttributes}
         className={cn(css.input_body, "input_body")}
       />
     </div>
