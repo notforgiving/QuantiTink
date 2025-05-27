@@ -5,7 +5,7 @@ export type IListState<T> = {
 };
 
 export type IEntityState<T> = {
-  data: T | null;
+  data: T;
   isLoading: boolean;
   errors: unknown;
 };

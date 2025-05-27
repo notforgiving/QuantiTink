@@ -132,20 +132,17 @@ const Calendar: FC = () => {
                     {(event.operationType === "Купоны" ||
                       event.operationType === "Погашение" ||
                       event.operationType === "Амортизация") &&
-                      eventCorrection.format("DD MMMM YYYY") <
-                        moment().format("DD MMMM YYYY") &&
+                      eventCorrection.unix() > moment().unix() &&
                       eventCorrection.format("DD MMMM")}
                     {event.operationType === "Дивиденды" &&
-                      eventCorrection.format("DD MMMM YYYY") >
-                        moment().format("DD MMMM YYYY") &&
+                      eventCorrection.unix() < moment().unix() &&
                       "Ожидаются"}
                     {event.operationType === "Дивиденды" &&
                       eventCorrection.format("DD MMMM YYYY") ===
                         moment().format("DD MMMM YYYY") &&
                       "Сегодня"}
                     {event.operationType === "Дивиденды" &&
-                      eventCorrection.format("DD MMMM YYYY") <
-                        moment().format("DD MMMM YYYY") &&
+                      eventCorrection.unix() > moment().unix() &&
                       eventCorrection.format("DD MMMM")}
                   </div>
                 </div>

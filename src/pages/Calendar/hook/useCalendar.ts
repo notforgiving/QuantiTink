@@ -99,7 +99,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
         "accountId",
         accountId || "0"
       );
-      if (data && moment().diff(moment(data.dateApi), "hours") <= 6) {
+      if (data && moment().diff(moment(data.dateApi), "hours") <= 1) {
         dispatch(eventsSlice.actions.getEventsListSuccessOnly(localData));
       } else {
         handleDispatchEventsData(eventsPositions);

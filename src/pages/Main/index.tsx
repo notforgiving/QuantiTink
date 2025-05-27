@@ -9,10 +9,12 @@ import { TFAmount } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
 import Account from "../../components/Account";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Load from "../../UI/components/Load";
 
 const Main: FC = () => {
+  const navigate = useNavigate();
+  // navigate(`/auth`);
   const accounts = useSelector((state: StateType) => state.accounts);
   const {
     portfolios: { data: portfoliosData, isLoading: isLoadingPortfolios },

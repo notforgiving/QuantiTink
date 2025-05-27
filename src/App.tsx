@@ -10,6 +10,7 @@ import { portfoliosSlice } from "./store/slices/portfolio.slice";
 import Calendar from "./pages/Calendar";
 import Shares from "./pages/Shares";
 import { infoSlice } from "./store/slices/info.slice";
+import Auth from "pages/Auth";
 
 function App() {
   const accounts = useSelector((state: StateType) => state.accounts);
@@ -28,6 +29,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="account/:id" element={<Portfolio />} />
         <Route path="account/:id/calendar" element={<Calendar />} />
         <Route path="account/:id/shares" element={<Shares />} />

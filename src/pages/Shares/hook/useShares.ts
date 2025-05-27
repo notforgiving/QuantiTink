@@ -22,7 +22,7 @@ export type TShareProfitability = {
     }
 }
 
-export type TFSortKey = 'DEFAULT' | 'PROFITABILITY' | 'NUMBER';
+export type TFSortKey = 'DEFAULT' | 'PROFITABILITY' | 'NUMBER' | 'DATE';
 export type TFSortDir = 'ASC' | 'DESC' | null;
 
 interface IUseSharesProps {
@@ -126,9 +126,16 @@ export const useShares: TFUseShares = ({ accountId }) => {
         if (currentSort.key === 'NUMBER' && currentSort.dir === 'ASC') {
             return b.number - a.number;
         }
-        if (currentSort.key === 'PROFITABILITY' && currentSort.dir === 'DESC') {
+        if (currentSort.key === 'NUMBER' && currentSort.dir === 'DESC') {
             return a.number - b.number;
         }
+        if (currentSort.key === 'DATE' && currentSort.dir === 'ASC') {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        if (currentSort.key === 'DATE' && currentSort.dir === 'DESC') {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }
+
         return a.number - b.number;
     }, [currentSort])
 

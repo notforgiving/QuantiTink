@@ -10,7 +10,10 @@ interface IButtonProps {
 
 const Button: FC<IButtonProps> = ({ text, buttonAttributes, className }) => {
   return (
-    <button className={cn(css.btn, className)} {...buttonAttributes}>
+    <button
+      className={cn(css.btn, "Button_component", className)}
+      {...buttonAttributes}
+    >
       {text}
     </button>
   );

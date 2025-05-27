@@ -91,7 +91,17 @@ const Shares: FC = () => {
               №
             </div>
             <div className={css.name}>Название</div>
-            <div className={css.date}>Дата покупки</div>
+            <div
+              className={css.date}
+              onClick={() =>
+                setCurrentSort({
+                  key: "DATE",
+                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
+                })
+              }
+            >
+              Дата покупки
+            </div>
             <div className={css.quantity}>Количество</div>
             <div className={css.priceTotal}>Сумма покупки</div>
             <div className={css.priceActiality}>Стоимость сейчас</div>

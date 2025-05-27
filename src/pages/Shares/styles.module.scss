@@ -93,7 +93,9 @@
         @include variables.phone {
           @include variables.beigeBlock;
         }
-        .profitabilityNow,.number {
+        .profitabilityNow,
+        .number,
+        .date {
           cursor: pointer;
         }
       }
