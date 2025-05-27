@@ -5,7 +5,7 @@ import moment from "moment";
 import { accordanceTariffAndComissions } from "../../../types/info.type";
 import { TFPosition } from "../../../types/portfolio.type";
 import { TFFormattPrice } from "../../../types/common";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type TShareProfitability = {
     number: number,
@@ -22,6 +22,9 @@ export type TShareProfitability = {
     }
 }
 
+export type TFSortKey = 'DEFAULT' | 'PROFITABILITY' | 'NUMBER';
+export type TFSortDir = 'ASC' | 'DESC' | null;
+
 interface IUseSharesProps {
     accountId: string;
 }
@@ -33,9 +36,25 @@ type TFUseShares = (peops: IUseSharesProps) => {
     comissionToggle: boolean,
     setComissionToggle: React.Dispatch<React.SetStateAction<boolean>>,
     search: string,
-    setSearch: React.Dispatch<React.SetStateAction<string>>
+    setSearch: React.Dispatch<React.SetStateAction<string>>,
+    setCurrentSort: React.Dispatch<React.SetStateAction<{
+        key: TFSortKey;
+        dir: TFSortDir;
+    }>>
+    currentSort: {
+        key: TFSortKey;
+        dir: TFSortDir;
+    },
+    sortFunction: (a: TShareProfitability, b: TShareProfitability) => number
 }
 export const useShares: TFUseShares = ({ accountId }) => {
+    const [currentSort, setCurrentSort] = useState<{
+        key: TFSortKey,
+        dir: TFSortDir,
+    }>({
+        key: 'DEFAULT',
+        dir: 'ASC'
+    });
     const [search, setSearch] = useState<string>('');
     const [withTax, setWithTax] = useState<boolean>(true);
     const [comissionToggle, setComissionToggle] = useState<boolean>(true);
@@ -97,5 +116,25 @@ export const useShares: TFUseShares = ({ accountId }) => {
         result.push(temp)
     })
 
-    return { result, withTax, setWithTax, comissionToggle, setComissionToggle, search, setSearch }
+    const sortFunction = useCallback((a: TShareProfitability, b: TShareProfitability) => {
+        if (currentSort.key === 'PROFITABILITY' && currentSort.dir === 'ASC') {
+            return a.profitabilityNow.money.value - b.profitabilityNow.money.value;
+        }
+        if (currentSort.key === 'PROFITABILITY' && currentSort.dir === 'DESC') {
+            return b.profitabilityNow.money.value - a.profitabilityNow.money.value;
+        }
+        if (currentSort.key === 'NUMBER' && currentSort.dir === 'ASC') {
+            return b.number - a.number;
+        }
+        if (currentSort.key === 'PROFITABILITY' && currentSort.dir === 'DESC') {
+            return a.number - b.number;
+        }
+        return a.number - b.number;
+    }, [currentSort])
+
+    useEffect(() => {
+
+    }, [currentSort])
+
+    return { result, withTax, setWithTax, comissionToggle, setComissionToggle, search, setSearch, setCurrentSort, currentSort, sortFunction }
 }

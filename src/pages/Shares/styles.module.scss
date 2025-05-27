@@ -93,8 +93,9 @@
         @include variables.phone {
           @include variables.beigeBlock;
         }
-      }
-      &:global(._isBody) {
+        .profitabilityNow,.number {
+          cursor: pointer;
+        }
       }
       @include variables.phone {
         display: grid;

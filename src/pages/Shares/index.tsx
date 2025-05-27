@@ -19,6 +19,9 @@ const Shares: FC = () => {
     setComissionToggle,
     search,
     setSearch,
+    setCurrentSort,
+    sortFunction,
+    currentSort,
   } = useShares({
     accountId: accountId || "0",
   });
@@ -76,20 +79,43 @@ const Shares: FC = () => {
         </div>
         <div className={css.shares_header}>
           <div className={cn(css.shares_item_row, "_isHeader")}>
-            <div className={css.number}>№</div>
+            <div
+              className={css.number}
+              onClick={() =>
+                setCurrentSort({
+                  key: "NUMBER",
+                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
+                })
+              }
+            >
+              №
+            </div>
             <div className={css.name}>Название</div>
             <div className={css.date}>Дата покупки</div>
             <div className={css.quantity}>Количество</div>
             <div className={css.priceTotal}>Сумма покупки</div>
             <div className={css.priceActiality}>Стоимость сейчас</div>
-            <div className={css.profitabilityNow}>Доходность этой операции</div>
+            <div
+              className={css.profitabilityNow}
+              onClick={() =>
+                setCurrentSort({
+                  key: "PROFITABILITY",
+                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
+                })
+              }
+            >
+              Доходность этой операции
+            </div>
             <div className={css.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
         <div className={css.shares_list}>
           {!!result.length &&
             result
-              .filter((el) => el.name.toLowerCase().includes(search.toLowerCase()))
+              .filter((el) =>
+                el.name.toLowerCase().includes(search.toLowerCase())
+              )
+              .sort(sortFunction)
               .map((operation) => (
                 <Line operation={operation} key={operation.date} />
               ))}
