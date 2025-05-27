@@ -148,65 +148,60 @@ export const getPercentByTarget = (base: number, target: number): number => {
 
 // Функция для проверки начислений по дивидендам
 export const calcLotsForDividends = (
+  /** Список операций по портфелю */
   operations: TFOperation[],
-  event: TPortfolioEvents,
-  lots: number
+  /** Событие, которое мы рассматриваем */
+  event: TPortfolioEvents
 ) => {
   if (operations && !!operations.length) {
+    // Выплачены дивиденды или нет
+    let receivedPayment = false;
     // Получаем из операций только дивиденды по акциям
-    const filtredOperations = operations.filter(
+    const dividendsOperations = operations.filter(
       (el) =>
         (el.type === "Выплата дивидендов" ||
           el.type === "Выплата дивидендов на карту") &&
         el.instrumentType === "share"
     );
-    // Сравниваем выплаты с нашей целью
-    // Если цель найдена, значит отправляем true - выплата уже получена
-    // Если цель не найдена, значит выплата не получена, значит проверяет
-    // прошлая ли это выплата
-    let temp = false;
-    if (!!filtredOperations.length) {
-      for (let i = 0; i < filtredOperations.length; i++) {
-        const el = filtredOperations[i];
-        const payOut = getNumberMoney(el.payment);
-        const shouldPay = getNumberMoney(event.dividendNet) * lots;
-        if (payOut === shouldPay) {
-          temp = true;
-          return {
-            temp,
-            quantity: 0,
-          };
-        }
-        temp = false;
-      }
-    }
-    // Если выплаты не нашли, то будем смотреть по дате отсечки
-    // Смотрим операции покупки данного тикера
+    // Ищем все покупки данной бумаги в операциях
     const operationsBuyTicker = operations.filter(
       (el) =>
         el.type === "Покупка ценных бумаг" &&
         el.figi === event.figi &&
         el.instrumentType === "share"
     );
+    // Посчитать количество лотов, которое надо проверять
     // Нам надо подсчитать сколько лотов у нас было на момент отсечки и
     // вернуть число лотов для рассчета дивидендов
-    // если количество лотов не ноль после подсчетов, то temp делаем false, чтобы не скрывать выплату из списка
     let quantity = 0;
     operationsBuyTicker.forEach((item) => {
-      if (moment(item.date) < moment(event.createdAt)) {
+      if (moment(item.date) < moment(event.lastBuyDate)) {
         quantity += Number(item.quantity);
       }
     });
-    if (quantity !== 0) {
-      temp = false;
+    // Находим все дивиденды, которые пришли по событиям
+    const searchDividends = dividendsOperations.findIndex(
+      (el) =>
+        getNumberMoney(el.payment) ===
+        getNumberMoney(event.dividendNet) * quantity
+    );
+    // Если выплату не нашли, то оставляем ее в списке
+    if (searchDividends !== -1) {
+      return {
+        receivedPayment: true,
+        quantity: 0,
+      };
     }
+    // Если выплату нашли, то отдаем receivedPayment - false и 
+    // количество для подсчета, которое должо прийти
     return {
-      temp,
+      receivedPayment,
       quantity,
     };
   }
+
   return {
-    temp: false,
+    receivedPayment: false,
     quantity: 0,
   };
 };
@@ -321,24 +316,30 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
     // путь для ребаланса
     let wayForRebalance = "Full_Rebalance";
     // когда денег только для погашения долга или для ребаланса
-    if (freeAmountMoney < Math.abs(getNumberMoney(totalAmountCurrencies)) && getNumberMoney(totalAmountCurrencies) < 0) {
+    if (
+      freeAmountMoney < Math.abs(getNumberMoney(totalAmountCurrencies)) &&
+      getNumberMoney(totalAmountCurrencies) < 0
+    ) {
       wayForRebalance = "Debt_Repayment";
     }
-    resultValues = Object.keys(howManyPercentsMoreOfGoals).reduce((state, key) => {
-      if (
-        howManyPercentsMoreOfGoals[key] < 0 &&
-        wayForRebalance !== "Debt_Repayment"
-      ) {
+    resultValues = Object.keys(howManyPercentsMoreOfGoals).reduce(
+      (state, key) => {
+        if (
+          howManyPercentsMoreOfGoals[key] < 0 &&
+          wayForRebalance !== "Debt_Repayment"
+        ) {
+          return {
+            ...state,
+            [key]: Math.abs(howManyPercentsMoreOfGoals[key]) * oneRatio,
+          };
+        }
         return {
           ...state,
-          [key]: Math.abs(howManyPercentsMoreOfGoals[key]) * oneRatio,
+          [key]: 0,
         };
-      }
-      return {
-        ...state,
-        [key]: 0,
-      };
-    }, {});
+      },
+      {}
+    );
   }
-  return resultValues
+  return resultValues;
 };

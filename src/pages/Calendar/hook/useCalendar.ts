@@ -150,13 +150,11 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
             // Надо проверить, что событие уже прошло и найти такую же выплату в операциях после отсечки
             // Если нет такой выплаты смотрим сколько у нас было активов на эту дату, считаем лоты
             // Выдаем количество лотов для учета дивидендов конкретной выплаты
-            const delThisEvent = calcLotsForDividends(
+            const waitEventDividends = calcLotsForDividends(
               portfolioOperations || [],
-              event,
-              shareInfo?.lot
-                ? shareInfo?.lot * Number(positionInfo?.quantityLots.units)
-                : 1
+              event
             );
+
             tempObject.paymentDate = event.paymentDate;
             tempObject.payOneLot = event.dividendNet;
             tempObject.operationType = "Дивиденды";
@@ -169,11 +167,11 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
             };
             tempObject.totalAmount = formattedMoneySupply(
               getNumberMoney(event.dividendNet) *
-                Number(delThisEvent.quantity) *
+                Number(waitEventDividends.quantity) *
                 0.87
             );
             // добавляем выплату в массив только если проверки пройдены или выплата все еще идет
-            if (!delThisEvent.temp && delThisEvent.quantity !== 0) {
+            if (!waitEventDividends.receivedPayment && waitEventDividends.quantity !== 0) {
               resultArray.push(tempObject);
             }
           } else {

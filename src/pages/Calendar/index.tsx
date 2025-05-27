@@ -105,6 +105,13 @@ const Calendar: FC = () => {
           payOuts &&
           !!payOuts.length &&
           payOuts.map((event, index) => {
+            let eventCorrection =
+              moment(event.paymentDate).day() === 5
+                ? moment(event.paymentDate).add(3, "d")
+                : moment(event.paymentDate).add(1, "d");
+            if (moment(event.paymentDate).day() === 6) {
+              eventCorrection = moment(event.paymentDate).add(2, "d");
+            }
             return (
               <div className={css.item} key={`${index}${event.figi}`}>
                 <div className={css.item_left}>
@@ -117,24 +124,29 @@ const Calendar: FC = () => {
                     {event.operationType}
                   </div>
                   <div className={css.item_date}>
+                    {(event.operationType === "Купоны" ||
+                      event.operationType === "Погашение") &&
+                      eventCorrection.format("DD MMMM YYYY") ===
+                        moment().format("DD MMMM YYYY") &&
+                      `Сегодня`}
+                    {(event.operationType === "Купоны" ||
+                      event.operationType === "Погашение" ||
+                      event.operationType === "Амортизация") &&
+                      eventCorrection.format("DD MMMM YYYY") <
+                        moment().format("DD MMMM YYYY") &&
+                      eventCorrection.format("DD MMMM")}
                     {event.operationType === "Дивиденды" &&
-                    moment(event.paymentDate) < moment() ? (
-                      "Ожидаются"
-                    ) : (
-                      <>
-                        {moment(event.paymentDate).day() === 5
-                          ? moment(event.paymentDate).day() === 6
-                            ? moment(event.paymentDate)
-                                .add(2, "d")
-                                .format("DD MMMM")
-                            : moment(event.paymentDate)
-                                .add(3, "d")
-                                .format("DD MMMM")
-                          : moment(event.paymentDate)
-                              .add(1, "d")
-                              .format("DD MMMM")}
-                      </>
-                    )}
+                      eventCorrection.format("DD MMMM YYYY") >
+                        moment().format("DD MMMM YYYY") &&
+                      "Ожидаются"}
+                    {event.operationType === "Дивиденды" &&
+                      eventCorrection.format("DD MMMM YYYY") ===
+                        moment().format("DD MMMM YYYY") &&
+                      "Сегодня"}
+                    {event.operationType === "Дивиденды" &&
+                      eventCorrection.format("DD MMMM YYYY") <
+                        moment().format("DD MMMM YYYY") &&
+                      eventCorrection.format("DD MMMM")}
                   </div>
                 </div>
                 <div className={css.item_body}>

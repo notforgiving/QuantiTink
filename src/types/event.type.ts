@@ -17,6 +17,7 @@ export type TEvents = {
     operationType: TEventType,
     payDate: string;
     paymentDate: string;
+    lastBuyDate: string;
     payOneBond: TFAmount,
     dividendNet: TFAmount,
     dividendType: string;
