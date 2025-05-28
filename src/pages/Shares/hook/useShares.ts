@@ -96,13 +96,13 @@ export const useShares: TFUseShares = ({ accountId }) => {
         const currentPrice = formattedMoneySupply(getNumberMoney(positioninfo.currentPrice));
         const buyPrice = formattedMoneySupply(getNumberMoney(item.price));
 
-        const ownershipPeriod = moment().diff(moment(item.date), 'year') > 3;
-        const taxBase = withTax ? currentPrice.value - buyPrice.value < 0 ? 1 : 0.13 : 0;
-        const comissionBase = comissionToggle ? currentPrice.value * accordanceTariffAndComissions[tariff] / 100 : 0;
-        const correctionPrice = ownershipPeriod || currentPrice.value - buyPrice.value < 0 ? comissionBase : ((currentPrice.value - buyPrice.value) * taxBase) + comissionBase;
+        const taxFree = currentPrice.value - buyPrice.value > 0 && withTax ? (currentPrice.value - buyPrice.value) * 0.13 : 0;
+        const currentPriceComission = comissionToggle ? currentPrice.value + currentPrice.value * accordanceTariffAndComissions[tariff] / 100 : currentPrice.value;
+        const buyPriceComission = comissionToggle ? buyPrice.value + buyPrice.value * accordanceTariffAndComissions[tariff] / 100 : buyPrice.value;
 
-        profitabilityNow.money = formattedMoneySupply(currentPrice.value - buyPrice.value - correctionPrice);
-        profitabilityNow.percent = Number(((profitabilityNow.money.value / buyPrice.value) * 100).toFixed(2));
+        profitabilityNow.money = formattedMoneySupply(currentPriceComission - buyPriceComission - taxFree);
+        profitabilityNow.percent = Number(((profitabilityNow.money.value / buyPriceComission) * 100).toFixed(2));
+
         const temp: TShareProfitability = {} as TShareProfitability;
         temp.number = index + 1;
         temp.name = searchItemInArrayData(sharesData?.instrument || [], 'figi', item.figi)?.name || 'Акция';
