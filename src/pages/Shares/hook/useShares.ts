@@ -100,8 +100,8 @@ export const useShares: TFUseShares = ({ accountId }) => {
         const currentPriceComission = comissionToggle ? currentPrice.value + currentPrice.value * accordanceTariffAndComissions[tariff] / 100 : currentPrice.value;
         const buyPriceComission = comissionToggle ? buyPrice.value + buyPrice.value * accordanceTariffAndComissions[tariff] / 100 : buyPrice.value;
 
-        profitabilityNow.money = formattedMoneySupply(currentPriceComission - buyPriceComission - taxFree);
-        profitabilityNow.percent = Number(((profitabilityNow.money.value / buyPriceComission) * 100).toFixed(2));
+        profitabilityNow.money = formattedMoneySupply((currentPriceComission - buyPriceComission - taxFree) * Number(item.quantity));
+        profitabilityNow.percent = Number(((profitabilityNow.money.value / (buyPriceComission * Number(item.quantity))) * 100).toFixed(2));
 
         const temp: TShareProfitability = {} as TShareProfitability;
         temp.number = index + 1;
