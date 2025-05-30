@@ -11,26 +11,39 @@ const userInitialState: TFUserState = {
         id: null,
     },
     isLoading: false,
-    errors: '' as unknown,
+    errors: null,
 };
+
+type TPayloadGetUser = {
+    email: string,
+    password: string;
+}
+
+const LOCALSTORAGE_NAME = 'Tbalance_user';
 
 export const userSlice = createSlice({
     name: USER,
     initialState: userInitialState,
     reducers: {
-        getUserAction: (state: TFUserState) => {
+        createUserAction: (state: TFUserState, { payload: _ }: PayloadAction<TPayloadGetUser>) => {
             state.isLoading = true;
             state.errors = '';
         },
-        getUserSuccessAction: (
-            state: TFUserState,
-            { payload: list }: PayloadAction<TUserState>
-        ) => {
-            // const filterList = list.filter((el:any) => el.type !== 'ACCOUNT_TYPE_INVEST_BOX')
-            // state.isLoading = false;
-            // state.data = filterList;
+        loginUserAction: (state: TFUserState, { payload: _ }: PayloadAction<TPayloadGetUser>) => {
+            state.isLoading = true;
+            state.errors = '';
         },
-        getUserErrorAction: (
+        userSuccessAction: (
+            state: TFUserState,
+            { payload: user }: PayloadAction<TUserState>
+        ) => {
+            state.data = {
+                ...user,
+            }
+            localStorage.setItem(LOCALSTORAGE_NAME, JSON.stringify(user));
+            state.isLoading = false;
+        },
+        userErrorAction: (
             state: TFUserState,
             { payload: error }: PayloadAction<unknown>
         ) => {
@@ -41,7 +54,8 @@ export const userSlice = createSlice({
             state.data.email = null;
             state.data.token = null;
             state.data.id = null;
-        }
+            localStorage.removeItem(LOCALSTORAGE_NAME);
+        },
     },
 });
 

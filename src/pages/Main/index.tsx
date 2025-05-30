@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import Container from "../../UI/components/Container";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
 import css from "./styles.module.scss";
 import { useMain } from "./hooks/useMain";
@@ -11,10 +11,13 @@ import cn from "classnames";
 import Account from "../../components/Account";
 import { NavLink, useNavigate } from "react-router-dom";
 import Load from "../../UI/components/Load";
+import { useAuth } from "hooks/useAuth";
+import { userSlice } from "store/slices/user.slice";
 
 const Main: FC = () => {
   const navigate = useNavigate();
-  // navigate(`/auth`);
+  const { isAuth } = useAuth();
+  const dispatch = useDispatch();
   const accounts = useSelector((state: StateType) => state.accounts);
   const {
     portfolios: { data: portfoliosData, isLoading: isLoadingPortfolios },
@@ -32,9 +35,20 @@ const Main: FC = () => {
     operations: operationsData,
   });
 
+  useEffect(() => {
+    const userLocal = localStorage.getItem("Tbalance_user");
+    if (!isAuth && !userLocal) {
+      navigate(`/auth`);
+    }
+    if (userLocal) {
+      dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
+    }
+  }, [dispatch, isAuth, navigate]);
+
   return (
     <Container>
       <div className={css.main}>
+        <div onClick={()=> dispatch(userSlice.actions.removeUserAction())}>Выход</div>
         <h1 className={css.title}>Брокерские счета</h1>
         <div className={css.totalAmountDepositsAllPortfolios}>
           <strong>Вложено средств: </strong>

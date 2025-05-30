@@ -28,8 +28,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Main />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/" element={<Main />} />
         <Route path="account/:id" element={<Portfolio />} />
         <Route path="account/:id/calendar" element={<Calendar />} />
         <Route path="account/:id/shares" element={<Shares />} />

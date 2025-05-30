@@ -6,11 +6,13 @@ export const useAuth = () => {
         email,
         token,
         id
-    } } = useSelector((state: StateType) => state.user);
+    }, errors } = useSelector((state: StateType) => state.user);
+
     return {
         isAuth: !!email,
         email,
         token,
         id,
+        errors,
     }
 }

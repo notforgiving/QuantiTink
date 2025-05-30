@@ -1,4 +1,4 @@
-export const TOKEN = 't.w6GPQlhdddwiTVusbd_210x1To1Gh3jzHYDef5LJnakejsNSgYyVMoFqwOToxjVSxAe-Rvejkj_sQYslIAgaIA'
+export const TOKEN = process.env.REACT_APP_T_TOKEN;
 
 const MAINPARTURL = 'https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.'
 
