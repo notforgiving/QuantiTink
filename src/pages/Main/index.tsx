@@ -60,18 +60,16 @@ const Main: FC = () => {
 
   useEffect(() => {
     if (token) {
-      console.log(token,'token');
-      
       if (!isLoadingInfo && Object.keys(infoData).length === 0) {
         dispatch(infoSlice.actions.getInfoAction());
       }
       if (accounts && accounts.length === 0 && !isLoadingAccounts) {
         dispatch(accountsSlice.actions.getaccountsListAction());
       }
-      // if (accounts && accounts.length !== 0 && !isLoadingAccounts) {
-      //   dispatch(portfoliosSlice.actions.getPortfoliosListAction(accounts));
-      //   dispatch(operationsSlice.actions.getOperationsListAction(accounts));
-      // }
+      if (accounts && accounts.length !== 0 && !isLoadingAccounts) {
+        dispatch(portfoliosSlice.actions.getPortfoliosListAction(accounts));
+        dispatch(operationsSlice.actions.getOperationsListAction(accounts));
+      }
     }
   }, [accounts, dispatch, infoData, isLoadingAccounts, isLoadingInfo, token]);
 
