@@ -1,17 +1,18 @@
 import { GetInfoAPI, TOKEN } from "./common";
 
-export async function  fetchGetInfoAPI() {
+export async function fetchGetInfoAPI() {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetInfoAPI, {
         method: "POST",
         body: JSON.stringify({}),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }
     );
     const data = await response.json();
-    if(data.status === 500) {
+    if (data.status === 500) {
         throw data.error;
     }
     return data;

@@ -23,6 +23,8 @@ type TFUseMain = (props: IUseMainProps) => {
     totalAmountAllPortfolio: TFFormattPrice
     /** Насколько портфель обгоняет пополнения или не догоняет */
     portfoliosReturns: TFFormattPrice & TFPricePercent,
+    tinkoffToken: string,
+    setTinkoffToken: React.Dispatch<React.SetStateAction<string>>,
 }
 
 export const useMain: TFUseMain = ({ portfolios, operations }) => {
@@ -34,6 +36,7 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
     })
 
     const [differentPercent, setDifferentPercent] = useState<string>('0%');
+    const [tinkoffToken, setTinkoffToken] = useState<string>("");
 
     useEffect(() => {
         if (operations && !!operations.length && portfolios) {
@@ -56,7 +59,7 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
 
     useEffect(() => {
         if (portfoliosReturns.value !== 0 || general.totalAmountDepositsAllPortfolios.value !== 0) {
-            setDifferentPercent(`${getPercentByTarget(portfoliosReturns.value,general.totalAmountDepositsAllPortfolios.value)}%`)
+            setDifferentPercent(`${getPercentByTarget(portfoliosReturns.value, general.totalAmountDepositsAllPortfolios.value)}%`)
         }
 
     }, [portfoliosReturns, general.totalAmountDepositsAllPortfolios])
@@ -68,6 +71,8 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
             formatt: portfoliosReturns.formatt,
             value: portfoliosReturns.value,
             percent: differentPercent,
-        }
+        }, 
+        tinkoffToken,
+        setTinkoffToken,
     }
 }

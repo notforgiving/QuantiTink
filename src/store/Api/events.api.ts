@@ -24,6 +24,7 @@ export async function fetchAllGetEventsAPI(positions: TFPosition[]) {
 
 
 export async function fetchGetBondsEventsAPI(figi: string) {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetBondEventsAPI, {
         method: "POST",
         body: JSON.stringify({
@@ -33,7 +34,7 @@ export async function fetchGetBondsEventsAPI(figi: string) {
             type: "EVENT_TYPE_CPN,EVENT_TYPE_MTY"
         }),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }
@@ -50,6 +51,7 @@ export async function fetchGetBondsEventsAPI(figi: string) {
 }
 
 export async function fetchGetDividendsEventsAPI(figi: string) {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetDividendsAPI, {
         method: "POST",
         body: JSON.stringify({
@@ -58,7 +60,7 @@ export async function fetchGetDividendsEventsAPI(figi: string) {
             instrumentId: figi,
         }),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }

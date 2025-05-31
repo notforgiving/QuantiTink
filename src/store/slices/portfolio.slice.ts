@@ -22,17 +22,18 @@ export const portfoliosSlice = createSlice({
         },
         getPortfoliosListSuccessAction: (
             state: TFPortfolioState,
-            { payload: object }: PayloadAction<{
+            { payload: { accounts, portfolios } }: PayloadAction<{
                 accounts: TFAccount[],
                 portfolios: TFPortfolio[],
             }>
         ) => {
             state.isLoading = false;
             let newState: TFUnionPortfolios[] = [];
-
-            object.accounts.forEach(account => {
-                const found = object.portfolios.find((element) => element.accountId === account.id);
-                newState.push(found as TFUnionPortfolios)
+            accounts.forEach(account => {
+                if (!!portfolios.length) {
+                    const found = portfolios.find((element) => element.accountId === account.id);
+                    newState.push(found as TFUnionPortfolios)
+                }
             })
             state.data = newState;
         },

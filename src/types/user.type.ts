@@ -7,6 +7,6 @@ export type TFLOGIN_USER = typeof LOGIN_USER;
 
 export type TUserState = {
     email: string | null;
-    token: string | null;
+    accesstoken: string | null;
     id: string | null;
 }

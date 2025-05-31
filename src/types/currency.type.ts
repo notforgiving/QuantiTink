@@ -1,15 +1,22 @@
+
+export const CURRENCY = 'accounts';
+export const GET_CURRENCY_LIST = `${CURRENCY}/getCurrencyListAction`;
+export type TFGET_CURRENCY_LIST = typeof GET_CURRENCY_LIST;
+
 export type TCurrencyResponse = {
-    result: string,
-    documentation: string,
-    terms_of_use: string,
-    time_last_update_unix: number,
-    time_last_update_utc: string,
-    time_next_update_unix: number,
-    time_next_update_utc: string,
-    base_code: string,
-    conversion_rates: {
-        [x: string]: number,
-    }
+    category: string,
+    fromCurrency: {
+        code: number;
+        name: string;
+        strCode: string;
+    },
+    toCurrency: {
+        code: number,
+        name: string,
+        strCode: number
+    },
+    buy: number,
+    sell: number
 }
 
 export type TCurrency = number;

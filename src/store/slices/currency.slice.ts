@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
-import { TCurrency, TCurrencyResponse } from "../../types/currency.type";
+import { CURRENCY, TCurrency, TCurrencyResponse } from "../../types/currency.type";
 
 export type TFCurrencyState = IEntityState<TCurrency>
 
 const currencyInitialState: TFCurrencyState = {
-    data: 1,
+    data: 80,
     isLoading: false,
     errors: '' as unknown,
 };
 
 export const currencySlice = createSlice({
-    name: 'currency',
+    name: CURRENCY,
     initialState: currencyInitialState,
     reducers: {
         getCurrencyListAction: (state: TFCurrencyState) => {
@@ -20,10 +20,11 @@ export const currencySlice = createSlice({
         },
         getCurrencyListSuccessAction: (
             state: TFCurrencyState,
-            { payload: data }: PayloadAction<TCurrencyResponse>
+            { payload: data }: PayloadAction<TCurrencyResponse[]>
         ) => {
             state.isLoading = false;
-            state.data = data.conversion_rates['RUB'];
+            const currency = data.filter(el => el.category === 'DebitCardsTransfers')[0]
+            state.data = currency.buy || 80;
         },
         getCurrencyListErrorAction: (
             state: TFCurrencyState,

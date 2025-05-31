@@ -1,8 +1,7 @@
 import { put, takeEvery } from "redux-saga/effects";
-import { GET_ACCOUNTS_LIST } from "../../types/accounts.type";
 import { fetchGetInfoAPI } from "../Api/info.api";
 import { infoSlice } from "../slices/info.slice";
-import { TInfoState } from "../../types/info.type";
+import { GET_INFO, TInfoState } from "../../types/info.type";
 
 function* getInfoSaga() {
     try {
@@ -14,5 +13,5 @@ function* getInfoSaga() {
 }
 
 export function* watchGetInfo() {
-    yield takeEvery(GET_ACCOUNTS_LIST, getInfoSaga);
+    yield takeEvery(GET_INFO, getInfoSaga);
 }

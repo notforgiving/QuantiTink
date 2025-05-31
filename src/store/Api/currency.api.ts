@@ -1,5 +1,5 @@
 export async function fetchGetCurrencysAPI() {
-    const response = await fetch('https://v6.exchangerate-api.com/v6/2e229c70f483cc798ca0bdab/latest/USD', {
+    const response = await fetch('https://api.tinkoff.ru/v1/currency_rates', {
         method: "GET",
         redirect: "follow"
     }
@@ -8,5 +8,5 @@ export async function fetchGetCurrencysAPI() {
     if (data.status === 500) {
         throw data.error;
     }
-    return data;
+    return data.payload.rates;
 }

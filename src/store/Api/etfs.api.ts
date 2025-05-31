@@ -17,6 +17,7 @@ export async function fetchAllGetEtfsAPI(etfsPositions: TFPosition[]) {
 
 
 export async function fetchGetEtfByAPI(figi: string) {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(EtfByAPI, {
         method: "POST",
         body: JSON.stringify({
@@ -24,7 +25,7 @@ export async function fetchGetEtfByAPI(figi: string) {
             id: figi,
         }),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }

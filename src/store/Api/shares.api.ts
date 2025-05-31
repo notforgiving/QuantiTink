@@ -17,6 +17,7 @@ export async function fetchAllGetSharesAPI(sharesPositions: TFPosition[]) {
 
 
 export async function fetchGetShareByAPI(figi: string) {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(ShareByAPI, {
         method: "POST",
         body: JSON.stringify({
@@ -24,7 +25,7 @@ export async function fetchGetShareByAPI(figi: string) {
             id: figi,
         }),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }

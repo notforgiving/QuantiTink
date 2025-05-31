@@ -7,7 +7,7 @@ export type TFUserState = IEntityState<TUserState>
 const userInitialState: TFUserState = {
     data: {
         email: null,
-        token: null,
+        accesstoken: null,
         id: null,
     },
     isLoading: false,
@@ -19,7 +19,7 @@ type TPayloadGetUser = {
     password: string;
 }
 
-const LOCALSTORAGE_NAME = 'Tbalance_user';
+export const USER_LOCALSTORAGE_NAME = 'Tbalance_user';
 
 export const userSlice = createSlice({
     name: USER,
@@ -40,7 +40,7 @@ export const userSlice = createSlice({
             state.data = {
                 ...user,
             }
-            localStorage.setItem(LOCALSTORAGE_NAME, JSON.stringify(user));
+            localStorage.setItem(USER_LOCALSTORAGE_NAME, JSON.stringify(user));
             state.isLoading = false;
         },
         userErrorAction: (
@@ -52,9 +52,9 @@ export const userSlice = createSlice({
         },
         removeUserAction: (state: TFUserState,) => {
             state.data.email = null;
-            state.data.token = null;
+            state.data.accesstoken = null;
             state.data.id = null;
-            localStorage.removeItem(LOCALSTORAGE_NAME);
+            localStorage.removeItem(USER_LOCALSTORAGE_NAME);
         },
     },
 });

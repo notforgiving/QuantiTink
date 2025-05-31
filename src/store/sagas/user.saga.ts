@@ -10,7 +10,7 @@ function* createUserSaga({ payload: { email, password } }: PayloadAction<{ email
             error: string;
             email: string;
             id: string;
-            token: string;
+            accesstoken: string;
         } = yield fetchCreateUserAPI(email, password);
         if (response.error !== '') {
             yield put(userSlice.actions.userErrorAction(response.error));
@@ -29,7 +29,7 @@ function* loginUserSaga({ payload: { email, password } }: PayloadAction<{ email:
             error: string;
             email: string;
             id: string;
-            token: string;
+            accesstoken: string;
         } = yield fetchLoginUserAPI(email, password);
         if (response.error !== '') {
             yield put(userSlice.actions.userErrorAction(response.error));

@@ -4,14 +4,13 @@ import { StateType } from "store/root-reducer";
 export const useAuth = () => {
     const { data: {
         email,
-        token,
+        accesstoken,
         id
     }, errors } = useSelector((state: StateType) => state.user);
-
     return {
         isAuth: !!email,
         email,
-        token,
+        accesstoken,
         id,
         errors,
     }

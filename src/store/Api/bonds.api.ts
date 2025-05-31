@@ -18,6 +18,7 @@ export async function fetchAllGetBondsAPI(bondsPositions: TFPosition[]) {
 
 
 export async function fetchGetBondByAPI(figi: string) {
+    const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(BondByAPI, {
         method: "POST",
         body: JSON.stringify({
@@ -25,7 +26,7 @@ export async function fetchGetBondByAPI(figi: string) {
             id: figi,
         }),
         headers: {
-            Authorization: `Bearer ${TOKEN}`,
+            Authorization: `Bearer ${tokenForApi}`,
             "Content-Type": "application/json",
         },
     }

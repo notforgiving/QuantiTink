@@ -9,9 +9,13 @@ import { watchGetEtfs } from './sagas/etfs.saga';
 import { watchGetShares } from './sagas/shares.saga';
 import { watchGetInfo } from './sagas/info.saga';
 import { watchSetUser } from './sagas/user.saga';
+import { watchToken } from './sagas/token.saga';
 
 const rootSaga = function* () {
   yield all([
+    fork(watchSetUser),
+    fork(watchToken),
+    fork(watchGetInfo),
     fork(watchGetAccounts),
     fork(watchGetPortfolios),
     fork(watchGetOperations),
@@ -20,8 +24,6 @@ const rootSaga = function* () {
     fork(watchGetBonds),
     fork(watchGetEtfs),
     fork(watchGetShares),
-    fork(watchGetInfo),
-    fork(watchSetUser),
   ]);
 };
 

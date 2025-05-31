@@ -8,6 +8,7 @@ import infoSlice, { TFInfoState } from "./slices/info.slice";
 import operationsSlice, { TFOperationsState } from "./slices/operations.slice";
 import portfolioSlice, { TFPortfolioState } from "./slices/portfolio.slice";
 import sharesSlice, { TFSharesState } from "./slices/share.slice";
+import tokenSlice, { TFTokenState } from "./slices/token.slice";
 import userSlice, { TFUserState } from "./slices/user.slice";
 
 export type StateType = {
@@ -22,20 +23,22 @@ export type StateType = {
   shares: TFSharesState,
   info: TFInfoState,
   user: TFUserState,
+  token: TFTokenState,
 };
 
 const rootReducers = {
+  user: userSlice,
+  token: tokenSlice,
+  info: infoSlice,
   accounts: accountsSlice,
   portfolios: portfolioSlice,
   operations: operationsSlice,
-  currency: currencySlice,
   general: generalSlice,
   events: eventsSlice,
   bonds: bondsSlice,
   etfs: etfsSlice,
   shares: sharesSlice,
-  info: infoSlice,
-  user: userSlice,
+  currency: currencySlice,
 };
 
 export default rootReducers;

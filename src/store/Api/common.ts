@@ -1,4 +1,4 @@
-export const TOKEN = process.env.REACT_APP_T_TOKEN;
+export const TOKEN = localStorage.getItem('Tbalance_token');
 
 const MAINPARTURL = 'https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.'
 
