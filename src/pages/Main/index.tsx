@@ -62,12 +62,12 @@ const Main: FC = () => {
     if (token) {
       console.log(token,'token');
       
-      // if (!isLoadingInfo && Object.keys(infoData).length === 0) {
-      //   dispatch(infoSlice.actions.getInfoAction());
-      // }
-      // if (accounts && accounts.length === 0 && !isLoadingAccounts) {
-      //   dispatch(accountsSlice.actions.getaccountsListAction());
-      // }
+      if (!isLoadingInfo && Object.keys(infoData).length === 0) {
+        dispatch(infoSlice.actions.getInfoAction());
+      }
+      if (accounts && accounts.length === 0 && !isLoadingAccounts) {
+        dispatch(accountsSlice.actions.getaccountsListAction());
+      }
       // if (accounts && accounts.length !== 0 && !isLoadingAccounts) {
       //   dispatch(portfoliosSlice.actions.getPortfoliosListAction(accounts));
       //   dispatch(operationsSlice.actions.getOperationsListAction(accounts));
