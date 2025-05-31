@@ -59,7 +59,7 @@ const Main: FC = () => {
   }, [dispatch, isAuth, isLoadingUser, navigate, user.email, userId]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !isLoadingToken) {
       if (!isLoadingInfo && Object.keys(infoData).length === 0) {
         dispatch(infoSlice.actions.getInfoAction());
       }
@@ -71,7 +71,7 @@ const Main: FC = () => {
         dispatch(operationsSlice.actions.getOperationsListAction(accounts));
       }
     }
-  }, [accounts, dispatch, infoData, isLoadingAccounts, isLoadingInfo, token]);
+  }, [accounts, dispatch, infoData, isLoadingAccounts, isLoadingInfo, isLoadingToken, token]);
 
   const {
     totalAmountDepositsAllPortfolios,

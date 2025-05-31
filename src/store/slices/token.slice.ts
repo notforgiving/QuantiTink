@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
-import { TFToken, TOKEN } from "types/token.type";
+import { TFToken, TOKEN, TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 
 export type TFTokenState = IEntityState<TFToken>
 
@@ -11,8 +11,6 @@ const tokenInitialState: TFTokenState = {
     isLoading: false,
     errors: null,
 };
-
-export const TOKEN_LOCALSTORAGE_NAME = 'Tbalance_token';
 
 export const tokenSlice = createSlice({
     name: TOKEN,
@@ -30,10 +28,10 @@ export const tokenSlice = createSlice({
             state: TFTokenState,
             { payload: token }: PayloadAction<string | null>
         ) => {
+            localStorage.setItem(TOKEN_LOCALSTORAGE_NAME, JSON.stringify(token));
             state.data = {
                 token,
             }
-            localStorage.setItem(TOKEN_LOCALSTORAGE_NAME, JSON.stringify(token));
             state.isLoading = false;
         },
         tokenErrorAction: (

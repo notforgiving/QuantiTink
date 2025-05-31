@@ -1,7 +1,8 @@
 import moment from "moment";
-import { GetBondEventsAPI, GetDividendsAPI, TOKEN } from "./common";
+import { GetBondEventsAPI, GetDividendsAPI } from "./common";
 import { TFPosition } from "../../types/portfolio.type";
 import { TEvents, TPortfolioEvents } from "../../types/event.type";
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 
 export async function fetchAllGetEventsAPI(positions: TFPosition[]) {
     let results: TPortfolioEvents[] = [];
@@ -24,6 +25,7 @@ export async function fetchAllGetEventsAPI(positions: TFPosition[]) {
 
 
 export async function fetchGetBondsEventsAPI(figi: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetBondEventsAPI, {
         method: "POST",
@@ -51,6 +53,7 @@ export async function fetchGetBondsEventsAPI(figi: string) {
 }
 
 export async function fetchGetDividendsEventsAPI(figi: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetDividendsAPI, {
         method: "POST",

@@ -1,7 +1,8 @@
 import moment from "moment";
 import { TFAccount } from "../../types/accounts.type";
 import { TFUnionOperations } from "../slices/operations.slice";
-import { GetOperationsAPI, TOKEN } from "./common";
+import { GetOperationsAPI } from "./common";
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 
 export async function fetchAllGetOperationsAPI(accountsList: TFAccount[]) {
     let results: TFUnionOperations[] = [];
@@ -23,6 +24,7 @@ export async function fetchAllGetOperationsAPI(accountsList: TFAccount[]) {
 
 
 export async function fetchGetOperationsAPI(id: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     try {
         const response = await fetch(GetOperationsAPI, {

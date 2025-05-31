@@ -1,5 +1,6 @@
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 import { TFPosition } from "../../types/portfolio.type";
-import { ShareByAPI, TOKEN } from "./common";
+import { ShareByAPI } from "./common";
 
 export async function fetchAllGetSharesAPI(sharesPositions: TFPosition[]) {
     let results: any[] = [];
@@ -17,6 +18,7 @@ export async function fetchAllGetSharesAPI(sharesPositions: TFPosition[]) {
 
 
 export async function fetchGetShareByAPI(figi: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(ShareByAPI, {
         method: "POST",

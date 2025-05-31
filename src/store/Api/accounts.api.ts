@@ -1,6 +1,8 @@
-import { GetAccountsAPI, TOKEN } from "./common";
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
+import { GetAccountsAPI } from "./common";
 
 export async function fetchGetAccountsAPI() {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(GetAccountsAPI, {
         method: "POST",

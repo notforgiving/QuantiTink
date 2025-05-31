@@ -1,6 +1,7 @@
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 import { TFAccount } from "../../types/accounts.type";
 import { TFPortfolio } from "../../types/portfolio.type";
-import { GetPortfolioAPI, TOKEN } from "./common";
+import { GetPortfolioAPI } from "./common";
 
 export async function fetchAllGetPortfoliosAPI(accountsList: TFAccount[]) {
     let results: TFPortfolio[] = [];
@@ -22,6 +23,7 @@ export async function fetchAllGetPortfoliosAPI(accountsList: TFAccount[]) {
 
 
 export async function fetchGetPortfolioAPI(id: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     try {
         const response = await fetch(GetPortfolioAPI, {

@@ -1,5 +1,3 @@
-export const TOKEN = localStorage.getItem('Tbalance_token');
-
 const MAINPARTURL = 'https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.'
 
 export const GetAccountsAPI = MAINPARTURL + "UsersService/GetAccounts";

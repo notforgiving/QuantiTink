@@ -4,7 +4,7 @@ import { GET_TOKEN, SET_TOKEN } from "types/token.type";
 import { fetchReadTokenAPI, fetchWriteTokenAPI } from "store/Api/token.api";
 import { tokenSlice } from "store/slices/token.slice";
 
-function* writeTokenSaga({ payload }: PayloadAction<{token:string,userId:string}>) {
+function* writeTokenSaga({ payload }: PayloadAction<{ token: string, userId: string }>) {
     try {
         const response: string | null = yield fetchWriteTokenAPI(payload);
         yield put(tokenSlice.actions.tokenSuccessAction(response));
@@ -16,7 +16,13 @@ function* writeTokenSaga({ payload }: PayloadAction<{token:string,userId:string}
 function* readTokenSaga({ payload }: PayloadAction<string>) {
     try {
         const response: string = yield fetchReadTokenAPI(payload);
-        yield put(tokenSlice.actions.tokenSuccessAction(response === '' ? null : response));
+        console.log(response, 'readTokenSaga');
+        if (response === '') {
+            yield put(tokenSlice.actions.tokenErrorAction('Token not founded'))
+        } else {
+            yield put(tokenSlice.actions.tokenSuccessAction(response));
+        }
+
     } catch (error) {
         console.log('readTokenSaga', error);
     }

@@ -1,6 +1,7 @@
+import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 import { TInstrument } from "../../types/bonds.type";
 import { TFPosition } from "../../types/portfolio.type";
-import { BondByAPI, TOKEN } from "./common";
+import { BondByAPI } from "./common";
 
 export async function fetchAllGetBondsAPI(bondsPositions: TFPosition[]) {
     let results: TInstrument[] = [];
@@ -18,6 +19,7 @@ export async function fetchAllGetBondsAPI(bondsPositions: TFPosition[]) {
 
 
 export async function fetchGetBondByAPI(figi: string) {
+    const TOKEN = localStorage.getItem(TOKEN_LOCALSTORAGE_NAME);
     const tokenForApi = TOKEN ? JSON.parse(TOKEN) : null;
     const response = await fetch(BondByAPI, {
         method: "POST",

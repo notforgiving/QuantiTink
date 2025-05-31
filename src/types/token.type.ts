@@ -8,3 +8,5 @@ export type TFGET_TOKEN = typeof GET_TOKEN;
 export type TFToken = {
     token: string | null;
 }
+
+export const TOKEN_LOCALSTORAGE_NAME = 'Tbalance_token';
