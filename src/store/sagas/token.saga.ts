@@ -16,7 +16,6 @@ function* writeTokenSaga({ payload }: PayloadAction<{ token: string, userId: str
 function* readTokenSaga({ payload }: PayloadAction<string>) {
     try {
         const response: string = yield fetchReadTokenAPI(payload);
-        console.log(response, 'readTokenSaga');
         if (response === '') {
             yield put(tokenSlice.actions.tokenErrorAction('Token not founded'))
         } else {
