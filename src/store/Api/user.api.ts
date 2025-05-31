@@ -30,7 +30,6 @@ export async function fetchLoginUserAPI(email: string, password: string) {
     const response = await signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user: any = userCredential.user;
-            console.log(user, 'signInWithEmailAndPassword');
             return {
                 email: user.email,
                 token: user.stsTokenManager.accessToken,
