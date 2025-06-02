@@ -1,31 +1,44 @@
-import React, { FC } from "react";
-import Container from "../../UI/components/Container";
-import Button from "../../UI/components/Button";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import css from "./styles.module.scss";
-import { useShares } from "./hook/useShares";
+import Button from "UI/components/Button";
+import Container from "UI/components/Container";
+import css from "../styles.module.scss";
+import { useEtf } from "./hook/useEtf";
+import Input from "UI/components/Input";
 import cn from "classnames";
-import Line from "./components/Line";
-import Input from "../../UI/components/Input";
+import { useProfitability } from "../hook/useProfitability";
+import Line from "../components/Line";
 
-const Shares: FC = () => {
-  let { id: accountId } = useParams();
-  const navigate = useNavigate();
+const Etf = () => {
+  let { id: accountId, ticker } = useParams();
+
   const {
-    result,
+    search,
+    setSearch,
     withTax,
     setWithTax,
     comissionToggle,
     setComissionToggle,
-    search,
-    setSearch,
     setCurrentSort,
-    sortFunction,
     currentSort,
-  } = useShares({
+    tariff,
+    positions,
+    operations,
+    sortFunction,
+  } = useProfitability({ accountId: accountId || "0" });
+
+  const { name, result } = useEtf({
     accountId: accountId || "0",
+    withTax,
+    comissionToggle,
+    currentSort,
+    tariff,
+    positions,
+    ticker: ticker || "",
+    operations,
   });
 
+  const navigate = useNavigate();
   return (
     <Container>
       <Button
@@ -50,7 +63,7 @@ const Shares: FC = () => {
         </div>
       </div>
       <div className={css.shares}>
-        <div className={css.shares_title}>Акции</div>
+        <div className={css.shares_title}>{name}</div>
         <div className={css.shares_actions}>
           <Input
             label="Рассчитать с учетом налога"
@@ -135,4 +148,4 @@ const Shares: FC = () => {
   );
 };
 
-export default Shares;
+export default Etf;

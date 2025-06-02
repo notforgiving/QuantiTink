@@ -2,11 +2,11 @@ import React, { FC } from "react";
 import css from "../../styles.module.scss";
 import cn from "classnames";
 import moment from "moment";
-import { getDeclensionWordMonth } from "../../../../utils";
-import { TShareProfitability } from "../../hook/useShares";
+import { getDeclensionWordMonth } from "utils";
+import { TActiveProfitability } from "pages/Profitability/types";
 
 interface ILineProps {
-  operation: TShareProfitability;
+  operation: TActiveProfitability;
 }
 
 const Line: FC<ILineProps> = ({ operation }) => {

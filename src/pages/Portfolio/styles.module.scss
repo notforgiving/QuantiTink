@@ -159,6 +159,7 @@
   &_etf {
     @include variables.standartBlock;
     @include variables.yellowBlock;
+    cursor: pointer;
   }
   &_rebalance {
     padding: 20px 10px;

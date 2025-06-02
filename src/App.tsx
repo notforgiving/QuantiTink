@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "./pages/Main";
 import Portfolio from "./pages/Portfolio";
 import Calendar from "./pages/Calendar";
-import Shares from "./pages/Shares";
 import Auth from "pages/Auth";
 import UserPage from "pages";
 import Account from "pages/Account";
-import Etf from "pages/Etf";
+import Etf from "pages/Profitability/Etf";
+import Shares from "pages/Profitability/Shares";
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
             <Route index element={<Portfolio />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="shares" element={<Shares />} />
-            <Route path="etf:ticker" element={<Etf />} />
+            <Route path="etf/:ticker" element={<Etf />} />
           </Route>
         </Route>
       </Routes>
