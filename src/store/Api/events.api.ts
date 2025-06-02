@@ -30,7 +30,7 @@ export async function fetchGetBondsEventsAPI(figi: string) {
     const response = await fetch(GetBondEventsAPI, {
         method: "POST",
         body: JSON.stringify({
-            from: moment().add(-3, 'd').utc(),
+            from: moment().add(-5, 'd').utc(),
             to: moment().add(1, 'y').utc(),
             instrumentId: figi,
             type: "EVENT_TYPE_CPN,EVENT_TYPE_MTY"

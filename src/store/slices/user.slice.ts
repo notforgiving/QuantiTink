@@ -54,7 +54,8 @@ export const userSlice = createSlice({
             state.data.email = null;
             state.data.accesstoken = null;
             state.data.id = null;
-            localStorage.removeItem(USER_LOCALSTORAGE_NAME);
+            // localStorage.removeItem(USER_LOCALSTORAGE_NAME);
+            localStorage.clear();
         },
     },
 });
