@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
 import { TFPosition } from "../../types/portfolio.type";
-import { ETFS, TEtfsInstrumentObject } from "../../types/etfs.type";
+import { ETFS, ETFS_LOCALSTORAGE_NAME, TEtfsInstrumentObject } from "../../types/etfs.type";
 
 export type TFEtfsState = IEntityState<TEtfsInstrumentObject>
 
@@ -28,7 +28,7 @@ export const etfsSlice = createSlice({
             { payload: object }: PayloadAction<TEtfsInstrumentObject>
         ) => {
             state.isLoading = false;
-            localStorage.setItem('etfsSlice', JSON.stringify(object))
+            localStorage.setItem(ETFS_LOCALSTORAGE_NAME, JSON.stringify(object))
             state.data = object
         },
         getEtfsListErrorAction: (

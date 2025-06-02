@@ -15,3 +15,5 @@ export type TEtfInstrument = {
     ticker: string;
     name: string;
 }
+
+export const ETFS_LOCALSTORAGE_NAME = 'Tbalance_etfs';

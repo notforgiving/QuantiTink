@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
 import { TFPosition } from "../../types/portfolio.type";
-import { BONDS, TInstrumentObject } from "../../types/bonds.type";
+import { BONDS, BONDS_LOCALSTORAGE_NAME, TInstrumentObject } from "../../types/bonds.type";
 
 export type TFBondsState = IEntityState<TInstrumentObject>
 
@@ -28,7 +28,7 @@ export const bondsSlice = createSlice({
             { payload: object }: PayloadAction<TInstrumentObject>
         ) => {
             state.isLoading = false;
-            localStorage.setItem('bondsSlice', JSON.stringify(object))
+            localStorage.setItem(BONDS_LOCALSTORAGE_NAME, JSON.stringify(object))
             state.data = object
         },
         getBondsListErrorAction: (

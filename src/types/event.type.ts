@@ -51,3 +51,5 @@ export type TPayOutsEvent = {
     brand: TBrand;
     totalAmount: TFFormattPrice;
 }
+
+export const EVENTS_LOCALSTORAGE_NAME = 'Tbalance_events';

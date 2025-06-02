@@ -18,3 +18,5 @@ export type TShareInstrument = {
     name: string;
     brand: TBrand;
 }
+
+export const SHARE_LOCALSTORAGE_NAME = 'Tbalance_share';

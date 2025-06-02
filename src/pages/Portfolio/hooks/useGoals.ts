@@ -37,6 +37,9 @@ type TUseGoals = (props: IUseGoalsProps) => {
         [x: string]: number;
     }
 }
+
+export const GOALS_LOCALSTORAGE_NAME = 'Tbalance_goals';
+
 export const useGoals: TUseGoals = ({ accountId, totalAmountPortfolio, shares,
     rubBonds,
     usdBonds,
@@ -66,7 +69,7 @@ export const useGoals: TUseGoals = ({ accountId, totalAmountPortfolio, shares,
                     ...localStorageInfo,
                     [accountId]: values,
                 }
-                localStorage.setItem("TBalance_goals", JSON.stringify(preliminary));
+                localStorage.setItem(GOALS_LOCALSTORAGE_NAME, JSON.stringify(preliminary));
                 setOpenTargets(false);
             }
         },

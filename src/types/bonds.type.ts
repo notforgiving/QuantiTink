@@ -22,3 +22,5 @@ export type TInstrument = {
     currency: TFCurrency;
     brand: TBrand;
 }
+
+export const BONDS_LOCALSTORAGE_NAME = 'Tbalance_bonds';

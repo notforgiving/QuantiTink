@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
 import { TUserState, USER } from "types/user.type";
+import { clearImportantLocalData } from "store/localStorage";
 
 export type TFUserState = IEntityState<TUserState>
 
@@ -54,8 +55,7 @@ export const userSlice = createSlice({
             state.data.email = null;
             state.data.accesstoken = null;
             state.data.id = null;
-            // localStorage.removeItem(USER_LOCALSTORAGE_NAME);
-            localStorage.clear();
+            clearImportantLocalData();
         },
     },
 });

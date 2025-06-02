@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
 import { TFPosition } from "../../types/portfolio.type";
-import { SHARES, TShareState } from "../../types/share.type";
+import { SHARE_LOCALSTORAGE_NAME, SHARES, TShareState } from "../../types/share.type";
 export type TFSharesState = IEntityState<TShareState>
 
 const sharesInitialState: TFSharesState = {
@@ -27,7 +27,7 @@ export const sharesSlice = createSlice({
             { payload: object }: PayloadAction<TShareState>
         ) => {
             state.isLoading = false;
-            localStorage.setItem('sharesSlice', JSON.stringify(object))
+            localStorage.setItem(SHARE_LOCALSTORAGE_NAME, JSON.stringify(object))
             state.data = object
         },
         getSharesListErrorAction: (

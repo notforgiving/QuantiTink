@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IListState } from "../../types/common";
-import { EVENTS, TEventsState } from "../../types/event.type";
+import { EVENTS, EVENTS_LOCALSTORAGE_NAME, TEventsState } from "../../types/event.type";
 import { TFPosition } from "../../types/portfolio.type";
 
 export type TFEventsState = IListState<TEventsState>
@@ -24,7 +24,7 @@ export const eventsSlice = createSlice({
             { payload: list }: PayloadAction<TEventsState>
         ) => {
             state.isLoading = false;
-            localStorage.setItem('eventsSlice', JSON.stringify([list]))
+            localStorage.setItem(EVENTS_LOCALSTORAGE_NAME, JSON.stringify([list]))
             state.data = [list]
         },
         getEventsListErrorAction: (
