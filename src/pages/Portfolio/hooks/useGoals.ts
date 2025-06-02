@@ -49,7 +49,7 @@ export const useGoals: TUseGoals = ({ accountId, totalAmountPortfolio, shares,
     const [error, setError] = useState<string>("");
     const [freeAmountMoney, setFreeAmountMoney] = useState<number>(0);
     const localStorageInfo: { [x: string]: IGoalssForm } | null =
-        searchInLocalStorageByKey("TBalance_goals");
+        searchInLocalStorageByKey(GOALS_LOCALSTORAGE_NAME);
     const initialValues = localStorageInfo && localStorageInfo[accountId] ? localStorageInfo[accountId] : {};
     const formik = useFormik<IGoalssForm>({
         validate: (values: IGoalssForm) => {

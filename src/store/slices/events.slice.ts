@@ -1,12 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IListState } from "../../types/common";
+import { IEntityState, IListState } from "../../types/common";
 import { EVENTS, EVENTS_LOCALSTORAGE_NAME, TEventsState } from "../../types/event.type";
 import { TFPosition } from "../../types/portfolio.type";
+import { writeDataInlocalStorage } from "utils";
 
-export type TFEventsState = IListState<TEventsState>
+export type TFEventsState = IEntityState<TEventsState>
 
 const eventsInitialState: TFEventsState = {
-    data: [],
+    data: {
+        accountId: '0',
+        portfolioEvents: [],
+        dateApi: '0',
+    },
     isLoading: false,
     errors: '' as unknown,
 };
@@ -21,11 +26,11 @@ export const eventsSlice = createSlice({
         },
         getEventsListSuccessAction: (
             state: TFEventsState,
-            { payload: list }: PayloadAction<TEventsState>
+            { payload }: PayloadAction<TEventsState>
         ) => {
             state.isLoading = false;
-            localStorage.setItem(EVENTS_LOCALSTORAGE_NAME, JSON.stringify([list]))
-            state.data = [list]
+            writeDataInlocalStorage({ localStorageName: EVENTS_LOCALSTORAGE_NAME, response: payload });
+            state.data = payload
         },
         getEventsListErrorAction: (
             state: TFEventsState,
@@ -34,12 +39,14 @@ export const eventsSlice = createSlice({
             state.isLoading = false;
             state.errors = error;
         },
-        getEventsListSuccessOnly: (state: TFEventsState, { payload: list }: PayloadAction<TEventsState[]>) => {
+        getEventsListSuccessOnly: (state: TFEventsState, { payload }: PayloadAction<TEventsState>) => {
             state.isLoading = false;
-            state.data = list;
+            state.data = payload;
             state.errors = '';
         }
     },
 });
+
+export const { getEventsListAction, getEventsListSuccessOnly } = eventsSlice.actions;
 
 export default eventsSlice.reducer;

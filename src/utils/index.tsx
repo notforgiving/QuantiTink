@@ -9,7 +9,7 @@ import {
   TFPosition,
 } from "../types/portfolio.type";
 import { TPortfolioEvents } from "../types/event.type";
-import { IGoalssForm } from "../pages/Portfolio/hooks/useGoals";
+import { GOALS_LOCALSTORAGE_NAME, IGoalssForm } from "../pages/Portfolio/hooks/useGoals";
 import { IPortfolioItem } from "../pages/Portfolio/hooks/usePortfolio";
 
 type TGetNumberMoney = (initialData: TFAmount | null) => number;
@@ -109,6 +109,18 @@ export function searchItemInArrayData<T>(
   return data.filter((el: any) => el[key] === value)[0] || null;
 }
 
+/** Функция поиска и возврата индекса элемента массива по условию */
+export function searchIndexItemInArrayData<T>(
+  /** В каком массиве искать */
+  data: T[],
+  /** По какому ключу смотреть совпадение в исходном массиве */
+  key: string,
+  /** Значение с которым сравнивать */
+  value: string
+): number {
+  return data.findIndex((el: any) => el[key] === value);
+}
+
 /** Склоняем слово Месяц в зависимости от числа */
 export const getDeclensionWordMonth = (value: number): string => {
   if (value === 1) {
@@ -192,7 +204,7 @@ export const calcLotsForDividends = (
         quantity: 0,
       };
     }
-    // Если выплату нашли, то отдаем receivedPayment - false и 
+    // Если выплату нашли, то отдаем receivedPayment - false и
     // количество для подсчета, которое должо прийти
     return {
       receivedPayment,
@@ -235,16 +247,6 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
   usdBonds,
   etfArray,
 }) => {
-  // let sumOfAllPositionsInEtf = 0;
-  // if (formattedEtf) {
-  //   let temp = Array.from(formattedEtf, (x) => x.value) || [];
-  //   if (!!temp.length) {
-  //     sumOfAllPositionsInEtf = temp.reduce(
-  //       (state: number, item: number) => state + item,
-  //       0
-  //     );
-  //   }
-  // }
   // Считаем сумму всех активов (100%)
   const sumOfAllPositions = getNumberMoney(totalAmountPortfolio);
 
@@ -255,7 +257,7 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
   // забираем цели из локалсторадж
   const localData: {
     [x: string]: IGoalssForm;
-  } = searchInLocalStorageByKey("TBalance_goals") || {};
+  } = searchInLocalStorageByKey(GOALS_LOCALSTORAGE_NAME) || {};
 
   // забираем цели для конкретного портфеля
   const goals = localData[accountId] || {};
@@ -266,14 +268,6 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
     // получаем новую сумму для рассчета новых соотношений
     const newSummAfterCalc = sumOfAllPositions + freeMoneyWithoutDebt;
 
-    // // создаем объект с текущими соотношениями etf - ов для распарса внутрь общего объекта
-    // const newFactsPercentsEtfs = formattedEtf.reduce(
-    //   (state, item) => ({
-    //     ...state,
-    //     [item.ticker]: (item.value / newSummAfterCalc) * 100,
-    //   }),
-    //   {}
-    // );
     // новые проценты соотношений
     const newPercents: {
       [x: string]: number;
@@ -342,4 +336,70 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
     );
   }
   return resultValues;
+};
+
+interface IForkDispatchProps {
+  localStorageName: string;
+  accountId: string;
+}
+export const forkDispatch = ({
+  localStorageName,
+  accountId,
+}: IForkDispatchProps) => {
+  // Данные в локалсторадже
+  const localStorageData = localStorage.getItem(localStorageName) || null;
+  // Данные в локалсторадже в формате JSON
+  const localStorageDataJson = localStorageData
+    ? JSON.parse(localStorageData)
+    : null;
+  // индекс искомого элемента
+  const foundIndexDataInLocalStorage =
+    localStorageDataJson !== null
+      ? searchIndexItemInArrayData(
+          [...localStorageDataJson],
+          "accountId",
+          accountId
+        )
+      : -1;
+  // Если данные в локалстораж есть
+  // Если в этих данных мы нашли свой id
+  // Если данные обновлялись недавно
+  if (
+    localStorageDataJson !== null &&
+    foundIndexDataInLocalStorage !== -1 &&
+    localStorageDataJson[foundIndexDataInLocalStorage] &&
+    moment().unix() -
+      moment(
+        localStorageDataJson[foundIndexDataInLocalStorage]["dateApi"]
+      ).unix() <=
+      3600
+  ) {
+    return localStorageDataJson[foundIndexDataInLocalStorage];
+  }
+  return null;
+};
+
+interface TWriteDataInlocalStorageProps {
+  localStorageName: string;
+  response: any;
+}
+export const writeDataInlocalStorage = ({
+  localStorageName,
+  response,
+}: TWriteDataInlocalStorageProps) => {
+  // Данные в локалсторадже
+  const localStorageData: string | null =
+    localStorage.getItem(localStorageName) || null;
+  // Данные в локалсторадже в формате JSON
+  const localStorageDataJson: any[] | null = localStorageData
+    ? JSON.parse(localStorageData)
+    : null;
+  // индекс искомого элемента
+  const localStorageDataFiltred = localStorageDataJson
+    ? localStorageDataJson.filter((el) => el !== response["accountId"])
+    : [];
+  localStorage.setItem(
+    localStorageName,
+    JSON.stringify([...localStorageDataFiltred, response])
+  );
 };

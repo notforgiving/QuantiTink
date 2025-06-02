@@ -1,16 +1,11 @@
 import { useSelector } from "react-redux";
 import { StateType } from "../../../store/root-reducer";
-import { calcSummOfAllDeposits, formattedMoneySupply, getNumberMoney, getPercentByTarget, searchInLocalStorageByKey, searchItemInArrayData } from "../../../utils";
+import { calcSummOfAllDeposits, formattedMoneySupply, getNumberMoney, getPercentByTarget, searchItemInArrayData } from "../../../utils";
 import { TFAccount } from "../../../types/accounts.type";
 import { TFPortfolio } from "../../../types/portfolio.type";
 import { useEffect, useState } from "react";
 import { TFFormattPrice } from "../../../types/common";
 import moment from "moment";
-import { useDispatch } from "react-redux";
-import { bondsSlice } from "../../../store/slices/bonds.slice";
-import { TInstrumentObject } from "../../../types/bonds.type";
-import { etfsSlice } from "../../../store/slices/etfs.slice";
-import { sharesSlice } from "../../../store/slices/share.slice";
 
 interface IUsePortfolio {
     accountId: string;
@@ -52,7 +47,6 @@ type TUsePortfolio = (props: IUsePortfolio) => {
 }
 
 export const usePortfolio: TUsePortfolio = ({ accountId }) => {
-    const dispatch = useDispatch()
     const [currentPrice, setCurrentPrice] = useState<TFFormattPrice>({
         formatt: '',
         value: 0,
@@ -178,7 +172,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                 if (el.type === 'Выплата купонов') {
                     tempcoup += getNumberMoney(el.payment);
                 }
-                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') { 
+                if (el.type === 'Выплата дивидендов' || el.type === 'Выплата дивидендов на карту') {
                     tempdiv += getNumberMoney(el.payment) * 0.87;
                 }
             })
@@ -193,47 +187,6 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
     useEffect(() => {
         setCurrentProfitability(getPercentByTarget(coupons.value + dividends.value, amountInvestments.value))
     }, [amountInvestments.value, coupons, dividends])
-
-    useEffect(() => {
-        if (portfolio?.positions.length !== 0) {
-            const bondPositions = portfolio?.positions.filter((el) => el.instrumentType === "bond") || []
-            const localDataBondsSlice: TInstrumentObject | null = searchInLocalStorageByKey('bondsSlice');
-            if (localDataBondsSlice === null) {
-                dispatch(bondsSlice.actions.getBondsListAction({ bondPositions, accountId }))
-            } else {
-                const data = searchItemInArrayData([localDataBondsSlice], 'accountId', accountId || '0');
-                if (data) {
-                    dispatch(bondsSlice.actions.getBondsListSuccessOnly(localDataBondsSlice))
-                } else {
-                    dispatch(bondsSlice.actions.getBondsListAction({ bondPositions, accountId }))
-                }
-            }
-            const etfPositions = portfolio?.positions.filter((el) => el.instrumentType === 'etf') || [];
-            const localDataEtfsSlice: TInstrumentObject | null = searchInLocalStorageByKey('etfsSlice');
-            if (localDataEtfsSlice === null) {
-                dispatch(etfsSlice.actions.getEtfsListAction({ etfPositions, accountId }))
-            } else {
-                const data = searchItemInArrayData([localDataEtfsSlice], 'accountId', accountId || '0');
-                if (data) {
-                    dispatch(etfsSlice.actions.getEtfsListSuccessOnly(localDataEtfsSlice))
-                } else {
-                    dispatch(etfsSlice.actions.getEtfsListAction({ etfPositions, accountId }))
-                }
-            }
-            const sharesPositions = portfolio?.positions.filter((el) => el.instrumentType === 'share') || [];
-            const localDataSharesSlice: TInstrumentObject | null = searchInLocalStorageByKey('sharesSlice');
-            if (localDataSharesSlice === null) {
-                dispatch(sharesSlice.actions.getSharesListAction({ sharesPositions, accountId }))
-            } else {
-                const data = searchItemInArrayData([localDataEtfsSlice], 'accountId', accountId || '0');
-                if (data) {
-                    dispatch(sharesSlice.actions.getSharesListSuccessOnly(localDataSharesSlice))
-                } else {
-                    dispatch(sharesSlice.actions.getSharesListAction({ sharesPositions, accountId }))
-                }
-            }
-        }
-    }, [accountId, dispatch, portfolio])
 
     useEffect(() => {
         if (bondsData) {

@@ -14,7 +14,6 @@ import { TFAmount } from "../../types/portfolio.type";
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
   const navigate = useNavigate();
-
   const {
     account,
     portfolio,

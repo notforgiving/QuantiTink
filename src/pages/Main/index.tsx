@@ -9,69 +9,26 @@ import { TFAmount } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
 import Account from "../../components/Account";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Load from "../../UI/components/Load";
 import { useAuth } from "hooks/useAuth";
 import { userSlice } from "store/slices/user.slice";
 import Button from "UI/components/Button";
 import Input from "UI/components/Input";
 import { tokenSlice } from "store/slices/token.slice";
-import { infoSlice } from "store/slices/info.slice";
-import { accountsSlice } from "store/slices/accoutns.slice";
-import { portfoliosSlice } from "store/slices/portfolio.slice";
-import { operationsSlice } from "store/slices/operations.slice";
 
 const Main: FC = () => {
-  const navigate = useNavigate();
+  const { email, id: userId } = useAuth();
   const dispatch = useDispatch();
-  const { isAuth, email, id: userId } = useAuth();
-    const { data: user, isLoading: isLoadingUser } = useSelector(
-    (state: StateType) => state.user
-  );
-    const {
-    data: { token },
-    isLoading: isLoadingToken,
-  } = useSelector((state: StateType) => state.token);
-  const { data: accounts, isLoading: isLoadingAccounts } = useSelector(
-    (state: StateType) => state.accounts
-  );
   const {
+    accounts: { data: accountsData },
     portfolios: { data: portfoliosData, isLoading: isLoadingPortfolios },
-  } = useSelector((state: StateType) => state);
-  const {
     operations: { data: operationsData, isLoading: isLoadingOperations },
+    token: {
+      data: { token },
+      isLoading: isLoadingToken,
+    },
   } = useSelector((state: StateType) => state);
-  const { data: infoData, isLoading: isLoadingInfo } = useSelector(
-    (state: StateType) => state.info
-  );
-
-  useEffect(() => {
-    const userLocal = localStorage.getItem("Tbalance_user");
-    if (!isAuth && !userLocal) {
-      navigate(`/auth`);
-    }
-    if (userLocal && !isLoadingUser && user.email === null) {
-      dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
-    }
-    if (isAuth && userId) {
-      dispatch(tokenSlice.actions.getTokenAction(userId));
-    }
-  }, [dispatch, isAuth, isLoadingUser, navigate, user.email, userId]);
-
-  useEffect(() => {
-    if (token && !isLoadingToken) {
-      if (!isLoadingInfo && Object.keys(infoData).length === 0) {
-        dispatch(infoSlice.actions.getInfoAction());
-      }
-      if (accounts && accounts.length === 0 && !isLoadingAccounts) {
-        dispatch(accountsSlice.actions.getaccountsListAction());
-      }
-      if (accounts && accounts.length !== 0 && !isLoadingAccounts) {
-        dispatch(portfoliosSlice.actions.getPortfoliosListAction(accounts));
-        dispatch(operationsSlice.actions.getOperationsListAction(accounts));
-      }
-    }
-  }, [accounts, dispatch, infoData, isLoadingAccounts, isLoadingInfo, isLoadingToken, token]);
 
   const {
     totalAmountDepositsAllPortfolios,
@@ -176,7 +133,7 @@ const Main: FC = () => {
               )}
             </div>
             <div className={css.accounts}>
-              {accounts?.map((account: TFAccount) => {
+              {accountsData?.map((account: TFAccount) => {
                 const targetPortfolio = searchItemInArrayData(
                   portfoliosData || [],
                   "accountId",

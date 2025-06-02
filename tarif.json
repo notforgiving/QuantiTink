@@ -1,0 +1,190 @@
+{
+  "unaryLimits": [
+    {
+      "limitPerMinute": 200,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/BondBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Bonds",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/CurrencyBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/EditFavorites",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/EtfBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Etfs",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/FindInstrument",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/FutureBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Futures",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAccruedInterests",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetFundamentals",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetReports",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssets",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondEvents",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBrandBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBrands",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetConsensusForecasts",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetCountries",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetDividends",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetFavorites",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetForecastBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetFuturesMargin",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/GetInstrumentBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Indicatives",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/OptionBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Options",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/OptionsBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/ShareBy",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/Shares",
+        "tinkoff.public.invest.api.contract.v1.InstrumentsService/TradingSchedules"
+      ]
+    },
+    {
+      "limitPerMinute": 300,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetClosePrices",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetLastPrices",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetLastTrades",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetTechAnalysis",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus",
+        "tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatuses"
+      ]
+    },
+    {
+      "limitPerMinute": 200,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetOperations",
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetOperationsByCursor",
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetPortfolio",
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetPositions",
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits"
+      ]
+    },
+    {
+      "limitPerMinute": 5,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetBrokerReport"
+      ]
+    },
+    {
+      "limitPerMinute": 5,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OperationsService/GetDividendsForeignIssuer"
+      ]
+    },
+    {
+      "limitPerMinute": 100,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OrdersService/GetMaxLots",
+        "tinkoff.public.invest.api.contract.v1.OrdersService/GetOrderPrice",
+        "tinkoff.public.invest.api.contract.v1.OrdersService/GetOrderState",
+        "tinkoff.public.invest.api.contract.v1.OrdersService/ReplaceOrder"
+      ]
+    },
+    {
+      "limitPerMinute": 200,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OrdersService/CancelOrder"
+      ]
+    },
+    {
+      "limitPerMinute": 60,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
+      ]
+    },
+    {
+      "limitPerMinute": 300,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder"
+      ]
+    },
+    {
+      "limitPerMinute": 450,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.OrdersService/PostOrderAsync"
+      ]
+    },
+    {
+      "limitPerMinute": 200,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.SandboxService/CancelSandboxOrder",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/CloseSandboxAccount",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxAccounts",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxMaxLots",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOperations",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOperationsByCursor",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOrderState",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOrders",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxPortfolio",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxPositions",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxWithdrawLimits",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/OpenSandboxAccount",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/PostSandboxOrder",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/ReplaceSandboxOrder",
+        "tinkoff.public.invest.api.contract.v1.SandboxService/SandboxPayIn"
+      ]
+    },
+    {
+      "limitPerMinute": 50,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.StopOrdersService/CancelStopOrder",
+        "tinkoff.public.invest.api.contract.v1.StopOrdersService/PostStopOrder"
+      ]
+    },
+    {
+      "limitPerMinute": 60,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
+      ]
+    },
+    {
+      "limitPerMinute": 100,
+      "methods": [
+        "tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts",
+        "tinkoff.public.invest.api.contract.v1.UsersService/GetInfo",
+        "tinkoff.public.invest.api.contract.v1.UsersService/GetMarginAttributes",
+        "tinkoff.public.invest.api.contract.v1.UsersService/GetUserTariff"
+      ]
+    }
+  ],
+  "streamLimits": [
+    {
+      "limit": 16,
+      "streams": [
+        "tinkoff.public.invest.api.contract.v1.MarketDataStreamService/MarketDataServerSideStream",
+        "tinkoff.public.invest.api.contract.v1.MarketDataStreamService/MarketDataStream"
+      ],
+      "open": 0
+    },
+    {
+      "limit": 10,
+      "streams": [
+        "tinkoff.public.invest.api.contract.v1.OrdersStreamService/TradesStream"
+      ],
+      "open": 0
+    },
+    {
+      "limit": 2,
+      "streams": [
+        "tinkoff.public.invest.api.contract.v1.OperationsStreamService/PortfolioStream"
+      ],
+      "open": 0
+    },
+    {
+      "limit": 2,
+      "streams": [
+        "tinkoff.public.invest.api.contract.v1.OperationsStreamService/PositionsStream"
+      ],
+      "open": 0
+    },
+    {
+      "limit": 10,
+      "streams": [
+        "tinkoff.public.invest.api.contract.v1.OrdersStreamService/OrderStateStream"
+      ],
+      "open": 0
+    }
+  ]
+}
