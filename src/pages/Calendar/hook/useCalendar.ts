@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventsListAction, getEventsListSuccessOnly } from "../../../store/slices/events.slice";
 import { StateType } from "../../../store/root-reducer";
@@ -28,14 +28,17 @@ type TUseCalendar = (props: IUseCalendar) => {
   monthPayDiv: TFFormattPrice;
   yearAllPay: TFFormattPrice;
   isLoadingCalc: boolean;
-  dividends: boolean;
-  setDividends: React.Dispatch<React.SetStateAction<boolean>>;
+  filterFunction: (el: TPayOutsEvent) => boolean | TPayOutsEvent;
+  currentFilter: TFFilterKey,
+  setCurrentFilter: React.Dispatch<React.SetStateAction<TFFilterKey>>;
 };
+
+type TFFilterKey = "DEFAULT" | "DIVIDENDS" | "YEAR" | "MONTH";
 
 export const useCalendar: TUseCalendar = ({ accountId }) => {
   moment.locale("ru");
   const [isLoadingCalc, setIsLoadingCalc] = useState<boolean>(false);
-  const [dividends,setDividends] = useState<boolean>(false);
+  const [currentFilter, setCurrentFilter] = useState<TFFilterKey>('DEFAULT');
   const dispatch = useDispatch();
   const portfolio = useSelector((state: StateType) => {
     if (state.portfolios.data && !!state.portfolios.data?.length) {
@@ -50,6 +53,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
   const currency = useSelector((state: StateType) => state.currency.data) || 1;
   const { data: bondsData } = useSelector((state: StateType) => state.bonds);
   const [payOuts, setPayOuts] = useState<TPayOutsEvent[]>([]);
+  const [payOutsFiltred, setPayOutsFiltred] = useState<TPayOutsEvent[]>([]);
   const [monthPayBonds, setMonthPayBonds] = useState<TFFormattPrice>({
     formatt: "0",
     value: 0,
@@ -231,13 +235,115 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     }
   }, [accountId, payOuts]);
 
+  const filterFunction = useCallback((el: TPayOutsEvent) => {
+    if (currentFilter === 'DIVIDENDS') {
+      return el.operationType === "Дивиденды";
+    }
+
+    if (currentFilter === 'YEAR') {
+      return el;
+    }
+
+    if (currentFilter === 'MONTH') {
+      return el;
+    }
+
+    if (currentFilter === 'DEFAULT') {
+      return moment(el.paymentDate).year() === moment().year();
+    }
+
+    return el;
+  }, [currentFilter])
+
+
+  useEffect(() => {
+    setIsLoadingCalc(true);
+    let monthBonds = 0;
+    let monthDiv = 0;
+    let year = 0;
+    let newPayOuts: TPayOutsEvent[] = [];
+    const nextYearDate = moment().add(1, "y");
+    const nextMonthDate = moment().add(1, "M");
+
+    payOuts.forEach((item) => {
+      if (currentFilter === 'DIVIDENDS' && item.operationType === "Дивиденды") {
+        monthDiv += item.totalAmount.value;
+        year += item.totalAmount.value;
+        newPayOuts.push(item);
+      }
+      if (currentFilter === 'MONTH' && moment(item.paymentDate) < nextMonthDate) {
+        if (
+          item.operationType === "Дивиденды" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthDiv += item.totalAmount.value;
+        }
+        if (
+          item.operationType === "Купоны" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthBonds += item.totalAmount.value;
+        }
+        if (moment(item.paymentDate) < nextYearDate) {
+          year += item.totalAmount.value;
+        }
+        newPayOuts.push(item);
+      }
+      if (currentFilter === 'DEFAULT' && moment(item.paymentDate).year() === moment().year()) {
+        if (
+          item.operationType === "Дивиденды" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthDiv += item.totalAmount.value;
+        }
+        if (
+          item.operationType === "Купоны" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthBonds += item.totalAmount.value;
+        }
+        if (moment(item.paymentDate) < nextYearDate) {
+          year += item.totalAmount.value;
+        }
+        newPayOuts.push(item);
+      }
+      if (currentFilter === 'YEAR') {
+        if (
+          item.operationType === "Дивиденды" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthDiv += item.totalAmount.value;
+        }
+        if (
+          item.operationType === "Купоны" &&
+          moment(item.paymentDate) < nextMonthDate
+        ) {
+          monthBonds += item.totalAmount.value;
+        }
+        if (moment(item.paymentDate) < nextYearDate) {
+          year += item.totalAmount.value;
+        }
+        newPayOuts.push(item);
+      }
+    })
+
+    console.log(newPayOuts, 'newPayOuts');
+
+    setMonthPayBonds(formattedMoneySupply(monthBonds));
+    setMonthPayDiv(formattedMoneySupply(monthDiv));
+    setYearAllPay(formattedMoneySupply(year));
+    setPayOutsFiltred(newPayOuts);
+    setIsLoadingCalc(false);
+  }, [currentFilter, filterFunction, payOuts])
+
   return {
-    payOuts,
+    payOuts: payOutsFiltred,
     monthPayBonds,
     monthPayDiv,
     yearAllPay,
     isLoadingCalc,
-    dividends,
-    setDividends,
+    filterFunction,
+    currentFilter,
+    setCurrentFilter,
   };
 };

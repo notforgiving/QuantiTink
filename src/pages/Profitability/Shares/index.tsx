@@ -23,15 +23,16 @@ const Shares: FC = () => {
     currentSort,
     tariff,
     positions,
-        sortFunction,
-  } = useProfitability({accountId: accountId || '0'});
+    operations,
+    sortFunction,
+  } = useProfitability({ accountId: accountId || "0" });
   const { result } = useShares({
-    accountId: accountId || "0",
     withTax,
     comissionToggle,
     currentSort,
     tariff,
     positions,
+    operations,
   });
 
   return (

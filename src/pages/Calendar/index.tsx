@@ -19,8 +19,9 @@ const Calendar: FC = () => {
     monthPayDiv,
     yearAllPay,
     isLoadingCalc,
-    dividends,
-    setDividends,
+    filterFunction,
+    currentFilter,
+    setCurrentFilter,
   } = useCalendar({
     accountId,
   });
@@ -73,7 +74,7 @@ const Calendar: FC = () => {
         )}
       </div>
       <div className={css.total_wrapper}>
-        <span>В течении года:</span>
+        <span>За всё время:</span>
         {isLoadingCalc ? (
           <Load
             style={{
@@ -85,13 +86,34 @@ const Calendar: FC = () => {
           <div className={cn(css.total, css.all)}>{yearAllPay.formatt}</div>
         )}
       </div>
-      <div>
+      <div className={css.actions}>
         <Input
-          label="Отобразить только дивиденды"
+          label="Дивиденды"
           inputAttributes={{
             type: "checkbox",
-            checked: dividends,
-            onClick: () => setDividends(!dividends),
+            checked: currentFilter === "DIVIDENDS",
+            onClick: () =>
+              setCurrentFilter(
+                currentFilter === "DIVIDENDS" ? "DEFAULT" : "DIVIDENDS"
+              ),
+          }}
+        />
+        <Input
+          label="Период - год"
+          inputAttributes={{
+            type: "checkbox",
+            checked: currentFilter === "YEAR",
+            onClick: () =>
+              setCurrentFilter(currentFilter === "YEAR" ? "DEFAULT" : "YEAR"),
+          }}
+        />
+        <Input
+          label="Месяц"
+          inputAttributes={{
+            type: "checkbox",
+            checked: currentFilter === "MONTH",
+            onClick: () =>
+              setCurrentFilter(currentFilter === "MONTH" ? "DEFAULT" : "MONTH"),
           }}
         />
       </div>
@@ -121,16 +143,23 @@ const Calendar: FC = () => {
         {!isLoadingCalc &&
           payOuts &&
           !!payOuts.length &&
-          payOuts
-            .filter((el) => (dividends ? el.operationType === "Дивиденды" : el))
-            .map((event, index) => {
-              let eventCorrection =
-                moment(event.paymentDate).day() === 5
-                  ? moment(event.paymentDate).add(3, "d")
-                  : moment(event.paymentDate).add(1, "d");
-              if (moment(event.paymentDate).day() === 6) {
-                eventCorrection = moment(event.paymentDate).add(2, "d");
-              }
+          payOuts.map((event, index) => {
+            let eventCorrection =
+              moment(event.paymentDate).day() === 5
+                ? moment(event.paymentDate).add(3, "d")
+                : moment(event.paymentDate).add(1, "d");
+            if (moment(event.paymentDate).day() === 6) {
+              eventCorrection = moment(event.paymentDate).add(2, "d");
+            }
+            if (
+              eventCorrection.format("DD MMMM YYYY") <
+                moment().format("DD MMMM YYYY") &&
+              (event.operationType === "Купоны" ||
+                event.operationType === "Амортизация" ||
+                event.operationType === "Погашение")
+            ) {
+              return null;
+            } else {
               return (
                 <div className={css.item} key={`${index}${event.figi}`}>
                   <div className={css.item_left}>
@@ -180,7 +209,8 @@ const Calendar: FC = () => {
                   </div>
                 </div>
               );
-            })}
+            }
+          })}
       </div>
     </Container>
   );

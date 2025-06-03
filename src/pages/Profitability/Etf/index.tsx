@@ -28,10 +28,8 @@ const Etf = () => {
   } = useProfitability({ accountId: accountId || "0" });
 
   const { name, result } = useEtf({
-    accountId: accountId || "0",
     withTax,
     comissionToggle,
-    currentSort,
     tariff,
     positions,
     ticker: ticker || "",

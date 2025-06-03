@@ -32,8 +32,7 @@
     box-shadow: rgba(42, 57, 79, 0.751) -5px 0px 20px 3px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
+    gap: 50px;
     min-height: 100vh;
     position: fixed;
     right: 0px;
@@ -43,6 +42,7 @@
     border-radius: 5px 0px 0px 5px;
     padding: 20px;
     transition: 0.3s;
+    width: 100vw;
   }
   &_actions {
     display: flex;
@@ -57,7 +57,6 @@
     margin-bottom: 10px;
   }
   &_content {
-    flex: 1;
   }
   &_form {
     display: flex;

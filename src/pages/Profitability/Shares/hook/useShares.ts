@@ -6,10 +6,9 @@ import { formattedMoneySupply, getNumberMoney, searchItemInArrayData } from "uti
 import { TFPosition } from "types/portfolio.type";
 import { accordanceTariffAndComissions, TAccordanceTariffAndComissions } from "types/info.type";
 import { TFSortDir, TFSortKey, TActiveProfitability } from "pages/Profitability/types";
-import { TFUnionOperations } from "store/slices/operations.slice";
+import { TFOperation } from "types/operations.types";
 
 interface IUseSharesProps {
-    accountId: string;
     withTax: boolean;
     comissionToggle: boolean;
     currentSort: {
@@ -18,20 +17,16 @@ interface IUseSharesProps {
     },
     tariff: keyof TAccordanceTariffAndComissions,
     positions: TFPosition[],
+    operations: TFOperation[],
 }
 
 type TFUseShares = (props: IUseSharesProps) => {
     result: TActiveProfitability[],
 }
-export const useShares: TFUseShares = ({ accountId, withTax, comissionToggle, currentSort, tariff, positions }) => {
+export const useShares: TFUseShares = ({ operations, withTax, comissionToggle, currentSort, tariff, positions }) => {
     let result: TActiveProfitability[] = [];
 
     const { data: sharesData } = useSelector((state: StateType) => state.shares);
-    const { operations } = useSelector((state: StateType) => searchItemInArrayData(
-        state.operations.data || [],
-        "accountId",
-        accountId
-    ) || {} as TFUnionOperations);
 
     const operationsByBuyShares = operations.filter(el => (el.type === 'Покупка ценных бумаг' || el.type === 'Покупка ценных бумаг с карты') && el.instrumentType === 'share') || [];
 
