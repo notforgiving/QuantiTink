@@ -49,6 +49,12 @@
   flex-direction: column;
   gap: 10px;
 
+  &_header {
+    position: sticky;
+    top: 0;
+    background: variables.$darkBlue;
+  }
+
   @include variables.phone {
     margin-top: 10px;
   }
