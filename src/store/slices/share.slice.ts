@@ -27,21 +27,21 @@ export const sharesSlice = createSlice({
             state: TFSharesState,
             { payload: object }: PayloadAction<TShareState>
         ) => {
+            if (object.instrument.length !== 0) writeDataInlocalStorage({ localStorageName: SHARE_LOCALSTORAGE_NAME, response: object });
+            state.data = object;
             state.isLoading = false;
-            writeDataInlocalStorage({ localStorageName: SHARE_LOCALSTORAGE_NAME, response: object });
-            state.data = object
         },
         getSharesListErrorAction: (
             state: TFSharesState,
             { payload: error }: PayloadAction<unknown>
         ) => {
-            state.isLoading = false;
             state.errors = error;
+            state.isLoading = false;
         },
         getSharesListSuccessOnly: (state: TFSharesState, { payload: object }: PayloadAction<TShareState>) => {
-            state.isLoading = false;
             state.data = object;
             state.errors = '';
+            state.isLoading = false;
         }
     },
 });

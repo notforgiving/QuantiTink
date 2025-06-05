@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IListState } from "../../types/common";
-import { PORTFOLIOS, TFPortfolio } from "../../types/portfolio.type";
+import { PORTFOLIOS, PORTFOLIOS_LOCALSTORAGE_NAME, TFPortfolio } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
+import { writeDataInlocalStorage } from "utils";
 
 type TFUnionPortfolios = TFPortfolio;
 export type TFPortfolioState = IListState<TFUnionPortfolios>
@@ -27,7 +28,6 @@ export const portfoliosSlice = createSlice({
                 portfolios: TFPortfolio[],
             }>
         ) => {
-            state.isLoading = false;
             let newState: TFUnionPortfolios[] = [];
             accounts.forEach(account => {
                 if (!!portfolios.length) {
@@ -35,7 +35,22 @@ export const portfoliosSlice = createSlice({
                     newState.push(found as TFUnionPortfolios)
                 }
             })
+            writeDataInlocalStorage({
+                localStorageName: PORTFOLIOS_LOCALSTORAGE_NAME, response: {
+                    accountId: '0',
+                    response: newState,
+                }
+            });
             state.data = newState;
+            state.isLoading = false;
+        },
+        getPortfoliosListSuccessOnly: (
+            state: TFPortfolioState,
+            { payload: data }: PayloadAction<TFUnionPortfolios[]>
+        ) => {
+            state.isLoading = true;
+            state.data = data;
+            state.isLoading = false;
         },
         getPortfoliosListErrorAction: (
             state: TFPortfolioState,
@@ -46,5 +61,7 @@ export const portfoliosSlice = createSlice({
         }
     },
 });
+
+export const { getPortfoliosListAction, getPortfoliosListSuccessAction, getPortfoliosListSuccessOnly, getPortfoliosListErrorAction } = portfoliosSlice.actions;
 
 export default portfoliosSlice.reducer;

@@ -5,6 +5,8 @@ export const OPERATIONS = 'operations';
 export const GET_OPERATIONS_LIST = `${OPERATIONS}/getOperationsListAction`;
 export type TFPORTFOLIOS = typeof OPERATIONS;
 
+export const OPERATIONS_LOCALSTORAGE_NAME = 'Tbalance_operations';
+
 export type TFTrade = {
     dateTime: string;
     quantity: string;

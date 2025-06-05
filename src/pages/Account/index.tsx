@@ -24,39 +24,35 @@ const Account = () => {
   const accountId = id || "0";
   const dispatch = useDispatch();
   const portfolio = useSelector((state: StateType) =>
-    searchItemInArrayData(
-      state.portfolios.data || [],
-      "accountId",
-      accountId,
-    )
+    searchItemInArrayData(state.portfolios.data || [], "accountId", accountId)
   );
   useEffect(() => {
+    const forkDispatchDataBonds = forkDispatch({
+      localStorageName: BONDS_LOCALSTORAGE_NAME,
+      accountId,
+    });
+    const forkDispatchDataEtfs = forkDispatch({
+      localStorageName: ETFS_LOCALSTORAGE_NAME,
+      accountId,
+    });
+    const forkDispatchDataShares = forkDispatch({
+      localStorageName: SHARE_LOCALSTORAGE_NAME,
+      accountId,
+    });
     if (portfolio?.positions.length !== 0) {
       const bondPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "bond") || [];
-      const forkDispatchDataBonds = forkDispatch({
-        localStorageName: BONDS_LOCALSTORAGE_NAME,
-        accountId,
-      });
       forkDispatchDataBonds
         ? dispatch(getBondsListSuccessOnly(forkDispatchDataBonds))
         : dispatch(getBondsListAction({ bondPositions, accountId }));
       const etfPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "etf") || [];
-      const forkDispatchDataEtfs = forkDispatch({
-        localStorageName: ETFS_LOCALSTORAGE_NAME,
-        accountId,
-      });
       forkDispatchDataEtfs
         ? dispatch(getEtfsListSuccessOnly(forkDispatchDataEtfs))
         : dispatch(getEtfsListAction({ etfPositions, accountId }));
       const sharesPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "share") ||
         [];
-      const forkDispatchDataShares = forkDispatch({
-        localStorageName: SHARE_LOCALSTORAGE_NAME,
-        accountId,
-      });
       forkDispatchDataShares
         ? dispatch(getSharesListSuccessOnly(forkDispatchDataShares))
         : dispatch(getSharesListAction({ sharesPositions, accountId }));

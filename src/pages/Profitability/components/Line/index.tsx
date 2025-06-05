@@ -24,9 +24,13 @@ const Line: FC<ILineProps> = ({ operation }) => {
           {moment(operation.date).format("DD.MM.YYYY")}
         </div>
         <div className={css.quantity}>{operation.quantity}</div>
-        <div className={css.priceTotal}>{operation.priceTotal.formatt}</div>
+        <div className={css.priceTotal}>
+          <strong>{operation.priceTotal.value.formatt}</strong> /{" "}
+          <span>({operation.priceTotal.oneLot.formatt})</span>
+        </div>
         <div className={css.priceActiality}>
-          {operation.priceActiality.formatt}
+          <strong>{operation.priceActiality.value.formatt}</strong> /{" "}
+          <span>({operation.priceActiality.oneLot.formatt})</span>
         </div>
         <div className={css.profitabilityNow}>
           {operation.profitabilityNow.percent}% (

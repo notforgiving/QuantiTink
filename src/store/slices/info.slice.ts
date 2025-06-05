@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEntityState } from "../../types/common";
-import { INFO, TInfoState } from "../../types/info.type";
+import { INFO, INFO_LOCALSTORAGE_NAME, TInfoState } from "../../types/info.type";
+import { writeDataInlocalStorage } from "utils";
 
 export type TFInfoState = IEntityState<TInfoState>
 
@@ -22,8 +23,19 @@ export const infoSlice = createSlice({
             state: TFInfoState,
             { payload: data }: PayloadAction<TInfoState>
         ) => {
-            state.isLoading = false;
+            writeDataInlocalStorage({
+                localStorageName: INFO_LOCALSTORAGE_NAME, response: {
+                    accountId: '0',
+                    response: data,
+                }
+            });
             state.data = data;
+            state.isLoading = false;
+        },
+        getInfoSuccessOnly: (state: TFInfoState, { payload: object }: PayloadAction<TInfoState>) => {
+            state.isLoading = true;
+            state.data = object;
+            state.isLoading = false;
         },
         getInfoErrorAction: (
             state: TFInfoState,
@@ -34,5 +46,7 @@ export const infoSlice = createSlice({
         },
     },
 });
+
+export const { getInfoAction, getInfoSuccessAction, getInfoSuccessOnly } = infoSlice.actions;
 
 export default infoSlice.reducer;

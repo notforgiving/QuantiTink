@@ -17,3 +17,5 @@ export const accordanceTariffAndComissions: TAccordanceTariffAndComissions = {
 export type TInfoState = {
     tariff: keyof TAccordanceTariffAndComissions,
 };
+
+export const INFO_LOCALSTORAGE_NAME = 'Tbalance_info';

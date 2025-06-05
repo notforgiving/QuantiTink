@@ -1,17 +1,15 @@
-import React, { useEffect } from "react";
+import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "UI/components/Button";
 import Container from "UI/components/Container";
 import css from "../styles.module.scss";
-import { useEtf } from "./hook/useEtf";
 import Input from "UI/components/Input";
 import cn from "classnames";
 import { useProfitability } from "../hook/useProfitability";
 import Line from "../components/Line";
 
-const Etf = () => {
-  let { id: accountId, ticker } = useParams();
-
+const Bonds: FC = () => {
+  let { id: accountId, currency } = useParams();
   const {
     search,
     setSearch,
@@ -26,32 +24,26 @@ const Etf = () => {
     operations,
     sortFunction,
   } = useProfitability({ accountId: accountId || "0" });
-
-  const { name, result, tbankEtf } = useEtf({
-    withTax,
-    comissionToggle,
-    tariff,
-    positions,
-    ticker: ticker || "",
-    operations,
-  });
-
-  useEffect(() => {
-    if (tbankEtf) {
-      setComissionToggle(false);
-    }
-  }, [setComissionToggle, tbankEtf]);
-
   const navigate = useNavigate();
+
   return (
     <Container>
-      <Button
-        text="Назад"
-        buttonAttributes={{
-          type: "button",
-          onClick: () => navigate(`/account/${accountId}`),
-        }}
-      />
+      <div className={css.header_actions}>
+        <Button
+          text="Назад"
+          buttonAttributes={{
+            type: "button",
+            onClick: () => navigate(`/account/${accountId}`),
+          }}
+        />
+        <Button
+          text="Рассчет доходности облигации"
+          buttonAttributes={{
+            type: "button",
+            onClick: () => navigate(`/calcBonds`),
+          }}
+        />
+      </div>
       <div className={css.symbols}>
         <div className={css.green}>
           <strong></strong>
@@ -67,7 +59,9 @@ const Etf = () => {
         </div>
       </div>
       <div className={css.shares}>
-        <div className={css.shares_title}>{name}</div>
+        <div className={css.shares_title}>
+          {currency === "rub" ? "Российские облигации" : "Валютные облигации"}
+        </div>
         <div className={css.shares_actions}>
           <Input
             label="Рассчитать с учетом налога"
@@ -77,16 +71,14 @@ const Etf = () => {
               onClick: () => setWithTax(!withTax),
             }}
           />
-          {!tbankEtf && (
-            <Input
-              label="Рассчитать с учетом комиссии"
-              inputAttributes={{
-                type: "checkbox",
-                checked: comissionToggle,
-                onClick: () => setComissionToggle(!comissionToggle),
-              }}
-            />
-          )}
+          <Input
+            label="Рассчитать с учетом комиссии"
+            inputAttributes={{
+              type: "checkbox",
+              checked: comissionToggle,
+              onClick: () => setComissionToggle(!comissionToggle),
+            }}
+          />
           <Input
             inputAttributes={{
               type: "text",
@@ -123,7 +115,7 @@ const Etf = () => {
             </div>
             <div className={css.quantity}>Количество</div>
             <div className={css.priceTotal}>Сумма покупки</div>
-            <div className={css.priceActiality}>Сумма сейчас</div>
+            <div className={css.priceActiality}>Стоимость сейчас</div>
             <div
               className={css.profitabilityNow}
               onClick={() =>
@@ -138,7 +130,7 @@ const Etf = () => {
             <div className={css.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
-        <div className={css.shares_list}>
+        {/* <div className={css.shares_list}>
           {!!result.length &&
             result
               .filter((el) =>
@@ -148,10 +140,10 @@ const Etf = () => {
               .map((operation) => (
                 <Line operation={operation} key={operation.date} />
               ))}
-        </div>
+        </div> */}
       </div>
     </Container>
   );
 };
 
-export default Etf;
+export default Bonds;

@@ -10,6 +10,7 @@ import { watchGetShares } from './sagas/shares.saga';
 import { watchGetInfo } from './sagas/info.saga';
 import { watchSetUser } from './sagas/user.saga';
 import { watchToken } from './sagas/token.saga';
+import { watchGetAllBonds } from './sagas/allBonds.sags';
 
 const rootSaga = function* () {
   yield all([
@@ -24,6 +25,7 @@ const rootSaga = function* () {
     fork(watchGetBonds),
     fork(watchGetEtfs),
     fork(watchGetShares),
+    fork(watchGetAllBonds),
   ]);
 };
 

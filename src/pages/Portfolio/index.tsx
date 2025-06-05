@@ -158,7 +158,7 @@ const Portfolio: FC = () => {
             </div>
           )}
           {rubBonds.value !== 0 && (
-            <div className={css.portfolio_rubBonds}>
+            <div className={css.portfolio_rubBonds} onClick={() => navigate(`/account/${accountId}/bonds/rub`)}>
               <strong>Рублевые облигации:</strong>
               <span>
                 {rubBonds.formatt} ({rubBonds.percent}%)
@@ -166,7 +166,7 @@ const Portfolio: FC = () => {
             </div>
           )}
           {usdBonds.value !== 0 && (
-            <div className={css.portfolio_usdBonds}>
+            <div className={css.portfolio_usdBonds} onClick={() => navigate(`/account/${accountId}/bonds/usd`)}>
               <strong>Валютные облигации:</strong>
               <span>
                 {usdBonds.formatt} ({usdBonds.percent}%)

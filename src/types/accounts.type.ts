@@ -17,5 +17,7 @@ export type TFaccountsApiResponse = {
 };
 
 export const ACCOUNTS = 'accounts';
-export const GET_ACCOUNTS_LIST = `${ACCOUNTS}/getaccountsListAction`;
+export const GET_ACCOUNTS_LIST = `${ACCOUNTS}/getAccountsListAction`;
 export type TFGET_ACCOUNTS_LIST = typeof GET_ACCOUNTS_LIST;
+
+export const ACCOUNTS_LOCALSTORAGE_NAME = 'Tbalance_accounts';

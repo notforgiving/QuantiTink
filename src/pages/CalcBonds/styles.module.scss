@@ -1,0 +1,118 @@
+@use "UI/styles/variables";
+
+.calc_container {
+  max-width: calc(80vw - 20px);
+  @include variables.phone {
+    max-width: 100vw;
+  }
+  .back {
+    margin-bottom: 10px;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  &_field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    :global(.input_component) {
+      flex: 1;
+    }
+    :global(.Button_component) {
+      height: 40px;
+    }
+  }
+}
+
+.body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.bond {
+  max-width: 400px;
+  width: 100%;
+  @include variables.standartBlock;
+  @include variables.beigeBlock;
+  padding: 0;
+  font-size: 14px;
+  border: 1px solid variables.$darkBlue;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    .remove {
+      opacity: 0.5;
+    }
+  }
+
+  & .remove {
+    @include variables.standartBlock;
+    @include variables.beigeBlock;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &_row {
+    padding: 5px 10px;
+    border-bottom: 1px solid variables.$darkBlue;
+    display: grid;
+    grid-template-columns: 70% auto;
+    gap: 5px;
+
+    &:global(.readOnly) {
+      @include variables.purpuleBlock;
+    }
+    &:global(.isWrite) {
+      @include variables.yellowBlock;
+      input {
+        display: block;
+        background: #ffffff00;
+        width: 100%;
+        border: none;
+        color: variables.$darkBlue;
+      }
+    }
+    &:global(.forbidden) {
+      cursor: not-allowed;
+      @include variables.greyBlock;
+    }
+    &:global(.isResult) {
+      cursor: not-allowed;
+      background: variables.$green;
+      color: variables.$lightGray;
+      font-size: 18px;
+      &:not(:last-of-type) {
+        margin-top: 20px;
+      }
+    }
+  }
+  &_name {
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: variables.$darkBlue;
+    &:hover {
+      color: variables.$orange;
+    }
+  }
+}

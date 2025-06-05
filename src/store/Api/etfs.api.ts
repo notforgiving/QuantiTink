@@ -1,9 +1,10 @@
 import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 import { TFPosition } from "../../types/portfolio.type";
 import { EtfByAPI } from "./common";
+import { TEtfInstrument } from "types/etfs.type";
 
 export async function fetchAllGetEtfsAPI(etfsPositions: TFPosition[]) {
-    let results: any[] = [];
+    let results: TEtfInstrument[] = [];
     try {
         return Promise.all(etfsPositions.map(async pos => {
             const res = await fetchGetEtfByAPI(pos.figi);

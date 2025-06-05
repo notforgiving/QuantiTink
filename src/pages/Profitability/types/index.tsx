@@ -6,8 +6,14 @@ export type TActiveProfitability = {
   date: string;
   quantity: string;
   currentPrice: TFFormattPrice;
-  priceTotal: TFFormattPrice;
-  priceActiality: TFFormattPrice;
+  priceTotal: {
+    value: TFFormattPrice,
+    oneLot: TFFormattPrice,
+  };
+  priceActiality: {
+    value: TFFormattPrice,
+    oneLot: TFFormattPrice,
+  };
   ownershipPeriod: number;
   profitabilityNow: {
     percent: number;

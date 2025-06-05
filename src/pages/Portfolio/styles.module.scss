@@ -151,10 +151,12 @@
   &_rubBonds {
     @include variables.standartBlock;
     @include variables.purpuleBlock;
+    cursor: pointer;
   }
   &_usdBonds {
     @include variables.standartBlock;
     @include variables.beigeBlock;
+    cursor: pointer;
   }
   &_etf {
     @include variables.standartBlock;

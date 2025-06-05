@@ -42,7 +42,10 @@
     border-radius: 5px 0px 0px 5px;
     padding: 20px;
     transition: 0.3s;
-    width: 100vw;
+    width: 50vw;
+    @include variables.phone {
+      width: 100vw;
+    }
   }
   &_actions {
     display: flex;

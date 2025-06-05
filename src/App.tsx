@@ -8,6 +8,8 @@ import UserPage from "pages";
 import Account from "pages/Account";
 import Etf from "pages/Profitability/Etf";
 import Shares from "pages/Profitability/Shares";
+import Bonds from "pages/Profitability/Bonds";
+import CalcBonds from "pages/CalcBonds";
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
             <Route path="calendar" element={<Calendar />} />
             <Route path="shares" element={<Shares />} />
             <Route path="etf/:ticker" element={<Etf />} />
+            <Route path="bonds/:currency" element={<Bonds />} />
           </Route>
+          <Route path="calcBonds" element={<CalcBonds />}/>
         </Route>
       </Routes>
     </BrowserRouter>

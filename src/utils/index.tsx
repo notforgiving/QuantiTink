@@ -9,8 +9,12 @@ import {
   TFPosition,
 } from "../types/portfolio.type";
 import { TPortfolioEvents } from "../types/event.type";
-import { GOALS_LOCALSTORAGE_NAME, IGoalssForm } from "../pages/Portfolio/hooks/useGoals";
+import {
+  GOALS_LOCALSTORAGE_NAME,
+  IGoalssForm,
+} from "../pages/Portfolio/hooks/useGoals";
 import { IPortfolioItem } from "../pages/Portfolio/hooks/usePortfolio";
+import { fetchAllOrderBookBondsAPI } from "store/Api/allBonds.api";
 
 type TGetNumberMoney = (initialData: TFAmount | null) => number;
 /** Выводим адекватный вид для средств */
@@ -341,10 +345,12 @@ export const useCalcRebalancePortfolio: TFUseCalcRebalancePortfolio = ({
 interface IForkDispatchProps {
   localStorageName: string;
   accountId: string;
+  customTimeUpdate?: number;
 }
 export const forkDispatch = ({
   localStorageName,
   accountId,
+  customTimeUpdate = 3600,
 }: IForkDispatchProps) => {
   // Данные в локалсторадже
   const localStorageData = localStorage.getItem(localStorageName) || null;
@@ -352,6 +358,10 @@ export const forkDispatch = ({
   const localStorageDataJson = localStorageData
     ? JSON.parse(localStorageData)
     : null;
+
+  if (accountId === "0" && localStorageDataJson) {
+    return localStorageDataJson[accountId];
+  }
   // индекс искомого элемента
   const foundIndexDataInLocalStorage =
     localStorageDataJson !== null
@@ -372,7 +382,7 @@ export const forkDispatch = ({
       moment(
         localStorageDataJson[foundIndexDataInLocalStorage]["dateApi"]
       ).unix() <=
-      3600
+      customTimeUpdate
   ) {
     return localStorageDataJson[foundIndexDataInLocalStorage];
   }
@@ -396,10 +406,27 @@ export const writeDataInlocalStorage = ({
     : null;
   // индекс искомого элемента
   const localStorageDataFiltred = localStorageDataJson
-    ? localStorageDataJson.filter((el) => el !== response["accountId"])
+    ? localStorageDataJson.filter(
+        (el) => el.accountId !== response["accountId"]
+      )
     : [];
   localStorage.setItem(
     localStorageName,
     JSON.stringify([...localStorageDataFiltred, response])
   );
+};
+
+export async function getCurentPricesOfBonds(figi: string) {
+  const result = await fetchAllOrderBookBondsAPI([figi]);
+  return result;
+}
+
+export const getCorrectionDataForPayOut = (date: string) => {
+  if (moment(date).day() === 5) {
+    return moment(date).add(3, "d");
+  }
+  if (moment(date).day() === 6) {
+    return moment(date).add(2, "d");
+  }
+  return moment(date).add(1, "d");
 };

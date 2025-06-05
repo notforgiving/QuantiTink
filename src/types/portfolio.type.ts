@@ -42,3 +42,5 @@ export type TFPortfolio = {
 export const PORTFOLIOS = 'portfolios';
 export const GET_PORTFOLIO_LIST = `${PORTFOLIOS}/getPortfoliosListAction`;
 export type TFPORTFOLIOS = typeof PORTFOLIOS;
+
+export const PORTFOLIOS_LOCALSTORAGE_NAME = 'Tbalance_portfolios';

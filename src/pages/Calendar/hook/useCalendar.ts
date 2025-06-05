@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventsListAction, getEventsListSuccessOnly } from "../../../store/slices/events.slice";
 import { StateType } from "../../../store/root-reducer";
@@ -6,6 +6,7 @@ import {
   calcLotsForDividends,
   forkDispatch,
   formattedMoneySupply,
+  getCorrectionDataForPayOut,
   getNumberMoney,
   getOnlyEventsPositionsByPortfolio,
   searchItemInArrayData,
@@ -28,9 +29,9 @@ type TUseCalendar = (props: IUseCalendar) => {
   monthPayDiv: TFFormattPrice;
   yearAllPay: TFFormattPrice;
   isLoadingCalc: boolean;
-  filterFunction: (el: TPayOutsEvent) => boolean | TPayOutsEvent;
   currentFilter: TFFilterKey,
   setCurrentFilter: React.Dispatch<React.SetStateAction<TFFilterKey>>;
+  isLoadingEventData: boolean,
 };
 
 type TFFilterKey = "DEFAULT" | "DIVIDENDS" | "YEAR" | "MONTH";
@@ -38,7 +39,7 @@ type TFFilterKey = "DEFAULT" | "DIVIDENDS" | "YEAR" | "MONTH";
 export const useCalendar: TUseCalendar = ({ accountId }) => {
   moment.locale("ru");
   const [isLoadingCalc, setIsLoadingCalc] = useState<boolean>(false);
-  const [currentFilter, setCurrentFilter] = useState<TFFilterKey>('DEFAULT');
+  const [currentFilter, setCurrentFilter] = useState<TFFilterKey>("MONTH");
   const dispatch = useDispatch();
   const portfolio = useSelector((state: StateType) => {
     if (state.portfolios.data && !!state.portfolios.data?.length) {
@@ -66,7 +67,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     formatt: "0",
     value: 0,
   });
-  const { data: eventsData } = useSelector((state: StateType) => state.events);
+  const { data: eventsData, isLoading: isLoadingEventData } = useSelector((state: StateType) => state.events);
   const { data: sharesData } = useSelector((state: StateType) => state.shares);
 
   const portfolioOperations = useSelector((state: StateType) => {
@@ -98,7 +99,6 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
       let shareInfo: TShareInstrument | null = null;
       eventsData.portfolioEvents.forEach((event) => {
         let tempObject: TPayOutsEvent = {} as TPayOutsEvent;
-
         if (bondInfo?.figi !== event.figi)
           bondInfo = searchItemInArrayData(
             bondsData?.instrument || [],
@@ -123,7 +123,6 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           units: positionInfo?.quantityLots.units || "0",
           nano: positionInfo?.quantityLots.nano || 0,
         };
-
         if (
           event.hasOwnProperty("dividendNet") &&
           event.dividendNet.currency === "rub"
@@ -137,6 +136,8 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           );
 
           tempObject.paymentDate = event.paymentDate;
+          const correctionPayOutday = getCorrectionDataForPayOut(event.paymentDate);
+          tempObject.realPaymentDate = correctionPayOutday;
           tempObject.payOneLot = event.dividendNet;
           tempObject.operationType = "Дивиденды";
           tempObject.name = shareInfo?.name || "Акция";
@@ -153,11 +154,14 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           );
           // добавляем выплату в массив только если проверки пройдены или выплата все еще идет
           if (!waitEventDividends.receivedPayment && waitEventDividends.quantity !== 0) {
+            tempObject.paymentTitle = correctionPayOutday < moment() ? 'Ожидаются' : correctionPayOutday.format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : correctionPayOutday.format("DD MMMM");
             resultArray.push(tempObject);
           }
         } else {
           if (event.hasOwnProperty("payOneBond")) {
             tempObject.paymentDate = event.payDate;
+            const correctionPayOutday = getCorrectionDataForPayOut(event.payDate);
+            tempObject.realPaymentDate = correctionPayOutday;
             tempObject.payOneLot = event.payOneBond;
             tempObject.operationType =
               event.eventType === "EVENT_TYPE_CPN"
@@ -180,7 +184,10 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
               currencyValue,
               bondInfo?.currency
             );
-            resultArray.push(tempObject);
+            if (correctionPayOutday >= moment()) {
+              tempObject.paymentTitle = correctionPayOutday.format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : correctionPayOutday.format("DD MMMM");
+              resultArray.push(tempObject);
+            }
           }
         }
       });
@@ -235,106 +242,44 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     }
   }, [accountId, payOuts]);
 
-  const filterFunction = useCallback((el: TPayOutsEvent) => {
-    if (currentFilter === 'DIVIDENDS') {
-      return el.operationType === "Дивиденды";
-    }
-
-    if (currentFilter === 'YEAR') {
-      return el;
-    }
-
-    if (currentFilter === 'MONTH') {
-      return el;
-    }
-
-    if (currentFilter === 'DEFAULT') {
-      return moment(el.paymentDate).year() === moment().year();
-    }
-
-    return el;
-  }, [currentFilter])
-
 
   useEffect(() => {
     setIsLoadingCalc(true);
     let monthBonds = 0;
     let monthDiv = 0;
     let year = 0;
-    let newPayOuts: TPayOutsEvent[] = [];
-    const nextYearDate = moment().add(1, "y");
+    const nextYearDate = moment().year();
     const nextMonthDate = moment().add(1, "M");
-
-    payOuts.forEach((item) => {
-      if (currentFilter === 'DIVIDENDS' && item.operationType === "Дивиденды") {
-        monthDiv += item.totalAmount.value;
-        year += item.totalAmount.value;
-        newPayOuts.push(item);
+    const newPayOuts = payOuts.filter(el => {
+      if (currentFilter === 'DIVIDENDS' && el.operationType === 'Дивиденды') {
+        return el;
       }
-      if (currentFilter === 'MONTH' && moment(item.paymentDate) < nextMonthDate) {
-        if (
-          item.operationType === "Дивиденды" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthDiv += item.totalAmount.value;
-        }
-        if (
-          item.operationType === "Купоны" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthBonds += item.totalAmount.value;
-        }
-        if (moment(item.paymentDate) < nextYearDate) {
-          year += item.totalAmount.value;
-        }
-        newPayOuts.push(item);
+      if (currentFilter === 'MONTH' && moment(el.paymentDate) < nextMonthDate) {
+        return el;
       }
-      if (currentFilter === 'DEFAULT' && moment(item.paymentDate).year() === moment().year()) {
-        if (
-          item.operationType === "Дивиденды" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthDiv += item.totalAmount.value;
-        }
-        if (
-          item.operationType === "Купоны" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthBonds += item.totalAmount.value;
-        }
-        if (moment(item.paymentDate) < nextYearDate) {
-          year += item.totalAmount.value;
-        }
-        newPayOuts.push(item);
+      if (currentFilter === 'YEAR' && moment(el.paymentDate).year() === nextYearDate) {
+        return el;
       }
-      if (currentFilter === 'YEAR') {
-        if (
-          item.operationType === "Дивиденды" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthDiv += item.totalAmount.value;
-        }
-        if (
-          item.operationType === "Купоны" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthBonds += item.totalAmount.value;
-        }
-        if (moment(item.paymentDate) < nextYearDate) {
-          year += item.totalAmount.value;
-        }
-        newPayOuts.push(item);
+      if (currentFilter === 'DEFAULT') {
+        return el;
       }
+      return false;
     })
-
-    console.log(newPayOuts, 'newPayOuts');
-
+    newPayOuts.forEach((item) => {
+      if ((item.operationType === 'Купоны' || item.operationType === 'Амортизация' || item.operationType === 'Погашение') && moment(item.paymentDate) < nextMonthDate) {
+        monthBonds += item.totalAmount.value;
+      }
+      if (item.operationType === 'Дивиденды' && moment(item.paymentDate) < nextMonthDate) {
+        monthDiv += item.totalAmount.value;
+      }
+      year += item.totalAmount.value;
+    })
     setMonthPayBonds(formattedMoneySupply(monthBonds));
     setMonthPayDiv(formattedMoneySupply(monthDiv));
     setYearAllPay(formattedMoneySupply(year));
     setPayOutsFiltred(newPayOuts);
     setIsLoadingCalc(false);
-  }, [currentFilter, filterFunction, payOuts])
+  }, [currentFilter, payOuts])
 
   return {
     payOuts: payOutsFiltred,
@@ -342,8 +287,8 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     monthPayDiv,
     yearAllPay,
     isLoadingCalc,
-    filterFunction,
     currentFilter,
     setCurrentFilter,
+    isLoadingEventData,
   };
 };

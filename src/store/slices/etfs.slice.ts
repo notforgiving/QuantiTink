@@ -28,21 +28,21 @@ export const etfsSlice = createSlice({
             state: TFEtfsState,
             { payload: object }: PayloadAction<TEtfsInstrumentObject>
         ) => {
+            if (object.instrument.length !== 0) writeDataInlocalStorage({ localStorageName: ETFS_LOCALSTORAGE_NAME, response: object });
+            state.data = object;
             state.isLoading = false;
-            writeDataInlocalStorage({ localStorageName: ETFS_LOCALSTORAGE_NAME, response: object });
-            state.data = object
         },
         getEtfsListErrorAction: (
             state: TFEtfsState,
             { payload: error }: PayloadAction<unknown>
         ) => {
-            state.isLoading = false;
             state.errors = error;
+            state.isLoading = false;
         },
         getEtfsListSuccessOnly: (state: TFEtfsState, { payload: object }: PayloadAction<TEtfsInstrumentObject>) => {
-            state.isLoading = false;
             state.data = object;
             state.errors = '';
+            state.isLoading = false;
         }
     },
 });

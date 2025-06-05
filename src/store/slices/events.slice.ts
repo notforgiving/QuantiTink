@@ -29,7 +29,7 @@ export const eventsSlice = createSlice({
             { payload }: PayloadAction<TEventsState>
         ) => {
             state.isLoading = false;
-            writeDataInlocalStorage({ localStorageName: EVENTS_LOCALSTORAGE_NAME, response: payload });
+            if (payload.portfolioEvents.length !== 0) writeDataInlocalStorage({ localStorageName: EVENTS_LOCALSTORAGE_NAME, response: payload });
             state.data = payload
         },
         getEventsListErrorAction: (

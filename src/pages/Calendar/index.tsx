@@ -5,7 +5,6 @@ import Button from "../../UI/components/Button";
 import { useCalendar } from "./hook/useCalendar";
 import css from "./styles.module.scss";
 import cn from "classnames";
-import moment from "moment";
 import { formattedMoneySupply } from "../../utils";
 import Load from "../../UI/components/Load";
 import Input from "UI/components/Input";
@@ -19,9 +18,9 @@ const Calendar: FC = () => {
     monthPayDiv,
     yearAllPay,
     isLoadingCalc,
-    filterFunction,
     currentFilter,
     setCurrentFilter,
+    isLoadingEventData,
   } = useCalendar({
     accountId,
   });
@@ -99,15 +98,6 @@ const Calendar: FC = () => {
           }}
         />
         <Input
-          label="Период - год"
-          inputAttributes={{
-            type: "checkbox",
-            checked: currentFilter === "YEAR",
-            onClick: () =>
-              setCurrentFilter(currentFilter === "YEAR" ? "DEFAULT" : "YEAR"),
-          }}
-        />
-        <Input
           label="Месяц"
           inputAttributes={{
             type: "checkbox",
@@ -116,9 +106,18 @@ const Calendar: FC = () => {
               setCurrentFilter(currentFilter === "MONTH" ? "DEFAULT" : "MONTH"),
           }}
         />
+        <Input
+          label={`Период - ${new Date().getFullYear()}`}
+          inputAttributes={{
+            type: "checkbox",
+            checked: currentFilter === "YEAR",
+            onClick: () =>
+              setCurrentFilter(currentFilter === "YEAR" ? "DEFAULT" : "YEAR"),
+          }}
+        />
       </div>
       <div className={css.grid}>
-        {isLoadingCalc && (
+        {(isLoadingCalc || isLoadingEventData) && (
           <>
             <Load
               style={{
@@ -140,76 +139,39 @@ const Calendar: FC = () => {
             />
           </>
         )}
+        {}
         {!isLoadingCalc &&
-          payOuts &&
-          !!payOuts.length &&
+          !isLoadingEventData &&
+          payOuts.length !== 0 &&
           payOuts.map((event, index) => {
-            let eventCorrection =
-              moment(event.paymentDate).day() === 5
-                ? moment(event.paymentDate).add(3, "d")
-                : moment(event.paymentDate).add(1, "d");
-            if (moment(event.paymentDate).day() === 6) {
-              eventCorrection = moment(event.paymentDate).add(2, "d");
-            }
-            if (
-              eventCorrection.format("DD MMMM YYYY") <
-                moment().format("DD MMMM YYYY") &&
-              (event.operationType === "Купоны" ||
-                event.operationType === "Амортизация" ||
-                event.operationType === "Погашение")
-            ) {
-              return null;
-            } else {
-              return (
-                <div className={css.item} key={`${index}${event.figi}`}>
-                  <div className={css.item_left}>
+            return (
+              <div className={css.item} key={`${index}${event.figi}`}>
+                <div className={css.item_left}>
+                  <div
+                    className={cn(css.item_type, {
+                      _isDividend: event.operationType === "Дивиденды",
+                      _isRepayment: event.operationType === "Погашение",
+                    })}
+                  >
+                    {event.operationType}
+                  </div>
+                  <div className={css.item_date}>{event.paymentTitle}</div>
+                </div>
+                <div className={css.item_body}>
+                  <div className={css.item_info}>
+                    <div className={css.item_name}>{event.name}</div>
                     <div
-                      className={cn(css.item_type, {
+                      className={cn(css.item_price, {
                         _isDividend: event.operationType === "Дивиденды",
                         _isRepayment: event.operationType === "Погашение",
                       })}
                     >
-                      {event.operationType}
-                    </div>
-                    <div className={css.item_date}>
-                      {(event.operationType === "Купоны" ||
-                        event.operationType === "Погашение") &&
-                        eventCorrection.format("DD MMMM YYYY") ===
-                          moment().format("DD MMMM YYYY") &&
-                        `Сегодня`}
-                      {(event.operationType === "Купоны" ||
-                        event.operationType === "Погашение" ||
-                        event.operationType === "Амортизация") &&
-                        eventCorrection.unix() > moment().unix() &&
-                        eventCorrection.format("DD MMMM")}
-                      {event.operationType === "Дивиденды" &&
-                        eventCorrection.unix() < moment().unix() &&
-                        "Ожидаются"}
-                      {event.operationType === "Дивиденды" &&
-                        eventCorrection.format("DD MMMM YYYY") ===
-                          moment().format("DD MMMM YYYY") &&
-                        "Сегодня"}
-                      {event.operationType === "Дивиденды" &&
-                        eventCorrection.unix() > moment().unix() &&
-                        eventCorrection.format("DD MMMM")}
-                    </div>
-                  </div>
-                  <div className={css.item_body}>
-                    <div className={css.item_info}>
-                      <div className={css.item_name}>{event.name}</div>
-                      <div
-                        className={cn(css.item_price, {
-                          _isDividend: event.operationType === "Дивиденды",
-                          _isRepayment: event.operationType === "Погашение",
-                        })}
-                      >
-                        {event.totalAmount.formatt}
-                      </div>
+                      {event.totalAmount.formatt}
                     </div>
                   </div>
                 </div>
-              );
-            }
+              </div>
+            );
           })}
       </div>
     </Container>

@@ -1,14 +1,14 @@
 import { put, takeEvery } from "redux-saga/effects";
 import { fetchGetAccountsAPI } from "../Api/accounts.api";
-import { accountsSlice } from "../slices/accoutns.slice";
 import { GET_ACCOUNTS_LIST, TFAccount } from "../../types/accounts.type";
+import { getAccountsListErrorAction, getAccountsListSuccessAction } from "store/slices/accoutns.slice";
 
 function* getAccountsListSaga() {
     try {
         const response: TFAccount[] = yield fetchGetAccountsAPI();
-        yield put(accountsSlice.actions.getaccountsListSuccessAction(response));
+        yield put(getAccountsListSuccessAction(response));
     } catch (error) {
-        yield put(accountsSlice.actions.getaccountsListErrorAction(error as string));
+        yield put(getAccountsListErrorAction(error as string));
     }
 }
 

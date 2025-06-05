@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IListState } from "../../types/common";
-import { OPERATIONS, TFOperation } from "../../types/operations.types";
+import { OPERATIONS, OPERATIONS_LOCALSTORAGE_NAME, TFOperation } from "../../types/operations.types";
 import { TFAccount } from "../../types/accounts.type";
+import { writeDataInlocalStorage } from "utils";
 
 export type TFUnionOperations = { accountId: string, operations: TFOperation[] };
 export type TFOperationsState = IListState<TFUnionOperations>
@@ -22,12 +23,20 @@ export const operationsSlice = createSlice({
         },
         getOperationsListSuccessAction: (
             state: TFOperationsState,
-            { payload }: PayloadAction<{
-                operations: TFUnionOperations[],
-            }>
+            { payload }: PayloadAction<TFUnionOperations[]>
         ) => {
+            state.data = payload;
+            writeDataInlocalStorage({
+                localStorageName: OPERATIONS_LOCALSTORAGE_NAME, response: payload,
+            });
             state.isLoading = false;
-            state.data = payload.operations;
+        },
+        getOperationsListSuccessOnly: (
+            state: TFOperationsState,
+            { payload }: PayloadAction<TFUnionOperations[]>
+        ) => {
+            state.data = payload;
+            state.isLoading = false;
         },
         getOperationsListErrorAction: (
             state: TFOperationsState,
@@ -38,5 +47,7 @@ export const operationsSlice = createSlice({
         },
     },
 });
+
+export const { getOperationsListAction, getOperationsListSuccessAction, getOperationsListSuccessOnly, getOperationsListErrorAction } = operationsSlice.actions;
 
 export default operationsSlice.reducer;

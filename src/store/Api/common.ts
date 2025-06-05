@@ -26,3 +26,10 @@ export const GetBondEventsAPILimit = 200;
 
 export const GetDividendsAPI = MAINPARTURL + "InstrumentsService/GetDividends";
 export const GetDividendsAPILimit = 200;
+
+export const GetBondsAPI = MAINPARTURL + "InstrumentsService/Bonds";
+export const GetBondsAPILimit = 200;
+
+
+export const GetOrderBookAPI = MAINPARTURL + "MarketDataService/GetOrderBook";
+export const GetOrderBookAPILimit = 200;

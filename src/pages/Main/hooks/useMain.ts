@@ -61,7 +61,6 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
         if (portfoliosReturns.value !== 0 || general.totalAmountDepositsAllPortfolios.value !== 0) {
             setDifferentPercent(`${getPercentByTarget(portfoliosReturns.value, general.totalAmountDepositsAllPortfolios.value)}%`)
         }
-
     }, [portfoliosReturns, general.totalAmountDepositsAllPortfolios])
 
     return {

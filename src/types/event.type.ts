@@ -43,6 +43,8 @@ export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'По�
 export type TPayOutsEvent = {
     figi: string;
     paymentDate: string;
+    realPaymentDate: moment.Moment;
+    paymentTitle: 'Сегодня' | 'Ожидаются' | string;
     name: string;
     operationType: TOperationTypeEvent;
     payOneLot: TFAmount,

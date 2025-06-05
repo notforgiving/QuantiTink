@@ -28,21 +28,22 @@ export const bondsSlice = createSlice({
             state: TFBondsState,
             { payload: response }: PayloadAction<TInstrumentObject>
         ) => {
-            state.isLoading = false;
-            writeDataInlocalStorage({ localStorageName: BONDS_LOCALSTORAGE_NAME, response });
             state.data = response;
+            if (response.instrument.length !== 0) writeDataInlocalStorage({ localStorageName: BONDS_LOCALSTORAGE_NAME, response });
+            state.isLoading = false;
         },
         getBondsListErrorAction: (
             state: TFBondsState,
             { payload: error }: PayloadAction<unknown>
         ) => {
-            state.isLoading = false;
             state.errors = error;
+            state.isLoading = false;
         },
         getBondsListSuccessOnly: (state: TFBondsState, { payload: object }: PayloadAction<TInstrumentObject>) => {
-            state.isLoading = false;
+
             state.data = object;
             state.errors = '';
+            state.isLoading = false;
         }
     },
 });
