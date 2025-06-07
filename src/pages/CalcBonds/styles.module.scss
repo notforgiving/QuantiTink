@@ -31,9 +31,12 @@
 }
 
 .body {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 40px;
+  @include variables.phone {
+    grid-template-columns: 1fr;
+  }
 }
 
 .bond {
@@ -48,12 +51,14 @@
   position: relative;
 
   &:hover {
-    .remove {
+    .remove,
+    .saveChanges {
       opacity: 0.5;
     }
   }
 
-  & .remove {
+  & .remove,
+  & .saveChanges {
     @include variables.standartBlock;
     @include variables.beigeBlock;
     position: absolute;
@@ -69,11 +74,16 @@
     }
   }
 
+  & .saveChanges {
+    top: 34px;
+  }
+
   &_row {
     padding: 5px 10px;
     border-bottom: 1px solid variables.$darkBlue;
     display: grid;
     grid-template-columns: 70% auto;
+    align-items: center;
     gap: 5px;
 
     &:global(.readOnly) {
@@ -101,6 +111,18 @@
       &:not(:last-of-type) {
         margin-top: 20px;
       }
+    }
+    &:global(._isWrongPrice) {
+      input {
+        background: variables.$red;
+        color: variables.$lightGray;
+      }
+    }
+    &:global(.weight) {
+      font-weight: 700;
+    }
+    &:global(._isLightGreen) {
+      background: rgb(119, 169, 119);
     }
   }
   &_name {

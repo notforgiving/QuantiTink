@@ -6,7 +6,6 @@ import Button from "UI/components/Button";
 import { useCalcBonds } from "./hook/useCalcBonds";
 import Bond from "./components/Bond";
 import { useNavigate } from "react-router-dom";
-import LoadingBond from "./components/LoadingBond";
 
 const CalcBonds: FC = () => {
   const navigate = useNavigate();
@@ -14,16 +13,18 @@ const CalcBonds: FC = () => {
     inputField,
     setInputField,
     handleAddBond,
-    bonds,
     handleRemoveBond,
     isLoading,
     error,
     bondsTable,
     handleChangeValueBonds,
     isLoadingBonds,
+    handleChangeCurrentPrice,
+    setSortByProfitability,
+    sortFunction,
+    sortByProfitability,
   } = useCalcBonds({});
-  console.log(bondsTable,'bondsTable');
-  
+
   return (
     <Container className={css.calc_container}>
       <div className={css.back}>
@@ -58,18 +59,48 @@ const CalcBonds: FC = () => {
           />
         </div>
       </div>
+      {bondsTable.length > 1 && (
+        <div className={css.back}>
+          <Button
+            text={
+              sortByProfitability === null
+                ? "Сортировать по увеличению доходности"
+                : sortByProfitability === false
+                ? "Сортировать по уменьшению доходности"
+                : "Сортировать по алфавиту"
+            }
+            buttonAttributes={{
+              onClick: () =>
+                setSortByProfitability((prevState) => {
+                  if (prevState) {
+                    return null;
+                  }
+                  if (prevState === null) {
+                    return false;
+                  }
+                  return true;
+                }),
+              disabled: isLoading || isLoadingBonds,
+            }}
+          />
+        </div>
+      )}
+
       <div className={css.body}>
-        {!!bondsTable.length &&
-          bondsTable.map((item) => (
-            <Bond
-              key={item.isin}
-              itemData={item}
-              handleRemoveBond={handleRemoveBond}
-              handleChangeValueBonds={handleChangeValueBonds}
-            />
-          ))}
-        {isLoading && <LoadingBond />}
-        {isLoadingBonds && "Загрузка, подождите пожалуйста"}
+        {isLoading && "Загрузка, подождите пожалуйста"}
+        {/* {isLoading && <LoadingBond />} */}
+        {!!bondsTable.length && !isLoading &&
+          bondsTable
+            .sort(sortFunction)
+            .map((item) => (
+              <Bond
+                key={item.isin}
+                itemData={item}
+                handleRemoveBond={handleRemoveBond}
+                handleChangeValueBonds={handleChangeValueBonds}
+                handleChangeCurrentPrice={handleChangeCurrentPrice}
+              />
+            ))}
       </div>
     </Container>
   );

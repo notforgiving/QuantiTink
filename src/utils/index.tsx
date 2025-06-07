@@ -14,7 +14,7 @@ import {
   IGoalssForm,
 } from "../pages/Portfolio/hooks/useGoals";
 import { IPortfolioItem } from "../pages/Portfolio/hooks/usePortfolio";
-import { fetchAllOrderBookBondsAPI } from "store/Api/allBonds.api";
+import { IBondsTable } from "pages/CalcBonds/hook/useCalcBonds";
 
 type TGetNumberMoney = (initialData: TFAmount | null) => number;
 /** Выводим адекватный вид для средств */
@@ -415,11 +415,6 @@ export const writeDataInlocalStorage = ({
     JSON.stringify([...localStorageDataFiltred, response])
   );
 };
-
-export async function getCurentPricesOfBonds(figi: string) {
-  const result = await fetchAllOrderBookBondsAPI([figi]);
-  return result;
-}
 
 export const getCorrectionDataForPayOut = (date: string) => {
   if (moment(date).day() === 5) {

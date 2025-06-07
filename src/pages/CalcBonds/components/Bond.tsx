@@ -7,12 +7,14 @@ interface IBondProps {
   itemData: IBondsTable;
   handleRemoveBond: (isin: string) => void;
   handleChangeValueBonds: (isin: string, newValue: number) => void;
+  handleChangeCurrentPrice: (isin: string, newPrice: number) => void;
 }
 
 const Bond: FC<IBondProps> = ({
   itemData,
   handleRemoveBond,
   handleChangeValueBonds,
+  handleChangeCurrentPrice,
 }) => {
   return (
     <div className={css.bond}>
@@ -40,104 +42,121 @@ const Bond: FC<IBondProps> = ({
       </div>
       <div className={cn(css.bond_row, "readOnly")}>
         <strong>Номинал облигации, руб</strong>
-        <span>1 000,00 ₽</span>
+        <span>{itemData.formattInitialNominal.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Количество облигаций, шт</strong>
         <input
           type="number"
           placeholder="Кол-во"
+          name="value"
           value={itemData.value}
           onChange={(e) =>
             handleChangeValueBonds(itemData.isin, Number(e.target.value))
           }
         />
       </div>
-      <div className={cn(css.bond_row, "isWrite")}>
+      <div
+        className={cn(css.bond_row, "isWrite", {
+          _isWrongPrice: itemData.priceInPercent === 100 || itemData.priceInPercent === 0,
+        })}
+      >
         <strong>Стоимость облигации, %</strong>
-        <input type="text" placeholder="100,40%" value="100,40%" />
+        <input
+          type="number"
+          placeholder="0%"
+          name="priceInPercent"
+          value={itemData.priceInPercent}
+          onChange={(e) =>
+            handleChangeCurrentPrice(itemData.isin, Number(e.target.value))
+          }
+        />
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Купонный доход на одну облигацию, руб</strong>
-        <input type="text" placeholder="19,73" value="19,73" />
+        <span>{itemData.payOneBond.value}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Количество купонных выплат до погашения</strong>
-        <input type="number" placeholder="23" value="23" />
+        <span>{itemData.eventsLength}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>НКД</strong>
-        <input type="number" placeholder="9" value="9" />
+        <span>{itemData.nkd.value}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Дата погашения</strong>
-        <input type="text" placeholder="14.07.2028" value="14.07.2028" />
+        <span>{itemData.maturityDate.formatt}</span>
       </div>
 
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Дней до погашения</strong>
-        <span>1137</span>
+        <span>{itemData.daysToMaturity}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", 'weight', {
+          _isLightGreen: Number(itemData.yearsToMaturity) >= 3,
+        })}
+      >
         <strong>Лет до погашения</strong>
-        <span>3,12</span>
+        <span>{itemData.yearsToMaturity}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Комиссия за покупку</strong>
-        <span>3,01 ₽</span>
+        <span>{itemData.commissionForPurchase}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Цена самих облигаций</strong>
-        <span>1 004,00 ₽</span>
+        <span>{itemData.priceInCurrencyView.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Уплаченного НКД</strong>
-        <span>9,20 ₽</span>
+        <span>{itemData.totalNkd.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div className={cn(css.bond_row, "forbidden", 'weight')}>
         <strong>Полная цена покупки</strong>
-        <span>1 016,21 ₽</span>
+        <span>{itemData.fullPrice.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div className={cn(css.bond_row, "forbidden", 'weight')}>
         <strong>С одной выплаты буду получать</strong>
-        <span>19,73 ₽</span>
+        <span>{itemData.payOneBondTotal.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Цена покупки выше номинала</strong>
-        <span>Да</span>
+        <span>{itemData.aboveNominal ? "Да" : "Нет"}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Суммарно получим купонами</strong>
-        <span>453,79 ₽</span>
+        <span>{itemData.sumAllCouponsReceived.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Маржа от погашения</strong>
-        <span>0,00 ₽</span>
+        <span>{itemData.marginFromBondRepayment.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Налог на купоны</strong>
-        <span>58,99 ₽</span>
+        <span>{itemData.couponTax.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Налог на погашение</strong>
-        <span>0,00 ₽</span>
+        <span>{itemData.taxOnBondRepayment.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Погашение</strong>
-        <span>1 000,00 ₽</span>
+        <span>{itemData.bondRepaymentAmount.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "forbidden")}>
         <strong>Чистая сумма в итоге</strong>
-        <span>1 394,80 ₽</span>
+        <span>{itemData.netAmountInTheEnd.formatt}</span>
       </div>
 
       <div className={cn(css.bond_row, "isResult")}>
         <strong>Чистая прибыль</strong>
-        <span>378,59 ₽</span>
+        <span>{itemData.netProfit.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "isResult")}>
         <strong>Доходность (годовых)</strong>
-        <span>11,96%</span>
+        <span>{itemData.annualProfitability}%</span>
       </div>
     </div>
   );

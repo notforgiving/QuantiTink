@@ -21,6 +21,8 @@ export type TInstrument = {
     ticker: string;
     currency: TFCurrency;
     brand: TBrand;
+    aciValue: TFAmount;
+    maturityDate: string;
 }
 
 export const BONDS_LOCALSTORAGE_NAME = 'Tbalance_bonds';

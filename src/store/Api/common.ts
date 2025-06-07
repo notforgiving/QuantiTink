@@ -24,6 +24,9 @@ export const EtfByAPILimit = 200;
 export const GetBondEventsAPI = MAINPARTURL + "InstrumentsService/GetBondEvents";
 export const GetBondEventsAPILimit = 200;
 
+export const GetBondCouponsAPI = MAINPARTURL + "InstrumentsService/GetBondCoupons";
+export const GetBondCouponsAPILimit = 200;
+
 export const GetDividendsAPI = MAINPARTURL + "InstrumentsService/GetDividends";
 export const GetDividendsAPILimit = 200;
 
