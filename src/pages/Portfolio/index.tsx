@@ -55,6 +55,10 @@ const Portfolio: FC = () => {
     etfArray,
   });
 
+  const forecastYear =
+    currentProfitability !== 0
+      ? (currentProfitability / (investmentPeriod ?? 1)) * 12
+      : 0;
   return (
     <Container>
       <Button
@@ -104,6 +108,10 @@ const Portfolio: FC = () => {
                 buttonAttributes={{
                   type: "button",
                   onClick: () => navigate(`/account/${accountId}/calendar`),
+                  disabled:
+                    shares.value === 0 &&
+                    rubBonds.value === 0 &&
+                    usdBonds.value === 0,
                 }}
               />
             </div>
@@ -142,15 +150,17 @@ const Portfolio: FC = () => {
             title="Без учета доходности по телу портфеля"
           >
             <strong>Годовая доходность (прогноз)</strong>
-            <span>{`${(
-              (currentProfitability / (investmentPeriod ?? 1)) *
-              12
-            ).toFixed(2)}%`}</span>
+            <span>
+              {forecastYear !== 0 ? `${forecastYear.toFixed(2)}%` : "0%"}
+            </span>
           </div>
         </div>
         <div className={css.portfolio_balance}>
           {shares.value !== 0 && (
-            <div className={css.portfolio_shares} onClick={() => navigate(`/account/${accountId}/shares`)}>
+            <div
+              className={css.portfolio_shares}
+              onClick={() => navigate(`/account/${accountId}/shares`)}
+            >
               <strong>Акции:</strong>
               <span>
                 {shares.formatt} ({shares.percent}%)
@@ -158,7 +168,10 @@ const Portfolio: FC = () => {
             </div>
           )}
           {rubBonds.value !== 0 && (
-            <div className={css.portfolio_rubBonds} onClick={() => navigate(`/account/${accountId}/bonds/rub`)}>
+            <div
+              className={css.portfolio_rubBonds}
+              onClick={() => navigate(`/account/${accountId}/bonds/rub`)}
+            >
               <strong>Рублевые облигации:</strong>
               <span>
                 {rubBonds.formatt} ({rubBonds.percent}%)
@@ -166,7 +179,10 @@ const Portfolio: FC = () => {
             </div>
           )}
           {usdBonds.value !== 0 && (
-            <div className={css.portfolio_usdBonds} onClick={() => navigate(`/account/${accountId}/bonds/usd`)}>
+            <div
+              className={css.portfolio_usdBonds}
+              onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
+            >
               <strong>Валютные облигации:</strong>
               <span>
                 {usdBonds.formatt} ({usdBonds.percent}%)
@@ -176,7 +192,13 @@ const Portfolio: FC = () => {
           {etfArray &&
             !!etfArray.length &&
             etfArray.map((etf) => (
-              <div className={css.portfolio_etf} key={etf.name} onClick={() => navigate(`/account/${accountId}/etf/${etf.ticker}`)}>
+              <div
+                className={css.portfolio_etf}
+                key={etf.name}
+                onClick={() =>
+                  navigate(`/account/${accountId}/etf/${etf.ticker}`)
+                }
+              >
                 <strong>{etf.name}</strong>
                 <span>
                   {etf.formatt} ({etf.percent}%)

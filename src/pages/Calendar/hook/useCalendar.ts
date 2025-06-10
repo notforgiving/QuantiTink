@@ -137,7 +137,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
 
           tempObject.paymentDate = event.paymentDate;
           const correctionPayOutday = getCorrectionDataForPayOut(event.paymentDate);
-          tempObject.realPaymentDate = correctionPayOutday;
+          tempObject.realPaymentDate = moment(correctionPayOutday);
           tempObject.payOneLot = event.dividendNet;
           tempObject.operationType = "Дивиденды";
           tempObject.name = shareInfo?.name || "Акция";
@@ -154,14 +154,14 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           );
           // добавляем выплату в массив только если проверки пройдены или выплата все еще идет
           if (!waitEventDividends.receivedPayment && waitEventDividends.quantity !== 0) {
-            tempObject.paymentTitle = correctionPayOutday < moment() ? 'Ожидаются' : correctionPayOutday.format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : correctionPayOutday.format("DD MMMM");
+            tempObject.paymentTitle = moment(correctionPayOutday) < moment() ? 'Ожидаются' : moment(correctionPayOutday).format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : moment(correctionPayOutday).format("DD MMMM");
             resultArray.push(tempObject);
           }
         } else {
           if (event.hasOwnProperty("payOneBond")) {
             tempObject.paymentDate = event.payDate;
             const correctionPayOutday = getCorrectionDataForPayOut(event.payDate);
-            tempObject.realPaymentDate = correctionPayOutday;
+            tempObject.realPaymentDate = moment(correctionPayOutday);
             tempObject.payOneLot = event.payOneBond;
             tempObject.operationType =
               event.eventType === "EVENT_TYPE_CPN"
@@ -184,8 +184,9 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
               currencyValue,
               bondInfo?.currency
             );
-            if (correctionPayOutday >= moment()) {
-              tempObject.paymentTitle = correctionPayOutday.format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : correctionPayOutday.format("DD MMMM");
+
+            if (moment(correctionPayOutday).format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') || moment(correctionPayOutday).unix() >= moment().unix()) {
+              tempObject.paymentTitle = moment(correctionPayOutday).format('DD MMMM YYYY') === moment().format('DD MMMM YYYY') ? 'Сегодня' : moment(correctionPayOutday).format("DD MMMM");
               resultArray.push(tempObject);
             }
           }
@@ -217,6 +218,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
       // Так как выплаты пропадают из выдачи мы записываем те, которые предназначены на следующий день
       const nextYearDate = moment().add(1, "y");
       const nextMonthDate = moment().add(1, "M");
+
       payOuts.forEach((item) => {
         if (
           item.operationType === "Дивиденды" &&

@@ -14,7 +14,6 @@ import {
   IGoalssForm,
 } from "../pages/Portfolio/hooks/useGoals";
 import { IPortfolioItem } from "../pages/Portfolio/hooks/usePortfolio";
-import { IBondsTable } from "pages/CalcBonds/hook/useCalcBonds";
 
 type TGetNumberMoney = (initialData: TFAmount | null) => number;
 /** Выводим адекватный вид для средств */
@@ -418,10 +417,10 @@ export const writeDataInlocalStorage = ({
 
 export const getCorrectionDataForPayOut = (date: string) => {
   if (moment(date).day() === 5) {
-    return moment(date).add(3, "d");
+    return moment(date).add(3, "d").toString();
   }
   if (moment(date).day() === 6) {
-    return moment(date).add(2, "d");
+    return moment(date).add(2, "d").toString();
   }
-  return moment(date).add(1, "d");
+  return moment(date).add(1, "d").toString();
 };
