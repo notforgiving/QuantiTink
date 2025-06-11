@@ -69,6 +69,7 @@ type TUseCalcBonds = (props: IUseCalcBonds) => {
     sortByProfitability: boolean | null;
 }
 export const useCalcBonds: TUseCalcBonds = () => {
+    const UPDATETIME = process.env.NODE_ENV === 'development' ? 60 : 5 * 60;
     const { id: userId } = useAuth();
     const dispatch = useDispatch();
     const [sortByProfitability, setSortByProfitability] = useState<boolean | null>(false);
@@ -78,7 +79,8 @@ export const useCalcBonds: TUseCalcBonds = () => {
     const [error, setError] = useState<string | null>(null);
     const [inputField, setInputField] = useState<string>('');
     const { info: { data: { tariff } },
-        all: { data: { instruments: allBondsData }, isLoading: isLoadingBonds }
+        all: { data: { instruments: allBondsData }, isLoading: isLoadingBonds },
+        currency: { data: currencyExchangeRate }
     } = useSelector((state: StateType) => state);
 
     const comission = accordanceTariffAndComissions[tariff] || 0;
@@ -94,7 +96,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         return null
     }
 
-    const clculationInnerDataInBond = ({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity }: {
+    const clculationInnerDataInBond = ({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity, initialNominal }: {
         eventsLength: any,
         formattInitialNominal: TFFormattPrice,
         priceInPercent: number,
@@ -103,8 +105,10 @@ export const useCalcBonds: TUseCalcBonds = () => {
         nkd: TFFormattPrice;
         yearsToMaturity: string;
         daysToMaturity: number;
+        initialNominal: TFAmount
     }) => {
-        const priceInCurrencyView = formattedMoneySupply(formattInitialNominal.value * quantity * (priceInPercent / 100));
+        const currencyExchangeRateCorrection = initialNominal.currency === 'usd' ? currencyExchangeRate : 1;
+        const priceInCurrencyView = formattedMoneySupply(formattInitialNominal.value * quantity * (priceInPercent / 100) * currencyExchangeRateCorrection);
         const aboveNominal = formattInitialNominal.value * (priceInPercent / 100) > formattInitialNominal.value;
         ///////////////
         const priceWithoutCommission = formattedMoneySupply(priceInCurrencyView.value);
@@ -123,7 +127,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         ///////////////
         const taxOnBondRepayment = Number(yearsToMaturity) >= 3 ? formattedMoneySupply(0) : formattedMoneySupply(marginFromBondRepayment.value * 0.13);
         ///////////////
-        const bondRepaymentAmount = formattedMoneySupply(formattInitialNominal.value * quantity);
+        const bondRepaymentAmount = formattedMoneySupply(formattInitialNominal.value * quantity * currencyExchangeRateCorrection);
         ///////////////
         const netAmountInTheEnd = formattedMoneySupply(bondRepaymentAmount.value + sumAllCouponsReceived.value - couponTax.value - taxOnBondRepayment.value);
         ///////////////
@@ -152,17 +156,22 @@ export const useCalcBonds: TUseCalcBonds = () => {
     const createUpdateItem = async (isin: string) => {
         const found = searchBond(isin);
         if (found) {
+
             const prices = await fetchGetOrderBookBondAPI(found.figi);
             const events = await fetchGetBondCouponsAPI(found.figi, moment().utc(), moment(found.maturityDate).add(3, 'd').utc());
+
+            const currencyExchangeRateCorrection = found.initialNominal.currency === 'usd' ? currencyExchangeRate : 1;
             const currentPrice = prices;
+
             const priceInPercent = getNumberMoney({
                 currency: found.currency,
                 nano: currentPrice.lastPrice.nano,
                 units: currentPrice.lastPrice.units,
-            })
+            });
+
             const quantity = 1;
             const nkd = formattedMoneySupply(getNumberMoney(found.aciValue));
-            const payOneBond = formattedMoneySupply(getNumberMoney(events[0].payOneBond));
+            const payOneBond = formattedMoneySupply(getNumberMoney(events[0].payOneBond) * currencyExchangeRateCorrection);
             const formattInitialNominal = formattedMoneySupply(getNumberMoney(found.initialNominal))
             const daysToMaturity = Math.ceil((moment(found.maturityDate).unix() - moment().unix()) / 86400);
             const yearsToMaturity = (daysToMaturity / 365).toFixed(2);
@@ -179,7 +188,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                 bondRepaymentAmount,
                 netAmountInTheEnd,
                 netProfit,
-                annualProfitability, totalNkd } = clculationInnerDataInBond({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity })
+                annualProfitability, totalNkd } = clculationInnerDataInBond({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity, initialNominal: found.initialNominal })
             return {
                 value: quantity,
                 isin,
@@ -199,7 +208,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                 payOneBond,
                 daysToMaturity,
                 yearsToMaturity,
-                commissionForPurchase,
+                commissionForPurchase: commissionForPurchase,
                 priceInCurrencyView,
                 fullPrice,
                 aboveNominal,
@@ -215,7 +224,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                 payOneBondTotal,
             }
         } else {
-            return new Promise<{code:number}>(function (resolve) {
+            return new Promise<{ code: number }>(function (resolve) {
                 return resolve({
                     code: 404
                 })
@@ -270,7 +279,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                         netAmountInTheEnd,
                         netProfit,
                         annualProfitability, totalNkd } = clculationInnerDataInBond({
-                            eventsLength: item.eventsLength, formattInitialNominal: item.formattInitialNominal, priceInPercent: newPrice, payOneBond: item.payOneBond, quantity: item.value, nkd: item.nkd, yearsToMaturity: item.yearsToMaturity, daysToMaturity: item.daysToMaturity
+                            eventsLength: item.eventsLength, formattInitialNominal: item.formattInitialNominal, priceInPercent: newPrice, payOneBond: item.payOneBond, quantity: item.value, nkd: item.nkd, yearsToMaturity: item.yearsToMaturity, daysToMaturity: item.daysToMaturity, initialNominal: item.initialNominal,
                         })
                     return {
                         ...item,
@@ -315,7 +324,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                         netAmountInTheEnd,
                         netProfit,
                         annualProfitability, totalNkd } = clculationInnerDataInBond({
-                            eventsLength: item.eventsLength, formattInitialNominal: item.formattInitialNominal, priceInPercent: item.priceInPercent, payOneBond: item.payOneBond, quantity: newValue, nkd: item.nkd, yearsToMaturity: item.yearsToMaturity, daysToMaturity: item.daysToMaturity
+                            eventsLength: item.eventsLength, formattInitialNominal: item.formattInitialNominal, priceInPercent: item.priceInPercent, payOneBond: item.payOneBond, quantity: newValue, nkd: item.nkd, yearsToMaturity: item.yearsToMaturity, daysToMaturity: item.daysToMaturity, initialNominal: item.initialNominal
                         })
                     return {
                         ...item,
@@ -373,17 +382,17 @@ export const useCalcBonds: TUseCalcBonds = () => {
                         moment(
                             res.date
                         ).unix() >
-                        5 * 60
+                        UPDATETIME
                     if (canWeUpdateData) {
                         console.log('Обновляемся');
-                        const promisesUpdateItems: Promise<IBondsTable | {code:number}>[] = [];
+                        const promisesUpdateItems: Promise<IBondsTable | { code: number }>[] = [];
                         valuesJSON.forEach((item: IBondsTable) => {
-                            const creatingItem: Promise<IBondsTable | {code:number}> = createUpdateItem(item.isin);
+                            const creatingItem: Promise<IBondsTable | { code: number }> = createUpdateItem(item.isin);
                             promisesUpdateItems.push(creatingItem)
                         })
                         Promise.all(promisesUpdateItems).then((res) => {
                             const temp: IBondsTable[] = [];
-                            res.forEach((el:any) => {
+                            res.forEach((el: any) => {
                                 if (el.code === 404) {
                                     console.log('Не найден элемент');
                                 } else {

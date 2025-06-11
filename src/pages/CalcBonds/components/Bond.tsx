@@ -82,7 +82,7 @@ const Bond: FC<IBondProps> = ({
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>НКД</strong>
-        <span>{itemData.nkd.value}</span>
+        <span>{itemData.nkd.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Дата погашения</strong>
