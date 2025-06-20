@@ -27,10 +27,12 @@ const Bond: FC<IBondProps> = ({
       <a
         href={`https://www.tbank.ru/invest/bonds/${itemData.isin}/`}
         target="_blank"
-        className={cn(css.bond_name, css.bond_row)}
+        className={cn(css.bond_name, css.bond_row, {
+          _isfloating: itemData.typeOfBond === "Плавающий",
+        })}
         rel="noreferrer"
       >
-        {itemData.name}
+        {itemData.name}{" "}({itemData.typeOfBond === "Плавающий" ? "Ф" : "ПК"})
       </a>
       <div className={cn(css.bond_row, "readOnly")}>
         <strong>Комиссия брокера, %</strong>
@@ -58,7 +60,8 @@ const Bond: FC<IBondProps> = ({
       </div>
       <div
         className={cn(css.bond_row, "isWrite", {
-          _isWrongPrice: itemData.priceInPercent === 100 || itemData.priceInPercent === 0,
+          _isWrongPrice:
+            itemData.priceInPercent === 100 || itemData.priceInPercent === 0,
         })}
       >
         <strong>Стоимость облигации, %</strong>
@@ -74,7 +77,7 @@ const Bond: FC<IBondProps> = ({
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Купонный доход на одну облигацию, руб</strong>
-        <span>{itemData.payOneBond.value}</span>
+        <span>{itemData.payOneBond.formatt}</span>
       </div>
       <div className={cn(css.bond_row, "isWrite")}>
         <strong>Количество купонных выплат до погашения</strong>
@@ -94,7 +97,7 @@ const Bond: FC<IBondProps> = ({
         <span>{itemData.daysToMaturity}</span>
       </div>
       <div
-        className={cn(css.bond_row, "forbidden", 'weight', {
+        className={cn(css.bond_row, "forbidden", "weight", {
           _isLightGreen: Number(itemData.yearsToMaturity) >= 3,
         })}
       >
@@ -113,11 +116,11 @@ const Bond: FC<IBondProps> = ({
         <strong>Уплаченного НКД</strong>
         <span>{itemData.totalNkd.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden", 'weight')}>
+      <div className={cn(css.bond_row, "forbidden", "weight")}>
         <strong>Полная цена покупки</strong>
         <span>{itemData.fullPrice.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden", 'weight')}>
+      <div className={cn(css.bond_row, "forbidden", "weight")}>
         <strong>С одной выплаты буду получать</strong>
         <span>{itemData.payOneBondTotal.formatt}</span>
       </div>

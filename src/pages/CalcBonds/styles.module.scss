@@ -49,6 +49,7 @@
   border: 1px solid variables.$darkBlue;
   overflow: hidden;
   position: relative;
+  display: grid;
 
   &:hover {
     .remove,
@@ -135,6 +136,10 @@
     color: variables.$darkBlue;
     &:hover {
       color: variables.$orange;
+    }
+
+    &:global(._isfloating) {
+      @include variables.orangeBlock;
     }
   }
 }

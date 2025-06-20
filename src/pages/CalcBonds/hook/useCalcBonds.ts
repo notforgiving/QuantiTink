@@ -7,7 +7,7 @@ import { fetchGetOrderBookBondAPI } from "store/Api/allBonds.api";
 import { fetchGetBondCouponsAPI, fetchReadBondsDataAPI, fetchWriteBondsDataAPI } from "store/Api/bonds.api";
 import { StateType } from "store/root-reducer";
 import { getAllBondsListAction, getAllBondsListSuccessOnly } from "store/slices/allBonds.slice";
-import { TInstrument } from "types/bonds.type";
+import { TFloatingCouponFlagText, TInstrument } from "types/bonds.type";
 import { ALL_BONDS_LOCALSTORAGE_NAME } from "types/calculationBonds.type";
 import { TFFormattPrice } from "types/common";
 import { accordanceTariffAndComissions } from "types/info.type";
@@ -51,6 +51,7 @@ export interface IBondsTable {
     bondRepaymentAmount: TFFormattPrice;
     totalNkd: TFFormattPrice;
     payOneBondTotal: TFFormattPrice;
+    typeOfBond: TFloatingCouponFlagText;
 }
 
 type TUseCalcBonds = (props: IUseCalcBonds) => {
@@ -153,10 +154,9 @@ export const useCalcBonds: TUseCalcBonds = () => {
         }
     }
 
-    const createUpdateItem = async (isin: string) => {
+    const createUpdateItem = async (isin: string): Promise<IBondsTable | { code: number }> => {
         const found = searchBond(isin);
         if (found) {
-
             const prices = await fetchGetOrderBookBondAPI(found.figi);
             const events = await fetchGetBondCouponsAPI(found.figi, moment().utc(), moment(found.maturityDate).add(3, 'd').utc());
 
@@ -171,7 +171,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
 
             const quantity = 1;
             const nkd = formattedMoneySupply(getNumberMoney(found.aciValue));
-            const payOneBond = formattedMoneySupply(getNumberMoney(events[0].payOneBond) * currencyExchangeRateCorrection);
+            const payOneBond = formattedMoneySupply(Number((getNumberMoney(events[0].payOneBond) * currencyExchangeRateCorrection).toFixed(2)));
             const formattInitialNominal = formattedMoneySupply(getNumberMoney(found.initialNominal))
             const daysToMaturity = Math.ceil((moment(found.maturityDate).unix() - moment().unix()) / 86400);
             const yearsToMaturity = (daysToMaturity / 365).toFixed(2);
@@ -188,7 +188,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                 bondRepaymentAmount,
                 netAmountInTheEnd,
                 netProfit,
-                annualProfitability, totalNkd } = clculationInnerDataInBond({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity, initialNominal: found.initialNominal })
+                annualProfitability, totalNkd } = clculationInnerDataInBond({ eventsLength, formattInitialNominal, priceInPercent, payOneBond, quantity, nkd, yearsToMaturity, daysToMaturity, initialNominal: found.initialNominal });
             return {
                 value: quantity,
                 isin,
@@ -222,6 +222,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                 bondRepaymentAmount,
                 totalNkd,
                 payOneBondTotal,
+                typeOfBond: found.floatingCouponFlag ? "Плавающий" : "Фиксированный",
             }
         } else {
             return new Promise<{ code: number }>(function (resolve) {
@@ -245,10 +246,6 @@ export const useCalcBonds: TUseCalcBonds = () => {
                     } else {
                         setBonds([...bonds, inputField])
                         setBondsTable([...bondsTable, res])
-                        // localStorage.setItem(CALC_LOCALSTORAGE_NAME, JSON.stringify({
-                        //     date: moment().utc().toString(),
-                        //     values: [...bondsTable, res],
-                        // }))
                         if (userId) fetchWriteBondsDataAPI({ userId, data: [...bondsTable, res] })
                         setInputField('')
                         setIsLoading(false)
@@ -387,7 +384,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
                         console.log('Обновляемся');
                         const promisesUpdateItems: Promise<IBondsTable | { code: number }>[] = [];
                         valuesJSON.forEach((item: IBondsTable) => {
-                            const creatingItem: Promise<IBondsTable | { code: number }> = createUpdateItem(item.isin);
+                            const creatingItem = createUpdateItem(item.isin);
                             promisesUpdateItems.push(creatingItem)
                         })
                         Promise.all(promisesUpdateItems).then((res) => {
@@ -421,7 +418,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         const forkDispatchDataInfo = forkDispatch({
             localStorageName: ALL_BONDS_LOCALSTORAGE_NAME,
             accountId: "0",
-            customTimeUpdate: 86400.
+            customTimeUpdate: UPDATETIME
         });
         forkDispatchDataInfo
             ? dispatch(getAllBondsListSuccessOnly(forkDispatchDataInfo))

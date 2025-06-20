@@ -11,6 +11,8 @@ export type TInstrumentObject = {
     dateApi: string;
 }
 
+export type TFloatingCouponFlagText = "Плавающий" | "Фиксированный";
+
 export type TInstrument = {
     figi: string;
     initialNominal: TFAmount;
@@ -23,6 +25,7 @@ export type TInstrument = {
     brand: TBrand;
     aciValue: TFAmount;
     maturityDate: string;
+    floatingCouponFlag: boolean;
 }
 
 export const BONDS_LOCALSTORAGE_NAME = 'Tbalance_bonds';
