@@ -163,12 +163,17 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
             const correctionPayOutday = getCorrectionDataForPayOut(event.payDate);
             tempObject.realPaymentDate = moment(correctionPayOutday);
             tempObject.payOneLot = event.payOneBond;
-            tempObject.operationType =
-              event.eventType === "EVENT_TYPE_CPN"
-                ? "Купоны"
-                : event.operationType === "OA"
-                  ? "Амортизация"
-                  : "Погашение";
+            console.log(event,event.eventType);
+
+            if (event.eventType === "EVENT_TYPE_CPN") tempObject.operationType = "Купоны"
+            else if (event.eventType === "EVENT_TYPE_MTY") tempObject.operationType = "Амортизация"
+            else if (event.eventType === "EVENT_TYPE_CALL") {
+              tempObject.operationType = "Досрочное погашение"
+              tempObject.note = event.note;
+            }
+            else tempObject.operationType = 'Погашение';
+
+
             tempObject.name = bondInfo?.name || "";
             tempObject.oneLot = 1;
             tempObject.brand = {

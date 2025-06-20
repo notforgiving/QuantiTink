@@ -145,12 +145,22 @@ const Calendar: FC = () => {
           payOuts.length !== 0 &&
           payOuts.map((event, index) => {
             return (
-              <div className={css.item} key={`${index}${event.figi}`}>
+              <div
+                className={css.item}
+                key={`${index}${event.figi}`}
+                title={
+                  event.operationType === "Досрочное погашение"
+                    ? event.note
+                    : ""
+                }
+              >
                 <div className={css.item_left}>
                   <div
                     className={cn(css.item_type, {
                       _isDividend: event.operationType === "Дивиденды",
                       _isRepayment: event.operationType === "Погашение",
+                      _isEarlyRepayment:
+                        event.operationType === "Досрочное погашение",
                     })}
                   >
                     {event.operationType}
@@ -164,6 +174,8 @@ const Calendar: FC = () => {
                       className={cn(css.item_price, {
                         _isDividend: event.operationType === "Дивиденды",
                         _isRepayment: event.operationType === "Погашение",
+                        _isEarlyRepayment:
+                          event.operationType === "Досрочное погашение",
                       })}
                     >
                       {event.totalAmount.formatt}

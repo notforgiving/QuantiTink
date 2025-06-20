@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px
+  gap: 20px;
 }
 
 .item {
@@ -103,6 +103,9 @@
     &:global(._isRepayment) {
       @include variables.purpuleBlock;
     }
+    &:global(._isEarlyRepayment) {
+      @include variables.middleBlueBlock;
+    }
 
     @include variables.phone {
       font-size: 18px;
@@ -124,6 +127,9 @@
     }
     &:global(._isRepayment) {
       @include variables.purpuleBlock;
+    }
+    &:global(._isEarlyRepayment) {
+      @include variables.middleBlueBlock;
     }
   }
 }

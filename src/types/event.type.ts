@@ -23,6 +23,7 @@ export type TEvents = {
     dividendType: string;
     eventType: string;
     createdAt: string;
+    note?: string;
 }
 
 export type TEventFigi = {
@@ -38,7 +39,7 @@ export type TEventsState = {
 }
 
 
-export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'Погашение' | 'Амортизация'
+export type TOperationTypeEvent = 'Дивиденды' | 'Купоны' | 'Погашение' | 'Амортизация' | 'Досрочное погашение'
 
 export type TPayOutsEvent = {
     figi: string;
@@ -52,6 +53,7 @@ export type TPayOutsEvent = {
     oneLot: number;
     brand: TBrand;
     totalAmount: TFFormattPrice;
+    note?: string;
 }
 
 export const EVENTS_LOCALSTORAGE_NAME = 'Tbalance_events';
