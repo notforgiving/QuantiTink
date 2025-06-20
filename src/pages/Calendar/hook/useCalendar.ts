@@ -163,8 +163,6 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
             const correctionPayOutday = getCorrectionDataForPayOut(event.payDate);
             tempObject.realPaymentDate = moment(correctionPayOutday);
             tempObject.payOneLot = event.payOneBond;
-            console.log(event,event.eventType);
-
             if (event.eventType === "EVENT_TYPE_CPN") tempObject.operationType = "Купоны"
             else if (event.eventType === "EVENT_TYPE_MTY") tempObject.operationType = "Амортизация"
             else if (event.eventType === "EVENT_TYPE_CALL") {
