@@ -416,6 +416,7 @@ export const writeDataInlocalStorage = ({
   );
 };
 
+/** Функция коррекции даты выплаты, так как в Т банке она происходит только на следующий день */
 export const getCorrectionDataForPayOut = (date: string) => {
   if (moment(date).day() === 5) {
     return moment(date).add(3, "d").toString();
@@ -424,4 +425,14 @@ export const getCorrectionDataForPayOut = (date: string) => {
     return moment(date).add(2, "d").toString();
   }
   return moment(date).add(1, "d").toString();
+};
+
+export const hideAccount = (idAccount: string) => {
+  const localData = localStorage.getItem("Tbalance_hiddenAccoutns");
+  const localDataJSON: string[] = localData ? JSON.parse(localData) : [];
+  if (!localDataJSON.includes(idAccount))
+    localStorage.setItem(
+      "Tbalance_hiddenAccoutns",
+      JSON.stringify([...localDataJSON, idAccount])
+    );
 };

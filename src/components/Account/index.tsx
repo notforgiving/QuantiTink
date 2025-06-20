@@ -4,21 +4,23 @@ import css from "./styles.module.scss";
 import { TFAmount } from "../../types/portfolio.type";
 import { formattedMoneySupply, getNumberMoney } from "../../utils";
 import Load from "../../UI/components/Load";
+import { NavLink } from "react-router-dom";
 
 interface IAccountProps {
+  id: string;
   name: string;
   totalAmountPortfolio?: TFAmount;
   loadingMoney: boolean;
 }
 
 const Account: FC<IAccountProps> = ({
+  id,
   name,
   totalAmountPortfolio,
   loadingMoney,
 }) => {
-
   return (
-    <div className={css.account}>
+    <NavLink to={`/account/${id}`} className={css.account}>
       <div className={css.account_img}>
         <AccountSvg />
       </div>
@@ -44,7 +46,7 @@ const Account: FC<IAccountProps> = ({
           </>
         )}
       </div>
-    </div>
+    </NavLink>
   );
 };
 

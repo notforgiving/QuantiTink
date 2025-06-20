@@ -1,19 +1,20 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
 import css from "./styles.module.scss";
 import { useMain } from "./hooks/useMain";
-import { searchItemInArrayData } from "../../utils";
+import { hideAccount, searchItemInArrayData } from "../../utils";
 import { TFAmount } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
 import Account from "../../components/Account";
-import { NavLink } from "react-router-dom";
 import Load from "../../UI/components/Load";
 import { useAuth } from "hooks/useAuth";
 import Button from "UI/components/Button";
 import Input from "UI/components/Input";
 import { tokenSlice } from "store/slices/token.slice";
+import { ReactComponent as OpenEyeSvg } from "assets/open__eye.svg";
+import { getAccountsSuccessOnly } from "store/slices/accoutns.slice";
 
 const Main: FC = () => {
   const { id: userId } = useAuth();
@@ -27,6 +28,7 @@ const Main: FC = () => {
       isLoading: isLoadingToken,
     },
   } = useSelector((state: StateType) => state);
+  const [hiddenAccounts, setHiddenAccounts] = useState<string>("");
 
   const {
     totalAmountDepositsAllPortfolios,
@@ -38,6 +40,16 @@ const Main: FC = () => {
     portfolios: portfoliosData,
     operations: operationsData,
   });
+
+  useEffect(() => {
+    if (hiddenAccounts !== "" && accountsData) {
+      const correctAccoutns = accountsData.filter(
+        (el) => el.id !== hiddenAccounts
+      );
+      dispatch(getAccountsSuccessOnly(correctAccoutns));
+      setHiddenAccounts('');
+    }
+  }, [accountsData, dispatch, hiddenAccounts]);
 
   return (
     <div className={css.main}>
@@ -128,8 +140,9 @@ const Main: FC = () => {
                 : ({} as TFAmount);
 
               return (
-                <NavLink to={`/account/${account.id}`} key={account.id}>
+                <div className={css.account__wrapper} key={account.id}>
                   <Account
+                    id={account.id}
                     name={account.name}
                     totalAmountPortfolio={
                       targetPortfolio ? totalAmountPortfolio : undefined
@@ -138,7 +151,16 @@ const Main: FC = () => {
                       isLoadingPortfolios || !portfoliosData?.length
                     }
                   />
-                </NavLink>
+                  <div
+                    className={css.hideAccount}
+                    onClick={() => {
+                      setHiddenAccounts(account.id);
+                      hideAccount(account.id);
+                    }}
+                  >
+                    <OpenEyeSvg />
+                  </div>
+                </div>
               );
             })}
           </div>
