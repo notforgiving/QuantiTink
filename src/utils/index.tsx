@@ -195,11 +195,12 @@ export const calcLotsForDividends = (
       }
     });
     // Находим все дивиденды, которые пришли по событиям
-    const searchDividends = dividendsOperations.findIndex(
-      (el) =>
-        getNumberMoney(el.payment) ===
-        getNumberMoney(event.dividendNet) * quantity
-    );
+    const searchDividends = dividendsOperations.findIndex((el) => {
+      return (
+        Number(getNumberMoney(el.payment).toFixed(2)) ===
+        Number((getNumberMoney(event.dividendNet) * quantity).toFixed(2))
+      );
+    });
     // Если выплату не нашли, то оставляем ее в списке
     if (searchDividends !== -1) {
       return {
