@@ -1,13 +1,6 @@
 @use "../../UI/styles/variables";
 
 .main {
-  & .profile {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-  }
   & .token {
     display: grid;
     grid-template-areas:

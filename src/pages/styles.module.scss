@@ -1,0 +1,9 @@
+@use "../UI/styles/variables";
+
+.profile {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}

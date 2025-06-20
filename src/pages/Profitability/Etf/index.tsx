@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "UI/components/Button";
-import Container from "UI/components/Container";
 import css from "../styles.module.scss";
 import { useEtf } from "./hook/useEtf";
 import Input from "UI/components/Input";
@@ -44,7 +43,7 @@ const Etf = () => {
 
   const navigate = useNavigate();
   return (
-    <Container>
+    <>
       <Button
         text="Назад"
         buttonAttributes={{
@@ -150,7 +149,7 @@ const Etf = () => {
               ))}
         </div>
       </div>
-    </Container>
+    </>
   );
 };
 

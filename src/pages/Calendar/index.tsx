@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Container from "../../UI/components/Container";
 import Button from "../../UI/components/Button";
 import { useCalendar } from "./hook/useCalendar";
 import css from "./styles.module.scss";
@@ -26,7 +25,7 @@ const Calendar: FC = () => {
   });
 
   return (
-    <Container>
+    <>
       <Button
         text="Назад"
         buttonAttributes={{
@@ -186,7 +185,7 @@ const Calendar: FC = () => {
             );
           })}
       </div>
-    </Container>
+    </>
   );
 };
 

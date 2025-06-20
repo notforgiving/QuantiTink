@@ -2,7 +2,6 @@ import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShares } from "./hook/useShares";
 import cn from "classnames";
-import Container from "UI/components/Container";
 import Button from "UI/components/Button";
 import Input from "UI/components/Input";
 import css from "../styles.module.scss";
@@ -36,7 +35,7 @@ const Shares: FC = () => {
   });
 
   return (
-    <Container>
+    <>
       <Button
         text="Назад"
         buttonAttributes={{
@@ -140,7 +139,7 @@ const Shares: FC = () => {
               ))}
         </div>
       </div>
-    </Container>
+    </>
   );
 };
 

@@ -1,12 +1,10 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "UI/components/Button";
-import Container from "UI/components/Container";
 import css from "../styles.module.scss";
 import Input from "UI/components/Input";
 import cn from "classnames";
 import { useProfitability } from "../hook/useProfitability";
-import Line from "../components/Line";
 
 const Bonds: FC = () => {
   let { id: accountId, currency } = useParams();
@@ -19,15 +17,11 @@ const Bonds: FC = () => {
     setComissionToggle,
     setCurrentSort,
     currentSort,
-    tariff,
-    positions,
-    operations,
-    sortFunction,
   } = useProfitability({ accountId: accountId || "0" });
   const navigate = useNavigate();
 
   return (
-    <Container>
+    <>
       <div className={css.header_actions}>
         <Button
           text="Назад"
@@ -142,7 +136,7 @@ const Bonds: FC = () => {
               ))}
         </div> */}
       </div>
-    </Container>
+    </>
   );
 };
 

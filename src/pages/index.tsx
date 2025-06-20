@@ -22,10 +22,13 @@ import { ACCOUNTS_LOCALSTORAGE_NAME } from "types/accounts.type";
 import { INFO_LOCALSTORAGE_NAME } from "types/info.type";
 import { OPERATIONS_LOCALSTORAGE_NAME } from "types/operations.types";
 import { PORTFOLIOS_LOCALSTORAGE_NAME } from "types/portfolio.type";
+import Button from "UI/components/Button";
+import Container from "UI/components/Container";
 import { forkDispatch } from "utils";
+import css from "./styles.module.scss";
 
 const UserPage = () => {
-  const { isAuth, id: userId } = useAuth();
+  const { email, isAuth, id: userId } = useAuth();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -120,7 +123,23 @@ const UserPage = () => {
     portfoliosData,
     token,
   ]);
-  return <Outlet />;
+  return (
+    <Container>
+      <div className={css.profile}>
+        <div className={css.email}>{email}</div>
+        <Button
+          text="Выход"
+          buttonAttributes={{
+            onClick: () => {
+              dispatch(userSlice.actions.removeUserAction());
+              dispatch(tokenSlice.actions.removeTokenAction());
+            },
+          }}
+        />
+      </div>
+      <Outlet />
+    </Container>
+  );
 };
 
 export default UserPage;

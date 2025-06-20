@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import Container from "UI/components/Container";
 import css from "./styles.module.scss";
 import Input from "UI/components/Input";
 import Button from "UI/components/Button";
@@ -26,7 +25,7 @@ const CalcBonds: FC = () => {
   } = useCalcBonds({});
 
   return (
-    <Container className={css.calc_container}>
+    <div>
       <div className={css.back}>
         <Button
           text="Назад"
@@ -102,7 +101,7 @@ const CalcBonds: FC = () => {
               />
             ))}
       </div>
-    </Container>
+    </div>
   );
 };
 
