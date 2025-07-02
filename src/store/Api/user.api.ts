@@ -5,7 +5,6 @@ export async function fetchCreateUserAPI(email: string, password: string) {
     const response = await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user: any = userCredential.user;
-            console.log(user, 'createUserWithEmailAndPassword');
             return {
                 email: user.email,
                 token: user.stsTokenManager.accessToken,

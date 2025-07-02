@@ -23,9 +23,9 @@ export const accountsSlice = createSlice({
             state: TFAccountsState,
             { payload: list }: PayloadAction<TFAccount[]>
         ) => {
-            const localData = localStorage.getItem("Tbalance_hiddenAccoutns");
-            const localDataJSON: string[] = localData ? JSON.parse(localData) : [];
-            const filterList = list.filter(el => el.type !== 'ACCOUNT_TYPE_INVEST_BOX' && !localDataJSON.includes(el.id));
+            // const localData = localStorage.getItem("Tbalance_hiddenAccoutns");
+            // const localDataJSON: string[] = localData ? JSON.parse(localData) : [];
+            const filterList = list.filter(el => el.type !== 'ACCOUNT_TYPE_INVEST_BOX');
             if (filterList.length !== 0) writeDataInlocalStorage({
                 localStorageName: ACCOUNTS_LOCALSTORAGE_NAME, response: {
                     accountId: '0',

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
 import css from "./styles.module.scss";
 import { useMain } from "./hooks/useMain";
-import { hideAccount, searchItemInArrayData } from "../../utils";
+import { searchItemInArrayData } from "../../utils";
 import { TFAmount } from "../../types/portfolio.type";
 import { TFAccount } from "../../types/accounts.type";
 import cn from "classnames";
@@ -13,7 +13,6 @@ import { useAuth } from "hooks/useAuth";
 import Button from "UI/components/Button";
 import Input from "UI/components/Input";
 import { tokenSlice } from "store/slices/token.slice";
-import { ReactComponent as OpenEyeSvg } from "assets/open__eye.svg";
 import { getAccountsSuccessOnly } from "store/slices/accoutns.slice";
 
 const Main: FC = () => {
@@ -47,7 +46,7 @@ const Main: FC = () => {
         (el) => el.id !== hiddenAccounts
       );
       dispatch(getAccountsSuccessOnly(correctAccoutns));
-      setHiddenAccounts('');
+      setHiddenAccounts("");
     }
   }, [accountsData, dispatch, hiddenAccounts]);
 
@@ -151,15 +150,11 @@ const Main: FC = () => {
                       isLoadingPortfolios || !portfoliosData?.length
                     }
                   />
-                  <div
+                  {/* <div
                     className={css.hideAccount}
-                    onClick={() => {
-                      setHiddenAccounts(account.id);
-                      hideAccount(account.id);
-                    }}
                   >
                     <OpenEyeSvg />
-                  </div>
+                  </div> */}
                 </div>
               );
             })}

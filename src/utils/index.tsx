@@ -426,13 +426,3 @@ export const getCorrectionDataForPayOut = (date: string) => {
   }
   return moment(date).add(1, "d").toString();
 };
-
-export const hideAccount = (idAccount: string) => {
-  const localData = localStorage.getItem("Tbalance_hiddenAccoutns");
-  const localDataJSON: string[] = localData ? JSON.parse(localData) : [];
-  if (!localDataJSON.includes(idAccount))
-    localStorage.setItem(
-      "Tbalance_hiddenAccoutns",
-      JSON.stringify([...localDataJSON, idAccount])
-    );
-};

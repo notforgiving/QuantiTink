@@ -59,33 +59,5 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-
-    .account__wrapper {
-      position: relative;
-
-      &:hover {
-        .hideAccount {
-          opacity: 1;
-        }
-      }
-    }
-
-    .hideAccount {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 25px;
-      height: auto;
-      color: variables.$middleBlue;
-      z-index: 2;
-      cursor: pointer;
-      transition: .3s;
-      opacity: 0;
-
-      &:hover {
-        transform: translateY(-50%) scale(1.1);
-      }
-    }
   }
 }
