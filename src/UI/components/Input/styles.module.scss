@@ -1,4 +1,5 @@
-@use "../../../UI/styles/variables";
+@use "../../../UI/styles/variables" as *;
+@use "../../../UI/styles/mixines" as *;
 
 .input {
   display: flex;
@@ -13,7 +14,7 @@
 
     &:global(._isChecked) {
       .checkbox_square {
-        background: variables.$gold;
+        background: $gold;
         &::before {
           left: calc(32px - 12px - 4px);
         }
@@ -23,7 +24,7 @@
     &_square {
       width: 32px;
       height: 20px;
-      background: variables.$middleGray;
+      background: $middleGray;
       border-radius: 5px;
       position: relative;
 
@@ -47,22 +48,23 @@
   }
 
   &_label {
-    font-size: 20px;
+    font-size: 14px;
   }
   &_body {
     border: none;
-    border-radius: 5px;
-    background: #fff;
+    border-radius: $border-radius;
+    background: $green-10;
     padding: 5px 10px;
     font-size: 14px;
     min-height: 40px;
-    color: variables.$lightBlue;
+    color: $green-70;
+    border: $border;
     &::placeholder {
-      color: variables.$lightBlue;
+      color: $green-70;
     }
   }
   &_error {
-    color: variables.$orange;
+    color: $orange;
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.1em;

@@ -6,12 +6,21 @@ interface IButtonProps {
   text: string | ReactNode;
   buttonAttributes?: ButtonHTMLAttributes<HTMLButtonElement>;
   className?: string;
+  /** Стиль кнопки - белый с бордером*/
+  borderStyle?: boolean;
 }
 
-const Button: FC<IButtonProps> = ({ text, buttonAttributes, className }) => {
+const Button: FC<IButtonProps> = ({
+  text,
+  buttonAttributes,
+  className,
+  borderStyle,
+}) => {
   return (
     <button
-      className={cn(css.btn, "Button_component", className)}
+      className={cn(css.btn, "Button_component", className, {
+        _isBorderStyle: borderStyle,
+      })}
       {...buttonAttributes}
     >
       {text}

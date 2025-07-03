@@ -1,19 +1,20 @@
 @use "reset";
-@use "variables";
+@use "variables" as *;
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 #root {
   min-height: 100vh;
-  background: variables.$darkBlue;
+  // background: $darkBlue;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: #ffffff;
-  background: #fff;
+  color: $green-70;
+  background: $green-10;
 }
 
 * {
@@ -29,7 +30,7 @@ body {
   padding: 20px 10px;
   margin: 0 auto;
   min-height: 100vh;
-  @include variables.phone {
+  @include phone {
     padding: 10px;
   }
 }
@@ -44,6 +45,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: variables.$gold;
+  background: $gold;
   border-radius: 10px;
 }

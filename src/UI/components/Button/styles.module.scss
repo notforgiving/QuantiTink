@@ -1,33 +1,50 @@
-@use "../../../UI/styles/variables";
+@use "../../../UI/styles/variables" as *;
+@use "../../../UI/styles/mixines" as *;
 
 .btn {
   border: none;
   padding: 8px 12px;
-  border-radius: 5px;
+  border-radius: $border-radius;
   font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: 0.3s;
-  background: variables.$lightGray;
-  color: variables.$lightBlue;
+  background: $green-40;
+  color: $white-10;
+  border: 1px solid transparent;
 
   &:hover {
-    background: variables.$lightBlue;
-    color: variables.$lightGray;
+    background: transparent;
+    @include border;
+    color: $green-40;
   }
 
   &:disabled {
     cursor: not-allowed;
 
     &:hover {
-      background: variables.$lightGray;
-      color: variables.$lightBlue;
+      background: $lightGray;
+      color: $lightBlue;
+    }
+  }
+
+  &:global(._isBorderStyle) {
+    background: transparent;
+    border: 1px solid $green-40;
+    color: $green-40;
+
+    &:hover {
+      background: $green-40;
+      color: $white-10;
+      border: 1px solid transparent;
     }
   }
 
   &_body {
   }
 
-  @include variables.phone {
+  @include phone {
     font-size: 14px;
     padding: 6px 10px;
   }

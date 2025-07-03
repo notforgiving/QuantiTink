@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { userSlice } from "store/slices/user.slice";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "hooks/useAuth";
+import { ReactComponent as LogoSvg } from "assets/logo.svg";
 
 export type TInitialFormik = {
   email: string;
@@ -64,9 +65,16 @@ const Auth: FC = () => {
 
   return (
     <div className={css.auth}>
+      <div className={css.auth__bg}>
+        <span></span>
+        <span></span>
+      </div>
+      <div className={css.logo}>
+        <LogoSvg />
+      </div>
       <div className={css.form}>
         <div className={css.auth_title}>
-          {loginState ? "Авторизация" : "Регистрация"}
+          {loginState ? "Вход" : "Регистрация"}
         </div>
         <div className={css.form_input}>
           <Input
@@ -115,6 +123,7 @@ const Auth: FC = () => {
         )}
         <Button
           text={loginState ? "Войти" : "Зарегистрироваться"}
+          borderStyle
           buttonAttributes={{
             onClick: () => formik.submitForm(),
           }}
