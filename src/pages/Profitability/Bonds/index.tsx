@@ -2,24 +2,16 @@ import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "UI/components/Button";
 import css from "../styles.module.scss";
-import Input from "UI/components/Input";
-import cn from "classnames";
-import { useProfitability } from "../hook/useProfitability";
+import includeCss from './styles.module.scss';
+import { useBonds } from "./hooks/useBonds";
 
 const Bonds: FC = () => {
-  let { id: accountId, currency } = useParams();
-  const {
-    search,
-    setSearch,
-    withTax,
-    setWithTax,
-    comissionToggle,
-    setComissionToggle,
-    setCurrentSort,
-    currentSort,
-  } = useProfitability({ accountId: accountId || "0" });
+  const { id: accountId, currency } = useParams();
   const navigate = useNavigate();
-
+  const { bondsList } = useBonds({
+    accountId: accountId || "0",
+    currency: currency || "rub",
+  });
   return (
     <>
       <div className={css.header_actions}>
@@ -56,85 +48,19 @@ const Bonds: FC = () => {
         <div className={css.shares_title}>
           {currency === "rub" ? "Российские облигации" : "Валютные облигации"}
         </div>
-        <div className={css.shares_actions}>
-          <Input
-            label="Рассчитать с учетом налога"
-            inputAttributes={{
-              type: "checkbox",
-              checked: withTax,
-              onClick: () => setWithTax(!withTax),
-            }}
-          />
-          <Input
-            label="Рассчитать с учетом комиссии"
-            inputAttributes={{
-              type: "checkbox",
-              checked: comissionToggle,
-              onClick: () => setComissionToggle(!comissionToggle),
-            }}
-          />
-          <Input
-            inputAttributes={{
-              type: "text",
-              placeholder: "Искать...",
-              value: search || "",
-              onChange: (e) => setSearch(e.target.value),
-            }}
-          />
+        <div className={includeCss.bond__list}>
+          {bondsList.map((item) => (
+            <div
+              className={includeCss.bond__item}
+              onClick={() =>
+                navigate(`/account/${accountId}/bonds/${currency}/${item.figi}`)
+              }
+            >
+              {item.name} {"   "}
+              / ({item.quantity}) шт
+            </div>
+          ))}
         </div>
-        <div className={css.shares_header}>
-          <div className={cn(css.shares_item_row, "_isHeader")}>
-            <div
-              className={css.number}
-              onClick={() =>
-                setCurrentSort({
-                  key: "NUMBER",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              №
-            </div>
-            <div className={css.name}>Название</div>
-            <div
-              className={css.date}
-              onClick={() =>
-                setCurrentSort({
-                  key: "DATE",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              Дата покупки
-            </div>
-            <div className={css.quantity}>Количество</div>
-            <div className={css.priceTotal}>Сумма покупки</div>
-            <div className={css.priceActiality}>Стоимость сейчас</div>
-            <div
-              className={css.profitabilityNow}
-              onClick={() =>
-                setCurrentSort({
-                  key: "PROFITABILITY",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              Доходность этой операции
-            </div>
-            <div className={css.ownershipPeriod}>Срок владения активом</div>
-          </div>
-        </div>
-        {/* <div className={css.shares_list}>
-          {!!result.length &&
-            result
-              .filter((el) =>
-                el.name.toLowerCase().includes(search.toLowerCase())
-              )
-              .sort(sortFunction)
-              .map((operation) => (
-                <Line operation={operation} key={operation.date} />
-              ))}
-        </div> */}
       </div>
     </>
   );

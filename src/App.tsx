@@ -10,6 +10,7 @@ import Etf from "pages/Profitability/Etf";
 import Shares from "pages/Profitability/Shares";
 import Bonds from "pages/Profitability/Bonds";
 import CalcBonds from "pages/CalcBonds";
+import BondView from "pages/Profitability/Bonds/BondView";
 
 function App() {
   return (
@@ -24,8 +25,9 @@ function App() {
             <Route path="shares" element={<Shares />} />
             <Route path="etf/:ticker" element={<Etf />} />
             <Route path="bonds/:currency" element={<Bonds />} />
+            <Route path="bonds/:currency/:figi" element={<BondView />} />
           </Route>
-          <Route path="calcBonds" element={<CalcBonds />}/>
+          <Route path="calcBonds" element={<CalcBonds />} />
         </Route>
       </Routes>
     </BrowserRouter>

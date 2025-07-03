@@ -10,6 +10,7 @@ import { TFOperation } from "types/operations.types";
 
 interface IUseProfitability {
     accountId: string;
+    customWithTax?: boolean;
 }
 
 type TUseProfitability = (props: IUseProfitability) => {
@@ -30,13 +31,13 @@ type TUseProfitability = (props: IUseProfitability) => {
     tariff: keyof TAccordanceTariffAndComissions,
     positions: TFPosition[],
     operations: TFOperation[],
-     sortFunction: (a: TActiveProfitability, b: TActiveProfitability) => number,
+    sortFunction: (a: TActiveProfitability, b: TActiveProfitability) => number,
 }
 
-export const useProfitability: TUseProfitability = ({ accountId }) => {
+export const useProfitability: TUseProfitability = ({ accountId, customWithTax = true }) => {
     const tariff = useSelector((state: StateType) => state.info.data?.tariff || 'investor');
     const [search, setSearch] = useState<string>('');
-    const [withTax, setWithTax] = useState<boolean>(true);
+    const [withTax, setWithTax] = useState<boolean>(customWithTax);
     const [comissionToggle, setComissionToggle] = useState<boolean>(true);
     const [currentSort, setCurrentSort] = useState<{
         key: TFSortKey,
