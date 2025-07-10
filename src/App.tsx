@@ -11,6 +11,7 @@ import Shares from "pages/Profitability/Shares";
 import Bonds from "pages/Profitability/Bonds";
 import CalcBonds from "pages/CalcBonds";
 import BondView from "pages/Profitability/Bonds/BondView";
+import Profile from "pages/Profile";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="bonds/:currency/:figi" element={<BondView />} />
           </Route>
           <Route path="calcBonds" element={<CalcBonds />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>

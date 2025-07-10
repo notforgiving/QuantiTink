@@ -3,7 +3,7 @@ import { calcSummOfAllDeposits, calcSummOfTotalAmountPortfolio, formattedMoneySu
 import { TFFormattPrice } from "../../../types/common";
 import { TFUnionOperations } from "../../../store/slices/operations.slice";
 import { useDispatch, useSelector } from "react-redux";
-import { setTotalAmountAllPortfolio, setTotalAmountDepositsAllPortfolios } from "../../../store/slices/general.slice";
+import { setAmountOfDepositsPortfolios, setTotalAmountAllPortfolio, setTotalAmountDepositsAllPortfolios } from "../../../store/slices/general.slice";
 import { StateType } from "../../../store/root-reducer";
 import { TFPortfolio } from "../../../types/portfolio.type";
 
@@ -25,6 +25,9 @@ type TFUseMain = (props: IUseMainProps) => {
     portfoliosReturns: TFFormattPrice & TFPricePercent,
     tinkoffToken: string,
     setTinkoffToken: React.Dispatch<React.SetStateAction<string>>,
+    amountOfDepositsPortfolios: {
+        [x: string]: TFFormattPrice,
+    }
 }
 
 export const useMain: TFUseMain = ({ portfolios, operations }) => {
@@ -40,12 +43,20 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
 
     useEffect(() => {
         if (operations && !!operations.length && portfolios) {
+            const amountOfDepositsPortfolios = operations.reduce((acc, portfolio) => {
+                return {
+                    ...acc,
+                    [portfolio.accountId]: formattedMoneySupply(calcSummOfAllDeposits([portfolio]))
+                }
+            }, {})
             const allDepositsData: TFFormattPrice[] = [];
             const summ = operations.reduce((acc, item) => {
                 const temp = formattedMoneySupply(calcSummOfAllDeposits([item]))
                 allDepositsData.push(temp)
                 return acc + temp.value;
             }, 0)
+            /** Размер пополнений для каждого брокерского счета */
+            dispatch(setAmountOfDepositsPortfolios(amountOfDepositsPortfolios))
             /** Считаем сумму всех пополнений для всех брокерских счетов */
             dispatch(setTotalAmountDepositsAllPortfolios(formattedMoneySupply(summ)))
             /** Считаем цену всех брокерских счетов */
@@ -66,11 +77,12 @@ export const useMain: TFUseMain = ({ portfolios, operations }) => {
     return {
         totalAmountDepositsAllPortfolios: general.totalAmountDepositsAllPortfolios,
         totalAmountAllPortfolio: general.totalAmountAllPortfolio,
+        amountOfDepositsPortfolios: general.amountOfDepositsPortfolios,
         portfoliosReturns: {
             formatt: portfoliosReturns.formatt,
             value: portfoliosReturns.value,
             percent: differentPercent,
-        }, 
+        },
         tinkoffToken,
         setTinkoffToken,
     }

@@ -4,10 +4,8 @@ import Input from "UI/components/Input";
 import Button from "UI/components/Button";
 import { useCalcBonds } from "./hook/useCalcBonds";
 import Bond from "./components/Bond";
-import { useNavigate } from "react-router-dom";
 
 const CalcBonds: FC = () => {
-  const navigate = useNavigate();
   const {
     inputField,
     setInputField,
@@ -26,16 +24,6 @@ const CalcBonds: FC = () => {
 
   return (
     <div>
-      <div className={css.back}>
-        <Button
-          text="Назад"
-          buttonAttributes={{
-            type: "button",
-            onClick: () => navigate(-1),
-            disabled: isLoadingBonds,
-          }}
-        />
-      </div>
       <div className={css.header}>
         <span className={css.header_title}>Введите ISIN облигации</span>
         <div className={css.header_field}>

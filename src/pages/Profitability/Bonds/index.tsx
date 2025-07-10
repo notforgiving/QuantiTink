@@ -13,20 +13,13 @@ const Bonds: FC = () => {
     currency: currency || "rub",
   });
   return (
-    <>
+    <div>
       <div className={css.header_actions}>
         <Button
           text="Назад"
           buttonAttributes={{
             type: "button",
             onClick: () => navigate(`/account/${accountId}`),
-          }}
-        />
-        <Button
-          text="Рассчет доходности облигации"
-          buttonAttributes={{
-            type: "button",
-            onClick: () => navigate(`/calcBonds`),
           }}
         />
       </div>
@@ -62,7 +55,7 @@ const Bonds: FC = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

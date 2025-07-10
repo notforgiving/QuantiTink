@@ -22,13 +22,15 @@ import { ACCOUNTS_LOCALSTORAGE_NAME } from "types/accounts.type";
 import { INFO_LOCALSTORAGE_NAME } from "types/info.type";
 import { OPERATIONS_LOCALSTORAGE_NAME } from "types/operations.types";
 import { PORTFOLIOS_LOCALSTORAGE_NAME } from "types/portfolio.type";
-import Button from "UI/components/Button";
 import Container from "UI/components/Container";
 import { forkDispatch } from "utils";
 import css from "./styles.module.scss";
+import { ReactComponent as MainImg } from "assets/wallet.svg";
+import { ReactComponent as ProfileImg } from "assets/preson.svg";
+import { ReactComponent as CalcImg } from "assets/calc.svg";
 
 const UserPage = () => {
-  const { email, isAuth, id: userId } = useAuth();
+  const { isAuth, id: userId } = useAuth();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -125,19 +127,26 @@ const UserPage = () => {
   ]);
   return (
     <Container>
-      <div className={css.profile}>
-        <div className={css.email}>{email}</div>
-        <Button
-          text="Выход"
-          buttonAttributes={{
-            onClick: () => {
-              dispatch(userSlice.actions.removeUserAction());
-              dispatch(tokenSlice.actions.removeTokenAction());
-            },
-          }}
-        />
-      </div>
       <Outlet />
+      <div className={css.menu}>
+        <div className={css.menu__wrapper}>
+          <div className={css.menu__item} onClick={() => navigate(`/`)}>
+            <MainImg />
+            <span>Главная</span>
+          </div>
+          <div
+            className={css.menu__item}
+            onClick={() => navigate(`/calcBonds`)}
+          >
+            <CalcImg />
+            <span>Доходность облигаций</span>
+          </div>
+          <div className={css.menu__item} onClick={() => navigate(`/profile`)}>
+            <ProfileImg />
+            <span>Профиль</span>
+          </div>
+        </div>
+      </div>
     </Container>
   );
 };

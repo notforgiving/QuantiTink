@@ -60,14 +60,6 @@ const Portfolio: FC = () => {
       : 0;
   return (
     <>
-      <Button
-        text="Назад"
-        buttonAttributes={{
-          type: "button",
-          onClick: () => navigate("/"),
-        }}
-      />
-
       <div className={css.portfolio}>
         <div className={css.portfolio_data}>
           <div className={css.portfolio_info}>

@@ -5,6 +5,9 @@ import { GENERAL } from "../../types/general.type";
 export type TFGeneralState = {
     totalAmountDepositsAllPortfolios: TFFormattPrice,
     totalAmountAllPortfolio: TFFormattPrice,
+    amountOfDepositsPortfolios: {
+        [x: string]: TFFormattPrice,
+    }
 }
 
 const generalInitialState: TFGeneralState = {
@@ -15,7 +18,8 @@ const generalInitialState: TFGeneralState = {
     totalAmountAllPortfolio: {
         formatt: '',
         value: 0,
-    }
+    },
+    amountOfDepositsPortfolios: {},
 };
 
 export const generalSlice = createSlice({
@@ -25,7 +29,7 @@ export const generalSlice = createSlice({
         /** Сумма пополнений всех брокерстких счетов */
         setTotalAmountDepositsAllPortfolios: (
             state: TFGeneralState,
-            { payload }: PayloadAction<TFFormattPrice>
+            { payload }: PayloadAction<TFGeneralState['totalAmountDepositsAllPortfolios']>
         ) => {
             return {
                 ...state,
@@ -35,17 +39,26 @@ export const generalSlice = createSlice({
         /** Размер тела всех брокерских счетов */
         setTotalAmountAllPortfolio: (
             state: TFGeneralState,
-            { payload }: PayloadAction<TFFormattPrice>
+            { payload }: PayloadAction<TFGeneralState['totalAmountAllPortfolio']>
         ) => {
             return {
                 ...state,
                 totalAmountAllPortfolio: payload,
             }
+        },
+        /** Размер пополнений для каждого брокерского счета */
+        setAmountOfDepositsPortfolios: (
+            state: TFGeneralState,
+            { payload }: PayloadAction<TFGeneralState['amountOfDepositsPortfolios']>
+        ) => {
+            return {
+                ...state,
+                amountOfDepositsPortfolios: payload,
+            }
         }
-
     },
 });
 
-export const { setTotalAmountDepositsAllPortfolios, setTotalAmountAllPortfolio } = generalSlice.actions
+export const { setTotalAmountDepositsAllPortfolios, setTotalAmountAllPortfolio, setAmountOfDepositsPortfolios } = generalSlice.actions
 
 export default generalSlice.reducer;

@@ -1,0 +1,40 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  &__header {
+    @include flex-center;
+    justify-content: flex-end;
+    font-size: 20px;
+    padding-block: 10px;
+  }
+  &__grid {
+    border-radius: $border-radius;
+    padding: 14px;
+    background: $green-10;
+  }
+  &__gridItem {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  &__gridIcon {
+    @include square(26px);
+    @include flex-center;
+    border-radius: 100%;
+    background: $green-40;
+    svg {
+      width: 16px;
+      color: $white-10;
+    }
+  }
+  &__gridData {
+  }
+  &__exit {
+    width: fit-content;
+    margin-left: auto;
+  }
+}

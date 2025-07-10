@@ -1,13 +1,68 @@
-@use "../../UI/styles/variables";
+@use "../../UI/styles/variables" as *;
+@use "../../UI/styles/mixines" as *;
 
 .main {
+  &:global(._isLoading) {
+    @include flex-center;
+  }
+  & .loading {
+    width: 100%;
+    align-self: center;
+    @include flex-center;
+  }
+
+  & .grid {
+    display: flex;
+    flex-wrap: wrap;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+      flex: 1;
+
+      &:nth-child(even) {
+        border-left: 1px solid rgb(from $green-70 r g b / 10%);
+      }
+      &:nth-child(odd) {
+        border-right: 1px solid rgb(from $green-70 r g b / 10%);
+      }
+      &:nth-child(1),
+      &:nth-child(2) {
+        border-bottom: 1px solid rgb(from $green-70 r g b / 10%);
+      }
+      &:nth-child(3),
+      &:nth-child(4) {
+        border-top: 1px solid rgb(from $green-70 r g b / 10%);
+      }
+
+      &:global(._isLight) {
+        strong {
+          color: $green-40;
+        }
+      }
+
+      span {
+        color: rgb(from $green-70 r g b / 60%);
+        font-weight: 600;
+      }
+      strong {
+        font-size: 24px;
+        font-weight: 700;
+        color: $green-70;
+      }
+    }
+  }
+
   & .token {
     display: grid;
     grid-template-areas:
       "title title"
       "input button";
-      grid-template-columns: 80% auto;
-      gap: 10px;
+    grid-template-columns: 80% auto;
+    gap: 10px;
     &_title {
       grid-area: title;
       display: block;
@@ -19,45 +74,18 @@
       grid-area: button;
     }
   }
+
   & .title {
     font-weight: 600;
-    font-size: 32px;
-    margin-bottom: 20px;
-  }
-
-  & .totalAmountAllPortfolio,
-  & .totalAmountDepositsAllPortfolios {
-    @include variables.beigeBlock;
-    padding: 20px;
-    border-bottom: 1px solid variables.$darkBlue;
-
-    strong {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-    span {
-      font-size: 20px;
-    }
-
-    .difference {
-      color: variables.$red;
-      font-size: 16px;
-      font-weight: 600;
-      @include variables.phone {
-        display: block;
-        margin-top: 5px;
-      }
-      &:global(._isGreen) {
-        color: variables.$green;
-      }
-    }
+    font-size: 22px;
+    padding-block: 15px;
+    text-align: center;
   }
 
   & .accounts {
     margin-top: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
   }
 }

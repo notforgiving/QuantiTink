@@ -14,6 +14,7 @@ import Button from "UI/components/Button";
 import Input from "UI/components/Input";
 import { tokenSlice } from "store/slices/token.slice";
 import { getAccountsSuccessOnly } from "store/slices/accoutns.slice";
+import Loader from "components/Loader";
 
 const Main: FC = () => {
   const { id: userId } = useAuth();
@@ -32,6 +33,7 @@ const Main: FC = () => {
   const {
     totalAmountDepositsAllPortfolios,
     totalAmountAllPortfolio,
+    amountOfDepositsPortfolios,
     portfoliosReturns,
     tinkoffToken,
     setTinkoffToken,
@@ -50,9 +52,19 @@ const Main: FC = () => {
     }
   }, [accountsData, dispatch, hiddenAccounts]);
 
+  console.log(accountsData, "accountsData");
+
   return (
-    <div className={css.main}>
-      {isLoadingToken && "Загрузка"}
+    <div
+      className={cn(css.main, {
+        _isLoading: isLoadingToken,
+      })}
+    >
+      {isLoadingToken && (
+        <div className={css.loading}>
+          <Loader />
+        </div>
+      )}
       {!isLoadingToken && token === null && (
         <div className={css.token}>
           <strong className={css.token_title}>
@@ -84,48 +96,89 @@ const Main: FC = () => {
       )}
       {token !== null && !isLoadingToken && (
         <>
-          <h1 className={css.title}>Брокерские счета</h1>
-          <div className={css.totalAmountDepositsAllPortfolios}>
-            <strong>Вложено средств: </strong>
-            {isLoadingPortfolios ||
-            !portfoliosData?.length ||
-            isLoadingOperations ||
-            !operationsData?.length ? (
-              <Load
-                style={{
-                  width: "106px",
-                  height: "21.5px",
-                }}
-              />
-            ) : (
-              <span>{totalAmountDepositsAllPortfolios.formatt}</span>
-            )}
-          </div>
-          <div className={css.totalAmountAllPortfolio}>
-            <strong>Текущая цена: </strong>
-            {isLoadingPortfolios ||
-            !portfoliosData?.length ||
-            isLoadingOperations ||
-            !operationsData?.length ? (
-              <Load
-                style={{
-                  width: "275px",
-                  height: "21.5px",
-                }}
-              />
-            ) : (
-              <>
+          <h1 className={css.title}>Портфель</h1>
+          <div className={css.grid}>
+            <div className={css.grid__item}>
+              <span>Стоимость портфеля</span>
+              <strong>
+                {isLoadingPortfolios ||
+                !portfoliosData?.length ||
+                isLoadingOperations ||
+                !operationsData?.length ? (
+                  <Load
+                    style={{
+                      width: "106px",
+                      height: "21.5px",
+                    }}
+                  />
+                ) : (
+                  totalAmountAllPortfolio.formatt
+                )}
+              </strong>
+            </div>
+            <div
+              className={cn(css.grid__item, {
+                _isLight: portfoliosReturns.value > 0,
+              })}
+            >
+              <span>Текущая доходность</span>
+              <strong>
+                {isLoadingPortfolios ||
+                !portfoliosData?.length ||
+                isLoadingOperations ||
+                !operationsData?.length ? (
+                  <Load
+                    style={{
+                      width: "275px",
+                      height: "21.5px",
+                    }}
+                  />
+                ) : (
+                  portfoliosReturns.formatt
+                )}
+              </strong>
+            </div>
+            <div
+              className={cn(css.grid__item, {
+                _isLight: portfoliosReturns.value > 0,
+              })}
+            >
+              <span>Доходность в процентах</span>
+              <strong>
                 {" "}
-                <span>{totalAmountAllPortfolio.formatt} </span>
-                <span
-                  className={cn(css.difference, {
-                    _isGreen: portfoliosReturns.value > 0,
-                  })}
-                >
-                  ( {portfoliosReturns.formatt} / {portfoliosReturns.percent} )
-                </span>
-              </>
-            )}
+                {isLoadingPortfolios ||
+                !portfoliosData?.length ||
+                isLoadingOperations ||
+                !operationsData?.length ? (
+                  <Load
+                    style={{
+                      width: "275px",
+                      height: "21.5px",
+                    }}
+                  />
+                ) : (
+                  portfoliosReturns.percent
+                )}
+              </strong>
+            </div>
+            <div className={css.grid__item}>
+              <span>Вложено средств</span>
+              <strong>
+                {isLoadingPortfolios ||
+                !portfoliosData?.length ||
+                isLoadingOperations ||
+                !operationsData?.length ? (
+                  <Load
+                    style={{
+                      width: "106px",
+                      height: "21.5px",
+                    }}
+                  />
+                ) : (
+                  totalAmountDepositsAllPortfolios.formatt
+                )}
+              </strong>
+            </div>
           </div>
           <div className={css.accounts}>
             {accountsData?.map((account: TFAccount) => {
@@ -139,23 +192,16 @@ const Main: FC = () => {
                 : ({} as TFAmount);
 
               return (
-                <div className={css.account__wrapper} key={account.id}>
-                  <Account
-                    id={account.id}
-                    name={account.name}
-                    totalAmountPortfolio={
-                      targetPortfolio ? totalAmountPortfolio : undefined
-                    }
-                    loadingMoney={
-                      isLoadingPortfolios || !portfoliosData?.length
-                    }
-                  />
-                  {/* <div
-                    className={css.hideAccount}
-                  >
-                    <OpenEyeSvg />
-                  </div> */}
-                </div>
+                <Account
+                  id={account.id}
+                  name={account.name}
+                  totalAmountPortfolio={
+                    targetPortfolio ? totalAmountPortfolio : undefined
+                  }
+                  loadingMoney={isLoadingPortfolios || !portfoliosData?.length}
+                  key={account.id}
+                  amountOfDeposits={amountOfDepositsPortfolios[account.id]}
+                />
               );
             })}
           </div>

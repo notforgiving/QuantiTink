@@ -1,34 +1,68 @@
-@use "./../../UI/styles/variables";
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+@mixin boxShadow {
+  box-shadow: 0px 0px 4px 1px rgb(from $green-70 r g b / 10%);
+}
 
 .account {
-  @include variables.yellowBlock;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  align-items: center;
   display: flex;
-  gap: 10px;
-  padding: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px;
+  flex: 1 1;
+  @include boxShadow;
+  border-radius: 5px;
+  transition: $transition;
 
-  &_img {
-    align-items: center;
-    background: linear-gradient(225deg, #2f2f3a, #59595a);
-    border-radius: 100%;
-    display: flex;
-    flex: none;
-    height: 32px;
-    justify-content: center;
-    width: 32px;
+  &:hover {
+    background: $green-10;
+  }
 
-    svg {
-      color: #fff;
-      height: auto;
-      width: 22px;
-    }
+  &_header {
+    @include flex-center;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
   }
 
   &_name {
-    font-size: 18px;
-    margin-bottom: 5px;
+    font-size: 16px;
+    align-self: center;
+    color: $green-70;
+  }
+
+  &_icon {
+    @include square(26px);
+    @include flex-center;
+    @include boxShadow;
+    border-radius: 100%;
+    flex: none;
+    svg {
+      width: 20px;
+    }
+  }
+  &_money {
+    font-size: 20px;
+    font-weight: 500;
+    color: $green-70;
+    padding-bottom: 16px;
+    position: relative;
+
+    &:global(._isGreen) {
+       &::before {
+         background: $green-50;
+       }
+    }
+
+    &::before {
+      @include before;
+      height: 4px;
+      background: $orange-20;
+      top: auto;
+      bottom: 0;
+      border-radius: 5px;
+    }
   }
 }
