@@ -37,7 +37,7 @@ const Account: FC<IAccountProps> = ({
           <ArrowRightSvg />
         </div>
       </div>
-      {loadingMoney || !totalAmountPortfolio ? (
+      {loadingMoney || !totalAmountPortfolio || !amountOfDeposits || !currentPriceOfBody ? (
         <Load
           style={{
             width: "100%",
