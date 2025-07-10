@@ -1,14 +1,6 @@
 @use "src/UI/styles/variables" as *;
 @use "src/UI/styles/mixines" as *;
 
-// .profile {
-//   margin-bottom: 10px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: flex-end;
-//   gap: 10px;
-// }
-
 .menu {
   position: fixed;
   left: 50%;
@@ -25,7 +17,6 @@
     max-width: $maxWidthApp;
     @include flex-center;
     justify-content: space-around;
-    align-items: flex-start;
     margin-inline: auto;
   }
 
@@ -36,6 +27,13 @@
     gap: 5px;
     text-align: center;
     padding: 10px;
+
+    &:global(._isActive) {
+      svg,
+      span {
+        color: $green-60;
+      }
+    }
 
     &:hover {
       svg,

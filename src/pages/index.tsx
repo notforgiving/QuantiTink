@@ -1,7 +1,7 @@
 import { useAuth } from "hooks/useAuth";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { StateType } from "store/root-reducer";
 import {
   getAccountsListAction,
@@ -28,9 +28,11 @@ import css from "./styles.module.scss";
 import { ReactComponent as MainImg } from "assets/wallet.svg";
 import { ReactComponent as ProfileImg } from "assets/preson.svg";
 import { ReactComponent as CalcImg } from "assets/calc.svg";
+import cn from "classnames";
 
 const UserPage = () => {
   const { isAuth, id: userId } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -125,23 +127,36 @@ const UserPage = () => {
     portfoliosData,
     token,
   ]);
+
   return (
     <Container>
       <Outlet />
       <div className={css.menu}>
         <div className={css.menu__wrapper}>
-          <div className={css.menu__item} onClick={() => navigate(`/`)}>
+          <div
+            className={cn(css.menu__item, {
+              _isActive: !location.pathname.includes("/calcBonds") && !location.pathname.includes("/profile"),
+            })}
+            onClick={() => navigate(`/`)}
+          >
             <MainImg />
             <span>Главная</span>
           </div>
           <div
-            className={css.menu__item}
+            className={cn(css.menu__item, {
+              _isActive: location.pathname.includes("/calcBonds"),
+            })}
             onClick={() => navigate(`/calcBonds`)}
           >
             <CalcImg />
             <span>Доходность облигаций</span>
           </div>
-          <div className={css.menu__item} onClick={() => navigate(`/profile`)}>
+          <div
+            className={cn(css.menu__item, {
+              _isActive: location.pathname.includes("/profile"),
+            })}
+            onClick={() => navigate(`/profile`)}
+          >
             <ProfileImg />
             <span>Профиль</span>
           </div>

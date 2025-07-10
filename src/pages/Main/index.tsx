@@ -52,8 +52,6 @@ const Main: FC = () => {
     }
   }, [accountsData, dispatch, hiddenAccounts]);
 
-  console.log(accountsData, "accountsData");
-
   return (
     <div
       className={cn(css.main, {
@@ -119,6 +117,7 @@ const Main: FC = () => {
             <div
               className={cn(css.grid__item, {
                 _isLight: portfoliosReturns.value > 0,
+                _isRed: portfoliosReturns.value <= 0,
               })}
             >
               <span>Текущая доходность</span>
@@ -141,6 +140,7 @@ const Main: FC = () => {
             <div
               className={cn(css.grid__item, {
                 _isLight: portfoliosReturns.value > 0,
+                _isRed: portfoliosReturns.value <= 0,
               })}
             >
               <span>Доходность в процентах</span>

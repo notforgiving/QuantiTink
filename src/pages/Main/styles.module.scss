@@ -43,6 +43,11 @@
           color: $green-40;
         }
       }
+      &:global(._isRed) {
+        strong {
+          color: $orange-20;
+        }
+      }
 
       span {
         color: rgb(from $green-70 r g b / 60%);
