@@ -1,9 +1,16 @@
-@use "../../UI/styles/variables" as *;
-@use "../../UI/styles/mixines" as *;
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
 
 .main {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 30px;
   &:global(._isLoading) {
     @include flex-center;
+  }
+  &__header {
+    position: relative;
+    z-index: 2;
   }
   & .loading {
     width: 100%;
@@ -65,7 +72,7 @@
         font-weight: 600;
       }
       strong {
-        font-size: 24px;
+        font-size: fluid(24, 16);
         font-weight: 700;
         color: $green-70;
       }
@@ -99,9 +106,27 @@
   }
 
   & .accounts {
-    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 5px;
+    background: #00d885;
+    margin-inline: -10px;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    padding: 10px;
+    padding-bottom: 60px;
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      @include before;
+      left: 50%;
+      translate: -50% -50%;
+      background: #fff;
+      width: 100%;
+      height: 283px;
+      border-radius: 13%;
+      z-index: -1;
+    }
   }
 }

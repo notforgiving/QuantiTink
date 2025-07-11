@@ -25,7 +25,7 @@ const Calendar: FC = () => {
   });
 
   return (
-    <>
+    <div>
       <Button
         text="Назад"
         buttonAttributes={{
@@ -185,7 +185,7 @@ const Calendar: FC = () => {
             );
           })}
       </div>
-    </>
+    </div>
   );
 };
 

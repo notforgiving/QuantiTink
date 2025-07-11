@@ -1,4 +1,25 @@
-@use "../../UI/styles/variables" as *;
+@use 'sass:math';
+@use "src/UI/styles/variables" as *;
+
+@function fluid($max: 100, $min: 10) {
+  $maxViewportWidth: 480;
+  $minViewportWidth: 320;
+
+  $maxSize: math.div($max, 16);
+  $minSize: math.div($min, 16);
+  $maxWidth: math.div($maxViewportWidth, 16);
+  $minWidth: math.div($minViewportWidth, 16);
+
+  $slope: math.div(($maxSize - $minSize), ($maxWidth - $minWidth));
+  $yAxisIntersection: -$minWidth * $slope + $minSize;
+
+  @return clamp(
+    #{$minSize * 1rem},
+    #{$yAxisIntersection * 1rem} + #{$slope * 100vw},
+    #{$maxSize * 1rem}
+  );
+}
+
 
 @mixin abs {
   position: absolute;

@@ -94,90 +94,91 @@ const Main: FC = () => {
       )}
       {token !== null && !isLoadingToken && (
         <>
-          <h1 className={css.title}>Портфель</h1>
-          <div className={css.grid}>
-            <div className={css.grid__item}>
-              <span>Стоимость портфеля</span>
-              <strong>
-                {isLoadingPortfolios ||
-                !portfoliosData?.length ||
-                isLoadingOperations ||
-                !operationsData?.length ? (
-                  <Load
-                    style={{
-                      width: "106px",
-                      height: "21.5px",
-                    }}
-                  />
-                ) : (
-                  totalAmountAllPortfolio.formatt
-                )}
-              </strong>
-            </div>
-            <div
-              className={cn(css.grid__item, {
-                _isLight: portfoliosReturns.value > 0,
-                _isRed: portfoliosReturns.value <= 0,
-              })}
-            >
-              <span>Текущая доходность</span>
-              <strong>
-                {isLoadingPortfolios ||
-                !portfoliosData?.length ||
-                isLoadingOperations ||
-                !operationsData?.length ? (
-                  <Load
-                    style={{
-                      width: "275px",
-                      height: "21.5px",
-                    }}
-                  />
-                ) : (
-                  portfoliosReturns.formatt
-                )}
-              </strong>
-            </div>
-            <div
-              className={cn(css.grid__item, {
-                _isLight: portfoliosReturns.value > 0,
-                _isRed: portfoliosReturns.value <= 0,
-              })}
-            >
-              <span>Доходность в процентах</span>
-              <strong>
-                {" "}
-                {isLoadingPortfolios ||
-                !portfoliosData?.length ||
-                isLoadingOperations ||
-                !operationsData?.length ? (
-                  <Load
-                    style={{
-                      width: "275px",
-                      height: "21.5px",
-                    }}
-                  />
-                ) : (
-                  portfoliosReturns.percent
-                )}
-              </strong>
-            </div>
-            <div className={css.grid__item}>
-              <span>Вложено средств</span>
-              <strong>
-                {isLoadingPortfolios ||
-                !portfoliosData?.length ||
-                isLoadingOperations ||
-                !operationsData?.length ? (
-                  <Load
-                    style={{
-                      width: "106px",
-                      height: "21.5px",
-                    }}
-                  />
-                ) : (
-                  totalAmountDepositsAllPortfolios.formatt
-                )}
-              </strong>
+          <div className={css.main__header}>
+            <h1 className={css.title}>Портфель</h1>
+            <div className={css.grid}>
+              <div className={css.grid__item}>
+                <span>Стоимость портфеля</span>
+                <strong>
+                  {isLoadingPortfolios ||
+                  !portfoliosData?.length ||
+                  isLoadingOperations ||
+                  !operationsData?.length ? (
+                    <Load
+                      style={{
+                        width: "100%",
+                        height: "21.5px",
+                      }}
+                    />
+                  ) : (
+                    totalAmountAllPortfolio.formatt
+                  )}
+                </strong>
+              </div>
+              <div
+                className={cn(css.grid__item, {
+                  _isLight: portfoliosReturns.value > 0,
+                  _isRed: portfoliosReturns.value <= 0,
+                })}
+              >
+                <span>Текущая доходность</span>
+                <strong>
+                  {isLoadingPortfolios ||
+                  !portfoliosData?.length ||
+                  isLoadingOperations ||
+                  !operationsData?.length ? (
+                    <Load
+                      style={{
+                        width: "100%",
+                        height: "21.5px",
+                      }}
+                    />
+                  ) : (
+                    portfoliosReturns.formatt
+                  )}
+                </strong>
+              </div>
+              <div
+                className={cn(css.grid__item, {
+                  _isLight: portfoliosReturns.value > 0,
+                  _isRed: portfoliosReturns.value <= 0,
+                })}
+              >
+                <span>Доходность в процентах</span>
+                <strong>
+                  {isLoadingPortfolios ||
+                  !portfoliosData?.length ||
+                  isLoadingOperations ||
+                  !operationsData?.length ? (
+                    <Load
+                      style={{
+                        width: "100%",
+                        height: "21.5px",
+                      }}
+                    />
+                  ) : (
+                    portfoliosReturns.percent
+                  )}
+                </strong>
+              </div>
+              <div className={css.grid__item}>
+                <span>Вложено средств</span>
+                <strong>
+                  {isLoadingPortfolios ||
+                  !portfoliosData?.length ||
+                  isLoadingOperations ||
+                  !operationsData?.length ? (
+                    <Load
+                      style={{
+                        width: "100%",
+                        height: "21.5px",
+                      }}
+                    />
+                  ) : (
+                    totalAmountDepositsAllPortfolios.formatt
+                  )}
+                </strong>
+              </div>
             </div>
           </div>
           <div className={css.accounts}>

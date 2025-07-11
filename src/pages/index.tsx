@@ -135,7 +135,9 @@ const UserPage = () => {
         <div className={css.menu__wrapper}>
           <div
             className={cn(css.menu__item, {
-              _isActive: !location.pathname.includes("/calcBonds") && !location.pathname.includes("/profile"),
+              _isActive:
+                !location.pathname.includes("/calcBonds") &&
+                !location.pathname.includes("/profile"),
             })}
             onClick={() => navigate(`/`)}
           >
