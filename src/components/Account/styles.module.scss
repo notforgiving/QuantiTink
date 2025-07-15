@@ -2,21 +2,26 @@
 @use "src/UI/styles/mixines" as *;
 
 @mixin boxShadow {
-  box-shadow: 0px 0px 4px 1px rgb(from $green-70 r g b / 10%);
+  box-shadow: 0px 11px 9px 0px rgb(from $green-70 r g b / 30%);
 }
 
 .account {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 20px;
+  gap: 40px;
   padding: 14px;
   flex: 1 1;
   @include boxShadow;
   border-radius: 5px;
   transition: $transition;
   background: $white-10;
-  width: min-content;
+  border: 1px solid #00d88578;
+
+  @include phone {
+    gap: 20px;
+    width: min-content;
+  }
 
   &:hover {
     background: $green-10;
@@ -30,9 +35,12 @@
   }
 
   &_name {
-    font-size: 16px;
+    font-size: 22px;
     align-self: center;
     color: $green-70;
+    @include phone {
+      font-size: 16px;
+    }
   }
 
   &_icon {

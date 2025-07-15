@@ -30,7 +30,7 @@ const BondView: FC = () => {
   });
 
   return (
-    <>
+    <div>
       <div className={maincss.header_actions}>
         <Button
           text="Назад"
@@ -40,9 +40,9 @@ const BondView: FC = () => {
           }}
         />
       </div>
-      <div className={maincss.shares}>
-        <div className={maincss.shares_title}>{name}</div>
-        <div className={maincss.shares_actions}>
+      <div className={maincss.income}>
+        <div className={maincss.income_title}>{name}</div>
+        <div className={maincss.income_actions}>
           <Input
             label="Рассчитать с учетом налога"
             inputAttributes={{
@@ -52,8 +52,8 @@ const BondView: FC = () => {
             }}
           />
         </div>
-        <div className={maincss.shares_header}>
-          <div className={cn(maincss.shares_item_row, "_isHeader")}>
+        <div className={maincss.income_header}>
+          <div className={cn(maincss.income_item_row, "_isHeader")}>
             <div
               className={maincss.number}
               onClick={() =>
@@ -94,17 +94,17 @@ const BondView: FC = () => {
             <div className={maincss.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
-        <div className={maincss.shares_list}>
+        <div className={maincss.income_list}>
           {!!result.length &&
             result.map((operation) => (
               <div
-                className={cn(maincss.shares_item, {
+                className={cn(maincss.income_item, {
                   _isProfitablePurchase: operation.profitabilityNow.percent > 0,
                   _isUnprofitablePurchase:
                     operation.profitabilityNow.percent <= 0,
                 })}
               >
-                <div className={cn(maincss.shares_item_row, "_isBody")}>
+                <div className={cn(maincss.income_item_row, "_isBody")}>
                   <div className={maincss.number}>{operation.number}</div>
                   <div className={maincss.name}></div>
                   <div className={maincss.date}>
@@ -135,7 +135,7 @@ const BondView: FC = () => {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

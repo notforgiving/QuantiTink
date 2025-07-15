@@ -35,7 +35,7 @@ const Shares: FC = () => {
   });
 
   return (
-    <>
+    <div>
       <Button
         text="Назад"
         buttonAttributes={{
@@ -57,9 +57,9 @@ const Shares: FC = () => {
           <span>Есль льгота ЛДВ</span>
         </div>
       </div>
-      <div className={css.shares}>
-        <div className={css.shares_title}>Акции</div>
-        <div className={css.shares_actions}>
+      <div className={cn(css.income, "isShares")}>
+        <div className={css.income_title}>Акции</div>
+        <div className={css.income_actions}>
           <Input
             label="Рассчитать с учетом налога"
             inputAttributes={{
@@ -85,8 +85,8 @@ const Shares: FC = () => {
             }}
           />
         </div>
-        <div className={css.shares_header}>
-          <div className={cn(css.shares_item_row, "_isHeader")}>
+        <div className={css.income_header}>
+          <div className={cn(css.income_item_row, "_isHeader")}>
             <div
               className={css.number}
               onClick={() =>
@@ -110,7 +110,7 @@ const Shares: FC = () => {
             >
               Дата покупки
             </div>
-            <div className={css.quantity}>Количество</div>
+            <div className={css.quantity}>Кол-во</div>
             <div className={css.priceTotal}>Сумма покупки</div>
             <div className={css.priceActiality}>Стоимость сейчас</div>
             <div
@@ -127,7 +127,7 @@ const Shares: FC = () => {
             <div className={css.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
-        <div className={css.shares_list}>
+        <div className={css.income_list}>
           {!!result.length &&
             result
               .filter((el) =>
@@ -139,7 +139,7 @@ const Shares: FC = () => {
               ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -182,29 +182,33 @@ const Main: FC = () => {
             </div>
           </div>
           <div className={css.accounts}>
-            {accountsData?.map((account: TFAccount) => {
-              const targetPortfolio = searchItemInArrayData(
-                portfoliosData || [],
-                "accountId",
-                account.id
-              );
-              const totalAmountPortfolio = targetPortfolio
-                ? targetPortfolio.totalAmountPortfolio
-                : ({} as TFAmount);
+            <div className={css.accounts_inner}>
+              {accountsData?.map((account: TFAccount) => {
+                const targetPortfolio = searchItemInArrayData(
+                  portfoliosData || [],
+                  "accountId",
+                  account.id
+                );
+                const totalAmountPortfolio = targetPortfolio
+                  ? targetPortfolio.totalAmountPortfolio
+                  : ({} as TFAmount);
 
-              return (
-                <Account
-                  id={account.id}
-                  name={account.name}
-                  totalAmountPortfolio={
-                    targetPortfolio ? totalAmountPortfolio : undefined
-                  }
-                  loadingMoney={isLoadingPortfolios || !portfoliosData?.length}
-                  key={account.id}
-                  amountOfDeposits={amountOfDepositsPortfolios[account.id]}
-                />
-              );
-            })}
+                return (
+                  <Account
+                    id={account.id}
+                    name={account.name}
+                    totalAmountPortfolio={
+                      targetPortfolio ? totalAmountPortfolio : undefined
+                    }
+                    loadingMoney={
+                      isLoadingPortfolios || !portfoliosData?.length
+                    }
+                    key={account.id}
+                    amountOfDeposits={amountOfDepositsPortfolios[account.id]}
+                  />
+                );
+              })}
+            </div>
           </div>
         </>
       )}

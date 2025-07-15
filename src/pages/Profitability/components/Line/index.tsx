@@ -12,12 +12,12 @@ interface ILineProps {
 const Line: FC<ILineProps> = ({ operation }) => {
   return (
     <div
-      className={cn(css.shares_item, {
+      className={cn(css.income_item, {
         _isProfitablePurchase: operation.profitabilityNow.percent > 0,
         _isUnprofitablePurchase: operation.profitabilityNow.percent <= 0,
       })}
     >
-      <div className={cn(css.shares_item_row, "_isBody")}>
+      <div className={cn(css.income_item_row, "_isBody")}>
         <div className={css.number}>{operation.number}</div>
         <div className={css.name}>{operation.name}</div>
         <div className={css.date}>
@@ -25,11 +25,11 @@ const Line: FC<ILineProps> = ({ operation }) => {
         </div>
         <div className={css.quantity}>{operation.quantity}</div>
         <div className={css.priceTotal}>
-          <strong>{operation.priceTotal.value.formatt}</strong> /{" "}
+          <strong>{operation.priceTotal.value.formatt}/</strong>
           <span>({operation.priceTotal.oneLot.formatt})</span>
         </div>
         <div className={css.priceActiality}>
-          <strong>{operation.priceActiality.value.formatt}</strong> /{" "}
+          <strong>{operation.priceActiality.value.formatt}/</strong>
           <span>({operation.priceActiality.oneLot.formatt})</span>
         </div>
         <div className={css.profitabilityNow}>

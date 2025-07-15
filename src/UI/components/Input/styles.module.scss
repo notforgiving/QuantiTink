@@ -1,10 +1,17 @@
-@use "../../../UI/styles/variables" as *;
-@use "../../../UI/styles/mixines" as *;
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
 
 .input {
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  &:global(.isDisabled) {
+    .input_body {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 
   & .checkbox {
     cursor: pointer;
@@ -14,7 +21,7 @@
 
     &:global(._isChecked) {
       .checkbox_square {
-        background: $gold;
+        background: $orange-20;
         &::before {
           left: calc(32px - 12px - 4px);
         }
@@ -46,7 +53,6 @@
       font-size: 16px;
     }
   }
-
   &_label {
     font-size: 14px;
   }

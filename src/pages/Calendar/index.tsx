@@ -59,7 +59,7 @@ const Calendar: FC = () => {
         ) : (
           <>
             <div className={css.total}>{monthPayBonds.formatt}</div>
-            <div className={cn(css.total, css.shares)}>
+            <div className={cn(css.total, css.income)}>
               {monthPayDiv.formatt}
             </div>
             <div className={cn(css.total, css.all)}>

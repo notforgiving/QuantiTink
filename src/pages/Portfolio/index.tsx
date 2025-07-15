@@ -59,7 +59,7 @@ const Portfolio: FC = () => {
       ? (currentProfitability / (investmentPeriod ?? 1)) * 12
       : 0;
   return (
-    <>
+    <div>
       <div className={css.portfolio}>
         <div className={css.portfolio_data}>
           <div className={css.portfolio_info}>
@@ -227,7 +227,7 @@ const Portfolio: FC = () => {
         formik={formik}
         error={error}
       />
-    </>
+    </div>
   );
 };
 

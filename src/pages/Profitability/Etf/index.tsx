@@ -43,8 +43,9 @@ const Etf = () => {
 
   const navigate = useNavigate();
   return (
-    <>
+    <div>
       <Button
+        className={css.back}
         text="Назад"
         buttonAttributes={{
           type: "button",
@@ -65,9 +66,9 @@ const Etf = () => {
           <span>Есль льгота ЛДВ</span>
         </div>
       </div>
-      <div className={css.shares}>
-        <div className={css.shares_title}>{name}</div>
-        <div className={css.shares_actions}>
+      <div className={cn(css.income, 'isEtf')}>
+        <div className={css.income_title}>{name}</div>
+        <div className={css.income_actions}>
           <Input
             label="Рассчитать с учетом налога"
             inputAttributes={{
@@ -95,8 +96,8 @@ const Etf = () => {
             }}
           />
         </div>
-        <div className={css.shares_header}>
-          <div className={cn(css.shares_item_row, "_isHeader")}>
+        <div className={css.income_header}>
+          <div className={cn(css.income_item_row, "_isHeader")}>
             <div
               className={css.number}
               onClick={() =>
@@ -137,7 +138,7 @@ const Etf = () => {
             <div className={css.ownershipPeriod}>Срок владения активом</div>
           </div>
         </div>
-        <div className={css.shares_list}>
+        <div className={css.income_list}>
           {!!result.length &&
             result
               .filter((el) =>
@@ -149,7 +150,7 @@ const Etf = () => {
               ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

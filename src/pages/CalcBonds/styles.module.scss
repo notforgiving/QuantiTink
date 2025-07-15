@@ -1,11 +1,14 @@
-@use "UI/styles/variables";
+@use "UI/styles/variables" as *;
+@use "UI/styles/mixines" as *;
 
 .calc_container {
   max-width: calc(80vw - 20px);
-  @include variables.phone {
+  @include phone {
     max-width: 100vw;
   }
-  .back {
+  .actions {
+    display: flex;
+    justify-content: flex-end;
     margin-bottom: 10px;
   }
 }
@@ -15,6 +18,13 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 10px;
+
+  &_title {
+    font-weight: 600;
+    font-size: 22px;
+    padding-block: 15px;
+    text-align: center;
+  }
 
   &_field {
     display: flex;
@@ -32,47 +42,59 @@
 
 .body {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 40px;
-  @include variables.phone {
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  &:global(.isLoading) {
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
+    padding-block: 30vh;
+  }
+  @include phone {
     grid-template-columns: 1fr;
   }
 }
 
 .bond {
-  max-width: 400px;
+  background: $white-10;
+  border-radius: $border-radius;
   width: 100%;
-  @include variables.standartBlock;
-  @include variables.beigeBlock;
   padding: 0;
   font-size: 14px;
-  border: 1px solid variables.$darkBlue;
+  border: 1px solid $green-70;
   overflow: hidden;
   position: relative;
   display: grid;
 
   &:hover {
-    .remove,
-    .saveChanges {
-      opacity: 0.5;
+    .bond_actions {
+      transform: translate(0, 0%);
+      background: transparentize($violet, 0.2);
+      backdrop-filter: blur(5px);
+    }
+  }
+
+  &_actions {
+    @include flex-center;
+    justify-content: space-between;
+    padding: 10px 5px;
+    @include abs;
+    height: auto;
+    transform: translate(0, -100%);
+    transition: transform 0.5s;
+    &::before {
+      @include before;
+      background: $violet;
+      backdrop-filter: blur(0px);
     }
   }
 
   & .remove,
   & .saveChanges {
-    @include variables.standartBlock;
-    @include variables.beigeBlock;
-    position: absolute;
-    right: 5px;
-    top: 5px;
     cursor: pointer;
-    padding: 4px;
-    opacity: 0;
-    transition: 0.3s;
-
-    &:hover {
-      opacity: 1;
-    }
+    padding: 6px;
+    font-size: 12px;
+    border-radius: 5px;
   }
 
   & .saveChanges {
@@ -81,49 +103,53 @@
 
   &_row {
     padding: 5px 10px;
-    border-bottom: 1px solid variables.$darkBlue;
+    border-bottom: 1px solid $darkBlue;
     display: grid;
     grid-template-columns: 70% auto;
     align-items: center;
     gap: 5px;
 
+    &:last-child {
+      border: none;
+    }
+
     &:global(.readOnly) {
-      @include variables.purpuleBlock;
+      @include purpuleBlock;
     }
     &:global(.isWrite) {
-      @include variables.yellowBlock;
+      @include yellowBlock;
       input {
         display: block;
         background: #ffffff00;
         width: 100%;
         border: none;
-        color: variables.$darkBlue;
+        color: $green-70;
       }
     }
     &:global(.forbidden) {
       cursor: not-allowed;
-      @include variables.greyBlock;
+      @include greyBlock;
     }
     &:global(.isResult) {
       cursor: not-allowed;
-      background: variables.$green;
-      color: variables.$lightGray;
+      background: $green-50;
+      color: $green-70;
       font-size: 18px;
-      &:not(:last-of-type) {
-        margin-top: 20px;
-      }
     }
     &:global(._isWrongPrice) {
       input {
-        background: variables.$red;
-        color: variables.$lightGray;
+        background: $red;
+        color: $lightGray;
       }
     }
     &:global(.weight) {
       font-weight: 700;
     }
     &:global(._isLightGreen) {
-      background: rgb(119, 169, 119);
+      background: $green-50;
+    }
+    &:global(._isHide) {
+      display: none;
     }
   }
   &_name {
@@ -133,13 +159,13 @@
     transition: 0.3s;
     font-weight: 600;
     letter-spacing: 0.03em;
-    color: variables.$darkBlue;
+    color: $green-70;
     &:hover {
-      color: variables.$orange;
+      color: $orange-20;
     }
 
     &:global(._isfloating) {
-      @include variables.orangeBlock;
+      @include orangeBlock;
     }
   }
 }

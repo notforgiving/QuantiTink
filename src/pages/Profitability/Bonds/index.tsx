@@ -37,8 +37,8 @@ const Bonds: FC = () => {
           <span>Есль льгота ЛДВ</span>
         </div>
       </div>
-      <div className={css.shares}>
-        <div className={css.shares_title}>
+      <div className={css.income}>
+        <div className={css.income_title}>
           {currency === "rub" ? "Российские облигации" : "Валютные облигации"}
         </div>
         <div className={includeCss.bond__list}>

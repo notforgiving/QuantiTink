@@ -4,6 +4,8 @@ import Input from "UI/components/Input";
 import Button from "UI/components/Button";
 import { useCalcBonds } from "./hook/useCalcBonds";
 import Bond from "./components/Bond";
+import Loader from "components/Loader";
+import cn from "classnames";
 
 const CalcBonds: FC = () => {
   const {
@@ -22,32 +24,33 @@ const CalcBonds: FC = () => {
     sortByProfitability,
   } = useCalcBonds({});
 
+  const conditionLoading = (isLoadingBonds || isLoading) && !bondsTable.length;
   return (
-    <div>
+    <div className={css.calc_container}>
       <div className={css.header}>
-        <span className={css.header_title}>Введите ISIN облигации</span>
-        <div className={css.header_field}>
-          <Input
-            error={error || undefined}
-            inputAttributes={{
-              type: "text",
-              value: inputField,
-              placeholder: "Введите ISIN",
-              onChange: (e) => setInputField(e.target.value),
-              disabled: isLoading || isLoadingBonds,
-            }}
-          />
-          <Button
-            text="Добавить"
-            buttonAttributes={{
-              onClick: () => handleAddBond(),
-              disabled: isLoading || isLoadingBonds,
-            }}
-          />
-        </div>
+        <span className={css.header_title}>Рассчет доходности облигаций</span>
+          <div className={css.header_field}>
+            <Input
+              error={error || undefined}
+              inputAttributes={{
+                type: "text",
+                value: inputField,
+                placeholder: "Введите ISIN облигации",
+                onChange: (e) => setInputField(e.target.value),
+                disabled: conditionLoading,
+              }}
+            />
+            <Button
+              text="Добавить"
+              buttonAttributes={{
+                onClick: () => handleAddBond(),
+                disabled: conditionLoading || inputField === "",
+              }}
+            />
+          </div>
       </div>
-      {bondsTable.length > 1 && (
-        <div className={css.back}>
+      {bondsTable.length > 1 && !isLoading && (
+        <div className={css.actions}>
           <Button
             text={
               sortByProfitability === null
@@ -72,11 +75,19 @@ const CalcBonds: FC = () => {
           />
         </div>
       )}
-
-      <div className={css.body}>
-        {isLoading && "Загрузка, подождите пожалуйста"}
+      <div
+        className={cn(css.body, {
+          isLoading: conditionLoading,
+        })}
+      >
+        {conditionLoading && (
+          <div className={css.loading}>
+            <Loader />
+          </div>
+        )}
         {/* {isLoading && <LoadingBond />} */}
-        {!!bondsTable.length && !isLoading &&
+        {!!bondsTable.length &&
+          !isLoading &&
           bondsTable
             .sort(sortFunction)
             .map((item) => (

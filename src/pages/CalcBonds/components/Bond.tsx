@@ -1,7 +1,8 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import css from "../styles.module.scss";
 import cn from "classnames";
 import { IBondsTable } from "../hook/useCalcBonds";
+import Button from "UI/components/Button";
 
 interface IBondProps {
   itemData: IBondsTable;
@@ -16,14 +17,34 @@ const Bond: FC<IBondProps> = ({
   handleChangeValueBonds,
   handleChangeCurrentPrice,
 }) => {
+  const [showAllData, setShowAllData] = useState<boolean>(false);
   return (
     <div className={css.bond}>
-      <div
+      <div className={css.bond_actions}>
+        <Button
+          text="Удалить"
+          className={css.remove}
+          buttonAttributes={{
+            onClick: () => handleRemoveBond(itemData.isin),
+          }}
+        />
+        <Button
+          text={
+            !showAllData ? "Показать полную таблицу" : "Скрыть лишние данные"
+          }
+          className={css.saveChanges}
+          buttonAttributes={{
+            onClick: () => setShowAllData(!showAllData),
+          }}
+        />
+      </div>
+      {/* <div
         className={css.remove}
         onClick={() => handleRemoveBond(itemData.isin)}
       >
         Удалить
-      </div>
+      </div> */}
+
       <a
         href={`https://www.tbank.ru/invest/bonds/${itemData.isin}/`}
         target="_blank"
@@ -32,13 +53,21 @@ const Bond: FC<IBondProps> = ({
         })}
         rel="noreferrer"
       >
-        {itemData.name}{" "}({itemData.typeOfBond === "Плавающий" ? "Ф" : "ПК"})
+        {itemData.name} ({itemData.typeOfBond === "Плавающий" ? "Ф" : "ПК"})
       </a>
-      <div className={cn(css.bond_row, "readOnly")}>
+      <div
+        className={cn(css.bond_row, "readOnly", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Комиссия брокера, %</strong>
         <span>{itemData.comission}%</span>
       </div>
-      <div className={cn(css.bond_row, "readOnly")}>
+      <div
+        className={cn(css.bond_row, "readOnly", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Налог на доход, %</strong>
         <span>13,00%</span>
       </div>
@@ -79,7 +108,11 @@ const Bond: FC<IBondProps> = ({
         <strong>Купонный доход на одну облигацию, руб</strong>
         <span>{itemData.payOneBond.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "isWrite")}>
+      <div
+        className={cn(css.bond_row, "isWrite", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Количество купонных выплат до погашения</strong>
         <span>{itemData.eventsLength}</span>
       </div>
@@ -92,7 +125,11 @@ const Bond: FC<IBondProps> = ({
         <span>{itemData.maturityDate.formatt}</span>
       </div>
 
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Дней до погашения</strong>
         <span>{itemData.daysToMaturity}</span>
       </div>
@@ -104,15 +141,27 @@ const Bond: FC<IBondProps> = ({
         <strong>Лет до погашения</strong>
         <span>{itemData.yearsToMaturity}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Комиссия за покупку</strong>
         <span>{itemData.commissionForPurchase}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Цена самих облигаций</strong>
         <span>{itemData.priceInCurrencyView.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Уплаченного НКД</strong>
         <span>{itemData.totalNkd.formatt}</span>
       </div>
@@ -124,7 +173,11 @@ const Bond: FC<IBondProps> = ({
         <strong>С одной выплаты буду получать</strong>
         <span>{itemData.payOneBondTotal.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Цена покупки выше номинала</strong>
         <span>{itemData.aboveNominal ? "Да" : "Нет"}</span>
       </div>
@@ -136,11 +189,19 @@ const Bond: FC<IBondProps> = ({
         <strong>Маржа от погашения</strong>
         <span>{itemData.marginFromBondRepayment.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Налог на купоны</strong>
         <span>{itemData.couponTax.formatt}</span>
       </div>
-      <div className={cn(css.bond_row, "forbidden")}>
+      <div
+        className={cn(css.bond_row, "forbidden", {
+          _isHide: !showAllData,
+        })}
+      >
         <strong>Налог на погашение</strong>
         <span>{itemData.taxOnBondRepayment.formatt}</span>
       </div>

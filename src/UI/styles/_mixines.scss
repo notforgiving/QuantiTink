@@ -20,6 +20,11 @@
   );
 }
 
+/** Функция отдает цвет с указанной прозрачностью */
+@function opacity-color($color, $opacity) {
+  $returnOpacity: calc(1 -  $opacity);
+  @return transparentize($color, $returnOpacity);
+}
 
 @mixin abs {
   position: absolute;

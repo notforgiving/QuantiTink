@@ -11,6 +11,8 @@
   &__header {
     position: relative;
     z-index: 2;
+    max-width: 500px;
+    margin-inline: auto;
   }
   & .loading {
     width: 100%;
@@ -21,6 +23,7 @@
   & .grid {
     display: flex;
     flex-wrap: wrap;
+    border-bottom: 0.5px solid rgb(from #001C18 r g b / 5%);
 
     &__item {
       display: flex;
@@ -106,9 +109,6 @@
   }
 
   & .accounts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
     background: #00d885;
     margin-inline: -10px;
     border-top-left-radius: 40px;
@@ -117,6 +117,17 @@
     padding-bottom: 60px;
     position: relative;
     z-index: 1;
+
+    &_inner {
+      display: grid;
+      gap: 5px;
+      grid-template-columns: 1fr;
+
+      @include phone {
+        display: flex;
+        flex-wrap: wrap;
+      }
+    }
 
     &::before {
       @include before;

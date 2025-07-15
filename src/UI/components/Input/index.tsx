@@ -31,7 +31,11 @@ const Input: FC<IInputProps> = ({ label, inputAttributes, error }) => {
     );
   }
   return (
-    <div className={cn(css.input, "input_component")}>
+    <div
+      className={cn(css.input, "input_component", {
+        isDisabled: inputAttributes?.disabled,
+      })}
+    >
       {label && (
         <label className={cn(css.input_label, "input_label")}>{label}</label>
       )}
@@ -39,9 +43,7 @@ const Input: FC<IInputProps> = ({ label, inputAttributes, error }) => {
         {...inputAttributes}
         className={cn(css.input_body, "input_body")}
       />
-      {
-        error && <div className={css.input_error}>{error}</div>
-      }
+      {error && <div className={css.input_error}>{error}</div>}
     </div>
   );
 };

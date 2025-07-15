@@ -3,9 +3,9 @@ $middleBlue: #42506b;
 $lightBlue: #3d619e;
 $lightGray: #e9e8eb;
 $middleGray: #c1b9ae;
-$red: #c62f31;
+$red: #d80053;
 $orange: #f8663f;
-$violet: #71617d;
+$violet: #441e82;
 $gold: #fcc769;
 $green: green;
 
@@ -15,11 +15,8 @@ $green: green;
 }
 
 @mixin greyBlock {
-  background: $lightGray;
-  color: $lightBlue;
-  &:hover {
-    background: lighten($lightGray, 10%);
-  }
+  background: $green-10;
+  color: $green-70;
 }
 
 @mixin redBlock {
@@ -47,17 +44,17 @@ $green: green;
 }
 
 @mixin yellowBlock {
-  background: $gold;
-  color: $lightBlue;
+  background: transparentize($orange-20, 0.3);
+  color: $green-70;
   transition: 0.3s;
 
   &:hover {
-    background: lighten($gold, 10%);
+    background: lighten($orange-20, 3%);
   }
 }
 
 @mixin purpuleBlock {
-  background: $violet;
+  background: transparentize($violet, 0.2);
   color: #fff;
   &:hover {
     background: lighten($violet, 10%);
@@ -75,7 +72,7 @@ $green: green;
 @mixin middleBlueBlock {
   background: $middleBlue;
   color: $lightGray;
-} 
+}
 
 @mixin inputBaseStyles {
   padding: 5px 10px;
@@ -94,17 +91,17 @@ $green: green;
 }
 
 $white-10: #fff;
-$green-10: #E9F4EC;
-$green-20: #A7CFCA;
-$green-30: #43E3A7;
-$green-40: #00D885;
-$green-50: #02D787;
-$green-60: #1E8276;
-$green-70: #001C18;
-$orange-10: #FEF1E0;
-$orange-20: #FFB864;
+$green-10: #e9f4ec;
+$green-20: #a7cfca;
+$green-30: #43e3a7;
+$green-40: #00d885;
+$green-50: #02d787;
+$green-60: #1e8276;
+$green-70: #001c18;
+$orange-10: #fef1e0;
+$orange-20: #d88500;
 
 $border-radius: 15px;
 $border: 1px solid $green-40;
 $transition: 0.3s;
-$maxWidthApp: 480px;
+$maxWidthApp: 1920px;

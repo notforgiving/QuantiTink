@@ -1,4 +1,9 @@
-@use "UI/styles/variables";
+@use "UI/styles/variables" as *;
+
+.back {
+  width: fit-content;
+  background: $green-60;
+}
 
 .symbols {
   display: flex;
@@ -22,17 +27,17 @@
 
   & .green {
     strong {
-      background: variables.$green;
+      background: $green-60;
     }
   }
   & .red {
     strong {
-      background: variables.$red;
+      background: $red;
     }
   }
   & .threeYears {
     strong {
-      background: variables.$gold;
+      background: $orange-20;
     }
   }
 }
@@ -43,19 +48,95 @@
   justify-content: space-between;
 }
 
-.shares {
-  margin-top: 40px;
+.income {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 
+  &:global(.isEtf) {
+    .income_item {
+      @include phone {
+        padding: 4px 6px;
+      }
+    }
+    .income_item_row {
+      grid-template-columns: 20px 80px repeat(4, 1fr);
+      gap: 15px;
+
+      &:global(._isHeader) {
+        @include phone {
+          .profitabilityNow {
+            font-weight: normal;
+            font-size: inherit;
+          }
+        }
+      }
+
+      @include phone {
+        grid-template-areas:
+          "date ownershipPeriod ownershipPeriod"
+          "priceTotal  priceActiality profitabilityNow";
+        grid-template-columns: auto auto auto;
+        grid-template-rows: auto auto;
+        justify-items: flex-start;
+        gap: 15px 10px;
+      }
+    }
+    .name,
+    .quantity {
+      display: none;
+    }
+    .priceTotal {
+      @include phone {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+    .priceActiality {
+      @include phone {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        text-align: left;
+      }
+    }
+    .ownershipPeriod {
+      @include phone {
+        flex-direction: row;
+        justify-content: flex-end;
+        grid-column-start: 2;
+      }
+    }
+    .profitabilityNow {
+      @include phone {
+        font-weight: 500;
+      }
+    }
+  }
+
+  &:global(.isShares) {
+    .income_item_row {
+      grid-template-columns: 20px 150px 80px 50px repeat(3, 1fr);
+
+      .priceTotal {
+        display: none;
+      }
+      .ownershipPeriod {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
   &_header {
     position: sticky;
     top: 0;
-    background: variables.$darkBlue;
+    background: $white-10;
   }
 
-  @include variables.phone {
+  @include phone {
     margin-top: 10px;
   }
 
@@ -65,7 +146,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    @include variables.phone {
+    @include phone {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -83,28 +164,28 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    @include variables.standartBlock;
-    @include variables.middleBlueBlock;
+    @include standartBlock;
+    @include middleBlueBlock;
     padding: 6px 8px;
 
     &:global(._isProfitablePurchase) {
-      background: variables.$green;
+      background: $green-60;
     }
     &:global(._isUnprofitablePurchase) {
-      background: variables.$red;
+      background: $red;
     }
 
     &_row {
       display: grid;
-      grid-template-columns: 20px 200px 80px 80px repeat(4, 1fr);
+      grid-template-columns: 20px 150px 80px 50px repeat(4, 1fr);
       gap: 4px;
       &:global(._isHeader) {
-        border-bottom: 2px solid variables.$lightBlue;
+        border-bottom: 2px solid $green-40;
         padding-bottom: 4px;
         padding: 6px 8px;
-        @include variables.phone {
-          @include variables.beigeBlock;
-        }
+        // @include phone {
+        //   @include beigeBlock;
+        // }
         .profitabilityNow,
         .number,
         .date {
@@ -121,7 +202,7 @@
           font-size: 12px;
         }
       }
-      @include variables.phone {
+      @include phone {
         display: grid;
         grid-template-areas:
           "date name name"
