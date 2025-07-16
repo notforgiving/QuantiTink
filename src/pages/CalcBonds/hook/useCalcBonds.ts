@@ -65,15 +65,27 @@ type TUseCalcBonds = (props: IUseCalcBonds) => {
     handleChangeValueBonds: (isin: string, newValue: number) => void;
     isLoadingBonds: boolean;
     handleChangeCurrentPrice: (isin: string, newPrice: number) => void;
-    setSortByProfitability: React.Dispatch<React.SetStateAction<boolean | null>>;
+    setSortByProfitability: React.Dispatch<React.SetStateAction<{
+        key: "income" | "alfabet";
+        value: 'ask' | 'desk' | null;
+    }>>
     sortFunction: (a: IBondsTable, b: IBondsTable) => number;
-    sortByProfitability: boolean | null;
+    sortByProfitability: {
+        key: "income" | "alfabet";
+        value: 'ask' | 'desk' | null;
+    }
 }
 export const useCalcBonds: TUseCalcBonds = () => {
     const UPDATETIME = process.env.NODE_ENV === 'development' ? 60 : 5 * 60;
     const { id: userId } = useAuth();
     const dispatch = useDispatch();
-    const [sortByProfitability, setSortByProfitability] = useState<boolean | null>(false);
+    const [sortByProfitability, setSortByProfitability] = useState<{
+        key: 'income' | 'alfabet',
+        value: 'ask' | 'desk' | null;
+    }>({
+        key: 'income',
+        value: null,
+    });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [bonds, setBonds] = useState<string[]>([]);
     const [bondsTable, setBondsTable] = useState<IBondsTable[]>([]);
@@ -359,13 +371,25 @@ export const useCalcBonds: TUseCalcBonds = () => {
     }
 
     const sortFunction = (a: IBondsTable, b: IBondsTable) => {
-        if (sortByProfitability) {
-            return b.annualProfitability - a.annualProfitability;
+        if (sortByProfitability.key === 'income') {
+            if (sortByProfitability.value === null) {
+                return a.name.localeCompare(b.name);
+            } else if (sortByProfitability.value === 'ask') {
+                return a.annualProfitability - b.annualProfitability;
+            } else {
+                return b.annualProfitability - a.annualProfitability;
+            }
         }
-        if (sortByProfitability === null) {
-            return a.name.localeCompare(b.name);
+        if (sortByProfitability.key === 'alfabet') {
+            if (sortByProfitability.value === null) {
+                return a.name.localeCompare(b.name);
+            } else if (sortByProfitability.value === 'ask') {
+                return a.name.localeCompare(b.name);
+            } else {
+                return b.name.localeCompare(a.name);
+            }
         }
-        return a.annualProfitability - b.annualProfitability;
+        return a.name.localeCompare(b.name);
     }
 
     useEffect(() => {

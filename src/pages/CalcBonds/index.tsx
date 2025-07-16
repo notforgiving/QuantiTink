@@ -6,6 +6,7 @@ import { useCalcBonds } from "./hook/useCalcBonds";
 import Bond from "./components/Bond";
 import Loader from "components/Loader";
 import cn from "classnames";
+import SortArrows from "UI/components/SortArrows";
 
 const CalcBonds: FC = () => {
   const {
@@ -25,6 +26,24 @@ const CalcBonds: FC = () => {
   } = useCalcBonds({});
 
   const conditionLoading = (isLoadingBonds || isLoading) && !bondsTable.length;
+
+  const handleSortSlick = (key: "income" | "alfabet") => {
+    if (sortByProfitability.value === null) {
+      setSortByProfitability({
+        key,
+        value: "desk",
+      });
+    } else if (sortByProfitability.value === "desk") {
+      setSortByProfitability({
+        key,
+        value: "ask",
+      });
+    } else
+      setSortByProfitability({
+        key,
+        value: null,
+      });
+  };
 
   return (
     <div className={css.calc_container}>
@@ -52,28 +71,20 @@ const CalcBonds: FC = () => {
       </div>
       {bondsTable.length > 1 && !isLoading && (
         <div className={css.actions}>
-          <Button
-            text={
-              sortByProfitability === null
-                ? "Сортировать по увеличению доходности"
-                : sortByProfitability === false
-                ? "Сортировать по уменьшению доходности"
-                : "Сортировать по алфавиту"
-            }
-            buttonAttributes={{
-              onClick: () =>
-                setSortByProfitability((prevState) => {
-                  if (prevState) {
-                    return null;
-                  }
-                  if (prevState === null) {
-                    return false;
-                  }
-                  return true;
-                }),
-              disabled: isLoading || isLoadingBonds,
-            }}
-          />
+          <div
+            className={css.actions__item}
+            onClick={() => handleSortSlick("income")}
+          >
+            <span>По доходности</span>
+            <SortArrows state={sortByProfitability.key === 'income' ? sortByProfitability.value : null} />
+          </div>
+          <div
+            className={css.actions__item}
+            onClick={() => handleSortSlick("alfabet")}
+          >
+            <span>По алфавиту</span>
+            <SortArrows state={sortByProfitability.key === 'alfabet' ? sortByProfitability.value : null} />
+          </div>
         </div>
       )}
       <div
@@ -86,7 +97,6 @@ const CalcBonds: FC = () => {
             <Loader />
           </div>
         )}
-        {/* {isLoading && <LoadingBond />} */}
         {!!bondsTable.length &&
           !isLoading &&
           bondsTable
@@ -100,6 +110,11 @@ const CalcBonds: FC = () => {
                 handleChangeCurrentPrice={handleChangeCurrentPrice}
               />
             ))}
+            {
+              !isLoading && bondsTable.length === 0 && (
+                <div>Пока вы не добавили не одной облигации</div>
+              )
+            }
       </div>
     </div>
   );

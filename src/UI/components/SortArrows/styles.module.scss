@@ -1,0 +1,35 @@
+@use "UI/styles/variables" as *;
+@use "UI/styles/mixines" as *;
+
+.sort {
+  @include flex-center;
+  flex-direction: column;
+  svg {
+    width: 8px;
+    height: auto;
+    color: $green-20;
+  }
+
+  &:global(._isAsk) {
+    .sort__top {
+      path {
+        fill: #00c98d;
+      }
+    }
+  }
+
+  &:global(._isDesk) {
+    .sort__bottom {
+      path {
+        fill: #00c98d;
+      }
+    }
+  }
+
+  &__top {
+    transform: rotate(-90deg);
+  }
+  &__bottom {
+    transform: rotate(90deg);
+  }
+}
