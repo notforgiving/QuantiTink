@@ -29,25 +29,25 @@ const CalcBonds: FC = () => {
     <div className={css.calc_container}>
       <div className={css.header}>
         <span className={css.header_title}>Рассчет доходности облигаций</span>
-          <div className={css.header_field}>
-            <Input
-              error={error || undefined}
-              inputAttributes={{
-                type: "text",
-                value: inputField,
-                placeholder: "Введите ISIN облигации",
-                onChange: (e) => setInputField(e.target.value),
-                disabled: conditionLoading,
-              }}
-            />
-            <Button
-              text="Добавить"
-              buttonAttributes={{
-                onClick: () => handleAddBond(),
-                disabled: conditionLoading || inputField === "",
-              }}
-            />
-          </div>
+        <div className={css.header_field}>
+          <Input
+            error={error || undefined}
+            inputAttributes={{
+              type: "text",
+              value: inputField,
+              placeholder: "Введите ISIN облигации",
+              onChange: (e) => setInputField(e.target.value),
+              disabled: conditionLoading,
+            }}
+          />
+          <Button
+            text="Добавить"
+            buttonAttributes={{
+              onClick: () => handleAddBond(),
+              disabled: conditionLoading || inputField === "",
+            }}
+          />
+        </div>
       </div>
       {bondsTable.length > 1 && !isLoading && (
         <div className={css.actions}>

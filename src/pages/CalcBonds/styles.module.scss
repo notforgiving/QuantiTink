@@ -10,6 +10,11 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 10px;
+
+    :global(.Button_component) {
+      width: 100%;
+      padding: 7px 14px;
+    }
   }
 }
 
@@ -23,19 +28,23 @@
     font-weight: 600;
     font-size: 22px;
     padding-block: 15px;
-    text-align: center;
   }
 
   &_field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
 
     :global(.input_component) {
+      height: 100%;
+    }
+    :global(.input_body) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
       flex: 1;
     }
     :global(.Button_component) {
-      height: 40px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
 }
@@ -43,7 +52,7 @@
 .body {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 30px;
   &:global(.isLoading) {
     grid-template-columns: 1fr;
     align-items: center;
@@ -56,37 +65,37 @@
 }
 
 .bond {
-  background: $white-10;
-  border-radius: $border-radius;
   width: 100%;
-  padding: 0;
-  font-size: 14px;
-  border: 1px solid $green-70;
+  border-radius: 20px;
   overflow: hidden;
   position: relative;
   display: grid;
+  gap: 10px;
+
+  &__inner {
+    background: $white-10;
+    padding: 30px 20px;
+    font-size: 14px;
+    box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
+    display: grid;
+  }
 
   &:hover {
     .bond_actions {
       transform: translate(0, 0%);
-      background: transparentize($violet, 0.2);
-      backdrop-filter: blur(5px);
     }
   }
 
   &_actions {
     @include flex-center;
     justify-content: space-between;
-    padding: 10px 5px;
+    padding: 10px 15px;
     @include abs;
     height: auto;
     transform: translate(0, -100%);
     transition: transform 0.5s;
-    &::before {
-      @include before;
-      background: $violet;
-      backdrop-filter: blur(0px);
-    }
+    background: $white-10;
+    box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
   }
 
   & .remove,
@@ -102,22 +111,22 @@
   }
 
   &_row {
-    padding: 5px 10px;
-    border-bottom: 1px solid $darkBlue;
+    padding-block: 8px;
+    border-bottom: 1px solid #f2f2f2;
     display: grid;
     grid-template-columns: 70% auto;
     align-items: center;
     gap: 5px;
+    font-weight: 400;
+    font-size: 14px;
 
     &:last-child {
       border: none;
     }
 
     &:global(.readOnly) {
-      @include purpuleBlock;
     }
     &:global(.isWrite) {
-      @include yellowBlock;
       input {
         display: block;
         background: #ffffff00;
@@ -128,13 +137,24 @@
     }
     &:global(.forbidden) {
       cursor: not-allowed;
-      @include greyBlock;
     }
     &:global(.isResult) {
+      padding: 0;
       cursor: not-allowed;
-      background: $green-50;
-      color: $green-70;
-      font-size: 18px;
+      display: grid;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 5px;
+      span {
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 140%;
+        letter-spacing: 0.01em;
+        color: #32c691;
+      }
+      strong {
+        color: #969f9d;
+      }
     }
     &:global(._isWrongPrice) {
       input {
@@ -146,7 +166,6 @@
       font-weight: 700;
     }
     &:global(._isLightGreen) {
-      background: $green-50;
     }
     &:global(._isHide) {
       display: none;
@@ -155,17 +174,19 @@
   &_name {
     display: block;
     cursor: pointer;
-    text-align: center;
     transition: 0.3s;
     font-weight: 600;
+    font-size: 21px;
     letter-spacing: 0.03em;
-    color: $green-70;
-    &:hover {
-      color: $orange-20;
-    }
+    color: $orange-20;
+    margin-bottom: 14px;
+  }
 
-    &:global(._isfloating) {
-      @include orangeBlock;
-    }
+  &__result {
+    background: #e5f9f4;
+    border-radius: 20px;
+    padding: 20px;
+    display: grid;
+    gap: 10px;
   }
 }

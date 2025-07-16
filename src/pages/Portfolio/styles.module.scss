@@ -1,169 +1,148 @@
-@use "../../UI/styles/variables";
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
 
 .portfolio {
   font-size: 16px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   position: relative;
+  gap: 20px;
 
-  &_data {
-    @include variables.standartBlock;
-    @include variables.middleBlueBlock;
-    display: flex;
-    justify-content: space-between;
-
-    @include variables.phone {
-      gap: 10px;
+  &:global(.isGreen) {
+    .portfolio {
+      &_data {
+        border-left: 6px solid #10b981;
+      }
+      &_amount {
+        span {
+          color: #10b981;
+        }
+      }
     }
   }
-  &_info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+
+  &__title {
+    font-weight: 600;
+    font-size: 22px;
+    padding-block: 15px;
   }
-  &_name {
-    font-size: 28px;
-    @include variables.phone {
-      font-size: 24px;
-      margin-bottom: 10px;
+
+  &_data {
+    @include whiteBlock;
+    @include flex-center;
+    gap: 10px;
+    border-left: 6px solid #d88500;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  &_block {
+    @include whiteBlock;
+    @include flex-center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    &:global(.isActive) {
+      padding: 14px 20px;
+      gap: 20px;
+      .portfolio_blockItem {
+        align-items: flex-start;
+        span {
+          display: flex;
+          gap: 5px;
+          font-weight: normal;
+          font-size: 16px;
+          &:last-child {
+            font-weight: 600;
+          }
+        }
+        strong {
+          line-height: 20px;
+        }
+      }
+    }
+  }
+  &_blockItem {
+    width: 100%;
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    &:global(.isShare) {
+      svg {
+        color: #d88500;
+      }
+    }
+    &:global(.isBond) {
+      svg {
+        color: #10b981;
+      }
+    }
+    &:global(.isEtf) {
+      svg {
+        color: #104243;
+      }
+    }
+
+    &:first-child {
+      span {
+        font-weight: 700;
+        font-size: 18px;
+      }
+    }
+
+    svg {
+      color: #104243;
+      width: 20px;
+      height: auto;
+    }
+    strong {
+      flex: 1;
+      color: #104243;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    span {
+      text-align: right;
+      color: #104243;
     }
   }
   &_amount {
-    background: variables.$red;
-    padding: 5px;
-    border-radius: 5px;
-    width: fit-content;
-    &:global(._isGreen) {
-      background: variables.$green;
+    display: grid;
+    gap: 10px;
+    font-weight: 700;
+    strong {
+      font-size: 28px;
+      color: #104243;
     }
-    @include variables.phone {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    span {
+      font-size: 16px;
+      color: #d88500;
     }
   }
   &_actions {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 10px;
-    @include variables.phone {
-      justify-content: space-between;
+
+    :global(.Button_component) {
+      &::before {
+        width: 120%;
+        height: 120%;
+      }
     }
   }
   &_start {
-    @include variables.phone {
-      span {
-        display: block;
-        text-align: right;
-      }
-    }
-  }
-  &_calendar {
-  }
-  &_grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-
-    & > div {
-      align-items: center;
-      display: flex;
-      flex-basis: auto;
-      flex-direction: column;
-      flex-grow: 1;
-      flex-shrink: 1;
-      justify-content: center;
-      overflow: hidden;
-      padding: 20px;
-      text-align: center;
-      strong {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      span {
-        font-size: 24px;
-      }
-    }
-  }
-  &_balance {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    & > div {
-      align-items: center;
-      display: flex;
-      flex-basis: auto;
-      flex-direction: column;
-      flex-grow: 1;
-      flex-shrink: 1;
-      justify-content: center;
-      overflow: hidden;
-      padding: 20px;
-      text-align: center;
-      strong {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      span {
-        font-size: 24px;
-      }
-    }
-  }
-  &_investments {
-    @include variables.standartBlock;
-    @include variables.greyBlock;
-    align-items: center;
-    border-radius: 5px;
-    display: flex;
-    flex-basis: auto;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 1;
-    justify-content: center;
-    overflow: hidden;
-    padding: 20px;
-    text-align: center;
-    width: 100%;
-  }
-  &_comissions,
-  &_taxes {
-    @include variables.redBlock;
-    @include variables.standartBlock;
-  }
-  &_coupons,
-  &_dividends {
-    @include variables.blueBlock;
-    @include variables.standartBlock;
-  }
-  &_profitability {
-    @include variables.greyBlock;
-    @include variables.standartBlock;
-  }
-  &_shares {
-    @include variables.standartBlock;
-    @include variables.orangeBlock;
-    cursor: pointer;
-  }
-  &_rubBonds {
-    @include variables.standartBlock;
-    @include variables.purpuleBlock;
-    cursor: pointer;
-  }
-  &_usdBonds {
-    @include variables.standartBlock;
-    @include variables.beigeBlock;
-    cursor: pointer;
-  }
-  &_etf {
-    @include variables.standartBlock;
-    @include variables.yellowBlock;
-    cursor: pointer;
+    color: #2d666a;
   }
   &_rebalance {
-    padding: 20px 10px;
     font-size: 20px;
+    background: #00af86;
+    background: linear-gradient(
+      130deg,
+      rgba(0, 175, 134, 1) 0%,
+      rgba(0, 150, 115, 1) 100%
+    );
   }
 }

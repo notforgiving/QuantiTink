@@ -9,10 +9,6 @@
     @include flex-center;
   }
   &__header {
-    position: relative;
-    z-index: 2;
-    max-width: 500px;
-    margin-inline: auto;
   }
   & .loading {
     width: 100%;
@@ -21,63 +17,49 @@
   }
 
   & .grid {
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 30px 20px;
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 0.5px solid rgb(from #001C18 r g b / 5%);
+    justify-content: space-between;
+    gap: 20px 10px;
+    box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
 
     &__item {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      display: grid;
       gap: 10px;
-      padding: 16px;
-
-      &:nth-child(even) {
-        border-left: 1px solid rgb(from $green-70 r g b / 10%);
-      }
-      &:nth-child(odd) {
-        border-right: 1px solid rgb(from $green-70 r g b / 10%);
-      }
-      &:nth-child(1) {
-        width: 60%;
-      }
-      &:nth-child(2) {
-        width: 40%;
-      }
-      &:nth-child(3) {
-        width: 40%;
-      }
-      &:nth-child(4) {
-        width: 60%;
-      }
-      &:nth-child(1),
-      &:nth-child(2) {
-        border-bottom: 1px solid rgb(from $green-70 r g b / 10%);
-      }
-      &:nth-child(3),
-      &:nth-child(4) {
-        border-top: 1px solid rgb(from $green-70 r g b / 10%);
-      }
-
-      &:global(._isLight) {
+      &:global(._isGreen) {
         strong {
-          color: $green-40;
+          color: #3bc2a1;
         }
       }
-      &:global(._isRed) {
-        strong {
-          color: $orange-20;
-        }
-      }
-
       span {
-        color: rgb(from $green-70 r g b / 60%);
-        font-weight: 600;
+        color: opacity-color(#6b7280, 0.7);
+        font-weight: 500;
       }
       strong {
-        font-size: fluid(24, 16);
+        font-size: 16px;
         font-weight: 700;
-        color: $green-70;
+        color: #ef444c;
+      }
+      &:nth-child(1) {
+        width: 100%;
+        span {
+          color: #6b7280;
+          font-size: 18px;
+          font-weight: 500;
+        }
+        strong {
+          font-size: 30px;
+          font-weight: 600;
+          color: #000000;
+        }
+      }
+      &:last-child {
+        strong {
+          color: #000000;
+        }
       }
     }
   }
@@ -105,39 +87,11 @@
     font-weight: 600;
     font-size: 22px;
     padding-block: 15px;
-    text-align: center;
   }
 
   & .accounts {
-    background: #00d885;
-    margin-inline: -10px;
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
-    padding: 10px;
-    padding-bottom: 60px;
-    position: relative;
-    z-index: 1;
-
-    &_inner {
-      display: grid;
-      gap: 5px;
-      grid-template-columns: 1fr;
-
-      @include phone {
-        display: flex;
-        flex-wrap: wrap;
-      }
-    }
-
-    &::before {
-      @include before;
-      left: 50%;
-      translate: -50% -50%;
-      background: #fff;
-      width: 100%;
-      height: 283px;
-      border-radius: 13%;
-      z-index: -1;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 }

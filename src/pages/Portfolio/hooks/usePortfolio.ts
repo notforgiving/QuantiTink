@@ -22,8 +22,6 @@ type TUsePortfolio = (props: IUsePortfolio) => {
     currentPrice: TFFormattPrice
     /** Доходность в проентах */
     differencePercent: number;
-    /** Дата начала инвестирования */
-    portfolioStart: string;
     /** Срок инвестирования */
     investmentPeriod: number | null;
     /** Уплаченно комисиий */
@@ -89,7 +87,6 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
     const [etfArray, setEtfArray] = useState<(TFFormattPrice & { percent: number, name: string, ticker: string; })[]>([])
     const [currentProfitability, setCurrentProfitability] = useState<number>(0);
     const [differencePercent, setDifferencePercent] = useState<number>(0);
-    const [portfolioStart, setPortfolioStart] = useState<string>('0');
     const [investmentPeriod, setInvestmentPeriod] = useState<number | null>(null);
 
     const account = useSelector((state: StateType) => {
@@ -148,8 +145,7 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
                 accountId: accountId,
                 operations,
             }]))
-            setAmountInvestments(summ)
-            setPortfolioStart(moment(operations[operations.length - 1].date).format("DD.MM.YYYY"))
+            setAmountInvestments(summ);
             setInvestmentPeriod(moment().diff(moment(operations[operations.length - 1].date), "months"))
         }
 
@@ -241,7 +237,6 @@ export const usePortfolio: TUsePortfolio = ({ accountId }) => {
         amountInvestments,
         currentPrice,
         differencePercent,
-        portfolioStart,
         investmentPeriod,
         commissions,
         taxes,

@@ -4,9 +4,9 @@ import { TFAmount } from "../../types/portfolio.type";
 import { formattedMoneySupply, getNumberMoney } from "../../utils";
 import Load from "../../UI/components/Load";
 import { NavLink } from "react-router-dom";
-import { ReactComponent as ArrowRightSvg } from "assets/arrow-right.svg";
 import cn from "classnames";
 import { TFFormattPrice } from "types/common";
+import { getIconByRubAlfabet } from "general";
 
 interface IAccountProps {
   id: string;
@@ -29,15 +29,24 @@ const Account: FC<IAccountProps> = ({
         formatt: "0",
         value: 0,
       };
+
+  if(!amountOfDeposits || !currentPriceOfBody) {
+    return null;
+  }
+
   return (
-    <NavLink to={`/account/${id}`} className={css.account}>
-      <div className={css.account_header}>
-        <div className={css.account_name}>{name}</div>
-        <div className={css.account_icon}>
-          <ArrowRightSvg />
-        </div>
-      </div>
-      {loadingMoney || !totalAmountPortfolio || !amountOfDeposits || !currentPriceOfBody ? (
+    <NavLink
+      to={`/account/${id}`}
+      className={cn(css.account, {
+        _isGreen: amountOfDeposits.value < currentPriceOfBody.value,
+      })}
+    >
+      <div className={css.account_icon}>{getIconByRubAlfabet(name[0])}</div>
+      <div className={css.account_name}>{name}</div>
+      {loadingMoney ||
+      !totalAmountPortfolio ||
+      !amountOfDeposits ||
+      !currentPriceOfBody ? (
         <Load
           style={{
             width: "100%",
@@ -52,7 +61,8 @@ const Account: FC<IAccountProps> = ({
                 _isGreen: amountOfDeposits.value < currentPriceOfBody.value,
               })}
             >
-              {currentPriceOfBody.formatt}
+              <strong>{currentPriceOfBody.formatt}</strong>
+              <span>{((currentPriceOfBody.value - amountOfDeposits.value)/amountOfDeposits.value*100).toFixed(2)}%</span>
             </div>
           )}
         </>

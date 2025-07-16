@@ -9,6 +9,17 @@ import Goals from "../../components/Goals";
 import { useGoals } from "./hooks/useGoals";
 import GoalsModal from "../../components/Goals/components/GoalsModal";
 import { TFAmount } from "../../types/portfolio.type";
+import { ReactComponent as CalendarSvg } from "assets/calendar.svg";
+import { ReactComponent as WalletSvg } from "assets/ionicons/icon2.svg";
+import { ReactComponent as TicketSvg } from "assets/ticket.svg";
+import { ReactComponent as ReceiptSvg } from "assets/receipt.svg";
+import { ReactComponent as ServerSvg } from "assets/server.svg";
+import { ReactComponent as CashSvg } from "assets/cash.svg";
+import { ReactComponent as PodiumSvg } from "assets/podium.svg";
+import { ReactComponent as NutritionSvg } from "assets/nutrition.svg";
+import { ReactComponent as GitBranchSvg } from "assets/git-branch.svg";
+import { ReactComponent as GitNetworkSvg } from "assets/git-network.svg";
+import { ReactComponent as CubeSvg } from "assets/cube.svg";
 
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
@@ -19,7 +30,6 @@ const Portfolio: FC = () => {
     amountInvestments,
     currentPrice,
     differencePercent,
-    portfolioStart,
     investmentPeriod,
     commissions,
     taxes,
@@ -60,123 +70,132 @@ const Portfolio: FC = () => {
       : 0;
   return (
     <div>
-      <div className={css.portfolio}>
+      <div
+        className={cn(css.portfolio, {
+          isGreen: currentPrice.value > amountInvestments.value,
+        })}
+      >
+        {account && <div className={css.portfolio__title}>{account?.name}</div>}
         <div className={css.portfolio_data}>
-          <div className={css.portfolio_info}>
-            {account && (
-              <div className={css.portfolio_name}>{account?.name}</div>
-            )}
-            {portfolio && (
-              <div
-                className={cn(css.portfolio_amount, {
-                  _isGreen: currentPrice.value > amountInvestments.value,
-                })}
-              >
-                <span>{currentPrice.formatt}</span>
-                <span>
-                  {" "}
-                  ({" "}
-                  {
-                    formattedMoneySupply(
-                      currentPrice.value - amountInvestments.value
-                    ).formatt
-                  }{" "}
-                  / {`${differencePercent}%`})
-                </span>
-              </div>
-            )}
-          </div>
+          {portfolio && (
+            <div
+              className={cn(css.portfolio_amount, {
+                _isGreen: currentPrice.value > amountInvestments.value,
+              })}
+            >
+              <strong>{currentPrice.formatt}</strong>
+              <span>
+                {
+                  formattedMoneySupply(
+                    currentPrice.value - amountInvestments.value
+                  ).formatt
+                }{" "}
+                / {`${differencePercent}%`}
+              </span>
+            </div>
+          )}
           <div className={css.portfolio_actions}>
             <div className={css.portfolio_start}>
-              <span>{portfolioStart} / </span>
-              <span>{`${investmentPeriod} ${getDeclensionWordMonth(
+              {`${investmentPeriod} ${getDeclensionWordMonth(
                 investmentPeriod || 0
-              )}`}</span>
+              )}`}
             </div>
-            <div className={css.portfolio_calendar}>
-              <Button
-                text="Календарь инвестора"
-                buttonAttributes={{
-                  type: "button",
-                  onClick: () => navigate(`/account/${accountId}/calendar`),
-                  disabled:
-                    shares.value === 0 &&
-                    rubBonds.value === 0 &&
-                    usdBonds.value === 0,
-                }}
-              />
-            </div>
+            <Button
+              text=""
+              icon={<CalendarSvg />}
+              buttonAttributes={{
+                type: "button",
+                onClick: () => navigate(`/account/${accountId}/calendar`),
+                disabled:
+                  shares.value === 0 &&
+                  rubBonds.value === 0 &&
+                  usdBonds.value === 0,
+              }}
+            />
           </div>
         </div>
-        <div className={css.portfolio_grid}>
-          <div className={css.portfolio_investments}>
+
+        <div className={css.portfolio_block}>
+          <div className={css.portfolio_blockItem}>
+            <WalletSvg />
             <strong>Вложено:</strong>
             <span>{amountInvestments.formatt}</span>
           </div>
-          <div className={css.portfolio_comissions}>
+          <div className={css.portfolio_blockItem}>
+            <TicketSvg />
             <strong>Уплачено комиссий:</strong>
             <span>{commissions.formatt}</span>
           </div>
-          <div className={css.portfolio_taxes}>
+          <div className={css.portfolio_blockItem}>
+            <ReceiptSvg />
             <strong>Уплачено налогов:</strong>
             <span>{taxes.formatt}</span>
           </div>
-          <div className={css.portfolio_coupons}>
-            <strong>Получено купонов за всё время:</strong>
-            <span>{coupons.formatt}</span>
-          </div>
-          <div className={css.portfolio_dividends}>
-            <strong>Получено дивидендов за всё время:</strong>
-            <span>{dividends.formatt}</span>
-          </div>
-          <div
-            className={css.portfolio_profitability}
-            title="Без учета доходности по телу портфеля"
-          >
-            <strong>Текущая доходность</strong>
-            <span>{`${currentProfitability}%`}</span>
-          </div>
-          <div
-            className={css.portfolio_profitability}
-            title="Без учета доходности по телу портфеля"
-          >
-            <strong>Годовая доходность (прогноз)</strong>
+        </div>
+        <div className={css.portfolio_block}>
+          <div className={css.portfolio_blockItem}>
+            <ServerSvg />
+            <strong>Получено всего выплат</strong>
             <span>
+              {
+                formattedMoneySupply(Number(coupons.value + dividends.value))
+                  .formatt
+              }
+            </span>
+          </div>
+          <div className={css.portfolio_blockItem}>
+            <CashSvg />
+            <strong>Получено купонов / дивидендов</strong>
+            <span>
+              {coupons.formatt} / {dividends.formatt}
+            </span>
+          </div>
+        </div>
+        <div className={css.portfolio_block}>
+          <div className={css.portfolio_blockItem}>
+            <PodiumSvg />
+            <strong>Доходность / в год</strong>
+            <span>
+              {`${currentProfitability}%`} /{" "}
               {forecastYear !== 0 ? `${forecastYear.toFixed(2)}%` : "0%"}
             </span>
           </div>
         </div>
-        <div className={css.portfolio_balance}>
+        <div className={cn(css.portfolio_block, "isActive")}>
           {shares.value !== 0 && (
             <div
-              className={css.portfolio_shares}
+              className={cn(css.portfolio_blockItem, "isShare")}
               onClick={() => navigate(`/account/${accountId}/shares`)}
             >
+              <NutritionSvg />
               <strong>Акции:</strong>
               <span>
-                {shares.formatt} ({shares.percent}%)
+                <span>{shares.formatt}</span> / <span>{shares.percent}%</span>
               </span>
             </div>
           )}
           {rubBonds.value !== 0 && (
             <div
-              className={css.portfolio_rubBonds}
+              className={cn(css.portfolio_blockItem, "isBond")}
               onClick={() => navigate(`/account/${accountId}/bonds/rub`)}
             >
+              <GitBranchSvg />
               <strong>Рублевые облигации:</strong>
               <span>
-                {rubBonds.formatt} ({rubBonds.percent}%)
+                <span>{rubBonds.formatt}</span> /
+                <span>{rubBonds.percent}%</span>
               </span>
             </div>
           )}
           {usdBonds.value !== 0 && (
             <div
-              className={css.portfolio_usdBonds}
+              className={cn(css.portfolio_blockItem, "isBond")}
               onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
             >
+              <GitNetworkSvg />
               <strong>Валютные облигации:</strong>
               <span>
-                {usdBonds.formatt} ({usdBonds.percent}%)
+                <span>{usdBonds.formatt}</span> <span>{usdBonds.percent}%</span>
               </span>
             </div>
           )}
@@ -184,19 +203,18 @@ const Portfolio: FC = () => {
             !!etfArray.length &&
             etfArray.map((etf) => (
               <div
-                className={css.portfolio_etf}
-                key={etf.name}
-                onClick={() =>
-                  navigate(`/account/${accountId}/etf/${etf.ticker}`)
-                }
+                className={cn(css.portfolio_blockItem, "isEtf")}
+                onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
               >
+                <CubeSvg />
                 <strong>{etf.name}</strong>
                 <span>
-                  {etf.formatt} ({etf.percent}%)
+                  <span>{etf.formatt}</span> <span>{etf.percent}%</span>
                 </span>
               </div>
             ))}
         </div>
+
         <Button
           text="Докупить"
           className={css.portfolio_rebalance}

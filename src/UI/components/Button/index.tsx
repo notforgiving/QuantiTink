@@ -8,6 +8,9 @@ interface IButtonProps {
   className?: string;
   /** Стиль кнопки - белый с бордером*/
   borderStyle?: boolean;
+  /** Иконка в кнопке */
+  icon?: ReactNode;
+  rightIcon?: boolean;
 }
 
 const Button: FC<IButtonProps> = ({
@@ -15,15 +18,21 @@ const Button: FC<IButtonProps> = ({
   buttonAttributes,
   className,
   borderStyle,
+  icon,
+  rightIcon,
 }) => {
   return (
     <button
       className={cn(css.btn, "Button_component", className, {
         _isBorderStyle: borderStyle,
+        _isIcon: icon && text !== "",
+        _isEmptyText: icon && text === "",
+        _isReverse: rightIcon,
       })}
       {...buttonAttributes}
     >
-      {text}
+      {icon}
+      <span>{text}</span>
     </button>
   );
 };

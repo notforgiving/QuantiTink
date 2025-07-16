@@ -1,4 +1,4 @@
-@use 'sass:math';
+@use "sass:math";
 @use "src/UI/styles/variables" as *;
 
 @function fluid($max: 100, $min: 10) {
@@ -22,7 +22,7 @@
 
 /** Функция отдает цвет с указанной прозрачностью */
 @function opacity-color($color, $opacity) {
-  $returnOpacity: calc(1 -  $opacity);
+  $returnOpacity: calc(1 - $opacity);
   @return transparentize($color, $returnOpacity);
 }
 
@@ -36,7 +36,18 @@
 @mixin abs-center {
   @include abs;
   left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+}
+@mixin abs-x {
+  @include abs;
+  left: 50%;
   translate: -50% 0;
+}
+@mixin abs-y {
+  @include abs;
+  top: 50%;
+  translate: 0 -50%;
 }
 @mixin square($size) {
   width: $size;

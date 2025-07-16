@@ -6,6 +6,7 @@ import { ReactComponent as EmailSvg } from "assets/email.svg";
 import { useDispatch } from "react-redux";
 import { tokenSlice } from "store/slices/token.slice";
 import { userSlice } from "store/slices/user.slice";
+import Input from "UI/components/Input";
 
 const Profile: FC = () => {
   const { email } = useAuth();
@@ -14,12 +15,22 @@ const Profile: FC = () => {
     <div className={css.profile}>
       <div className={css.profile__header}>Ваши данные</div>
       <div className={css.profile__grid}>
-        <div className={css.profile__gridItem}>
-          <div className={css.profile__gridIcon}>
-            <EmailSvg />
+        <div className={css.profile__item}>
+          <div className={css.profile__itemBody}>
+            <div className={css.profile__itemIcon}>
+              <EmailSvg />
+            </div>
+            <div className={css.profile__itemData}>{email}</div>
           </div>
-          <div className={css.profile__gridData}>{email}</div>
         </div>
+        <Input
+          label="Темная тема"
+          leftLabel
+          inputAttributes={{
+            type: "checkbox",
+            disabled: true,
+          }}
+        />
       </div>
       <Button
         text="Выйти"

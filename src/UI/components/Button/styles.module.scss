@@ -3,21 +3,22 @@
 
 .btn {
   border: none;
-  padding: 8px 12px;
+  padding: 12px 14px;
   border-radius: $border-radius;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
   transition: 0.3s;
-  background: $green-40;
+  background: #00c98d;
   color: $white-10;
   border: 1px solid transparent;
+  position: relative;
 
   &:hover {
     background: transparent;
     @include border;
-    color: $green-40;
+    color: #00c98d;
   }
 
   &:disabled {
@@ -25,25 +26,56 @@
     opacity: 0.5;
 
     &:hover {
-      background: $green-40;
+      background: #00c98d;
       color: $white-10;
     }
+  }
+
+  &::before {
+    @include before;
+    @include abs-center;
+    height: 100%;
+    width: 100%;
+  }
+
+  &:global(._isIcon) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    svg {
+      vertical-align: middle;
+      width: 20px;
+      height: auto;
+    }
+  }
+
+  &:global(._isEmptyText) {
+    padding: 0;
+    background: none;
+    color: #10b981;
+    width: fit-content;
+    border: none;
+    border-radius: 0;
+    svg {
+      width: 24px;
+      height: auto;
+      vertical-align: middle;
+    }
+  }
+
+  &:global(._isReverse) {
+    flex-direction: row-reverse;
   }
 
   &:global(._isBorderStyle) {
     background: transparent;
-    border: 1px solid $green-40;
-    color: $green-40;
+    border: 1px solid #00c98d;
+    color: #00c98d;
 
     &:hover {
-      background: $green-40;
+      background: #00c98d;
       color: $white-10;
       border: 1px solid transparent;
     }
-  }
-
-  @include phone {
-    font-size: 14px;
-    padding: 6px 10px;
   }
 }

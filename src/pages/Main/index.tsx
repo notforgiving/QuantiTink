@@ -117,11 +117,10 @@ const Main: FC = () => {
               </div>
               <div
                 className={cn(css.grid__item, {
-                  _isLight: portfoliosReturns.value > 0,
-                  _isRed: portfoliosReturns.value <= 0,
+                  _isGreen: portfoliosReturns.value >= 0,
                 })}
               >
-                <span>Текущая доходность</span>
+                <span>Доходность</span>
                 <strong>
                   {isLoadingPortfolios ||
                   !portfoliosData?.length ||
@@ -140,11 +139,10 @@ const Main: FC = () => {
               </div>
               <div
                 className={cn(css.grid__item, {
-                  _isLight: portfoliosReturns.value > 0,
-                  _isRed: portfoliosReturns.value <= 0,
+                  _isGreen: portfoliosReturns.value >= 0,
                 })}
               >
-                <span>Доходность в процентах</span>
+                <span>Доходность %</span>
                 <strong>
                   {isLoadingPortfolios ||
                   !portfoliosData?.length ||
@@ -162,7 +160,7 @@ const Main: FC = () => {
                 </strong>
               </div>
               <div className={css.grid__item}>
-                <span>Вложено средств</span>
+                <span>Вложено</span>
                 <strong>
                   {isLoadingPortfolios ||
                   !portfoliosData?.length ||
@@ -182,7 +180,6 @@ const Main: FC = () => {
             </div>
           </div>
           <div className={css.accounts}>
-            <div className={css.accounts_inner}>
               {accountsData?.map((account: TFAccount) => {
                 const targetPortfolio = searchItemInArrayData(
                   portfoliosData || [],
@@ -208,7 +205,6 @@ const Main: FC = () => {
                   />
                 );
               })}
-            </div>
           </div>
         </>
       )}

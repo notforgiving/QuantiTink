@@ -6,13 +6,22 @@ interface IInputProps {
   label?: string | ReactNode;
   inputAttributes?: InputHTMLAttributes<HTMLInputElement>;
   error?: string;
+  leftLabel?: boolean;
 }
 
-const Input: FC<IInputProps> = ({ label, inputAttributes, error }) => {
+const Input: FC<IInputProps> = ({
+  label,
+  inputAttributes,
+  error,
+  leftLabel,
+}) => {
   if (inputAttributes && inputAttributes.type === "checkbox") {
     return (
       <div
-        className={cn(css.input, css.checkbox, "input_component")}
+        className={cn(css.input, css.checkbox, "input_component", {
+          _isLeftLabel: leftLabel,
+          isDisabled: inputAttributes.disabled,
+        })}
         onClick={inputAttributes.onClick}
       >
         <div
