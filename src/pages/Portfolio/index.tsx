@@ -16,10 +16,13 @@ import { ReactComponent as ReceiptSvg } from "assets/receipt.svg";
 import { ReactComponent as ServerSvg } from "assets/server.svg";
 import { ReactComponent as CashSvg } from "assets/cash.svg";
 import { ReactComponent as PodiumSvg } from "assets/podium.svg";
-import { ReactComponent as NutritionSvg } from "assets/nutrition.svg";
-import { ReactComponent as GitBranchSvg } from "assets/git-branch.svg";
-import { ReactComponent as GitNetworkSvg } from "assets/git-network.svg";
 import { ReactComponent as CubeSvg } from "assets/cube.svg";
+
+import { ReactComponent as SharesSvg } from "assets/shares.svg";
+import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
+import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
+import { ReactComponent as GoldetfSvg } from "assets/goldetf.svg";
+import { ReactComponent as BigemitentSvg } from "assets/bigemitent.svg";
 
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
@@ -167,7 +170,7 @@ const Portfolio: FC = () => {
               className={cn(css.portfolio_blockItem, "isShare")}
               onClick={() => navigate(`/account/${accountId}/shares`)}
             >
-              <NutritionSvg />
+              <SharesSvg />
               <strong>Акции:</strong>
               <span>
                 <span>{shares.formatt}</span> <span>({shares.percent}%)</span>
@@ -179,7 +182,7 @@ const Portfolio: FC = () => {
               className={cn(css.portfolio_blockItem, "isBond")}
               onClick={() => navigate(`/account/${accountId}/bonds/rub`)}
             >
-              <GitBranchSvg />
+              <RubbondsSvg />
               <strong>Рублевые облигации:</strong>
               <span>
                 <span>{rubBonds.formatt}</span>
@@ -192,10 +195,11 @@ const Portfolio: FC = () => {
               className={cn(css.portfolio_blockItem, "isBond")}
               onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
             >
-              <GitNetworkSvg />
+              <UsdbondsSvg />
               <strong>Валютные облигации:</strong>
               <span>
-                <span>{usdBonds.formatt}</span> <span>({usdBonds.percent}%)</span>
+                <span>{usdBonds.formatt}</span>{" "}
+                <span>({usdBonds.percent}%)</span>
               </span>
             </div>
           )}
@@ -204,9 +208,14 @@ const Portfolio: FC = () => {
             etfArray.map((etf) => (
               <div
                 className={cn(css.portfolio_blockItem, "isEtf")}
-                onClick={() => navigate(`/account/${accountId}/etf/${etf.ticker}`)}
+                onClick={() =>
+                  navigate(`/account/${accountId}/etf/${etf.ticker}`)
+                }
               >
-                <CubeSvg />
+                {etf.ticker === "TGLD" && <GoldetfSvg />}
+                {etf.ticker === "TMOS" && <BigemitentSvg />}
+                {etf.ticker !== "TGLD" && etf.ticker !== "TMOS" && <CubeSvg />}
+
                 <strong>{etf.name}</strong>
                 <span>
                   <span>{etf.formatt}</span> <span>({etf.percent}%)</span>

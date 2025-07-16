@@ -82,22 +82,6 @@
       }
     }
 
-    &:global(.isShare) {
-      svg {
-        color: #d88500;
-      }
-    }
-    &:global(.isBond) {
-      svg {
-        color: #10b981;
-      }
-    }
-    &:global(.isEtf) {
-      svg {
-        color: #104243;
-      }
-    }
-
     &:first-child {
       span {
         font-weight: 700;
