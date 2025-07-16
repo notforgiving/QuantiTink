@@ -170,7 +170,7 @@ const Portfolio: FC = () => {
               <NutritionSvg />
               <strong>Акции:</strong>
               <span>
-                <span>{shares.formatt}</span> / <span>{shares.percent}%</span>
+                <span>{shares.formatt}</span> <span>({shares.percent}%)</span>
               </span>
             </div>
           )}
@@ -182,8 +182,8 @@ const Portfolio: FC = () => {
               <GitBranchSvg />
               <strong>Рублевые облигации:</strong>
               <span>
-                <span>{rubBonds.formatt}</span> /
-                <span>{rubBonds.percent}%</span>
+                <span>{rubBonds.formatt}</span>
+                <span>({rubBonds.percent}%)</span>
               </span>
             </div>
           )}
@@ -195,7 +195,7 @@ const Portfolio: FC = () => {
               <GitNetworkSvg />
               <strong>Валютные облигации:</strong>
               <span>
-                <span>{usdBonds.formatt}</span> <span>{usdBonds.percent}%</span>
+                <span>{usdBonds.formatt}</span> <span>({usdBonds.percent}%)</span>
               </span>
             </div>
           )}
@@ -204,12 +204,12 @@ const Portfolio: FC = () => {
             etfArray.map((etf) => (
               <div
                 className={cn(css.portfolio_blockItem, "isEtf")}
-                onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
+                onClick={() => navigate(`/account/${accountId}/etf/${etf.ticker}`)}
               >
                 <CubeSvg />
                 <strong>{etf.name}</strong>
                 <span>
-                  <span>{etf.formatt}</span> <span>{etf.percent}%</span>
+                  <span>{etf.formatt}</span> <span>({etf.percent}%)</span>
                 </span>
               </div>
             ))}
