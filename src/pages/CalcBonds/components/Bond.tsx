@@ -18,8 +18,18 @@ const Bond: FC<IBondProps> = ({
   handleChangeCurrentPrice,
 }) => {
   const [showAllData, setShowAllData] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const handleClickBond = () => {
+    setShowMenu(!showMenu);
+  };
   return (
-    <div className={css.bond}>
+    <div
+      className={cn(css.bond, {
+        isShowMenu: showMenu,
+      })}
+      onClick={handleClickBond}
+    >
       <div className={css.bond_actions}>
         <Button
           text={

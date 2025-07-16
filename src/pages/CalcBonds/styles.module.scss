@@ -86,6 +86,19 @@
     }
   }
 
+  @include phone {
+    &:hover {
+      .bond_actions {
+        transform: translate(0, -100%);
+      }
+    }
+    &:global(.isShowMenu) {
+      .bond_actions {
+        transform: translate(0, 0%);
+      }
+    }
+  }
+
   &_actions {
     @include flex-center;
     justify-content: space-between;
@@ -104,10 +117,6 @@
     padding: 6px;
     font-size: 12px;
     border-radius: 5px;
-  }
-
-  & .saveChanges {
-    top: 34px;
   }
 
   &_row {

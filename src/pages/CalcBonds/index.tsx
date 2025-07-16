@@ -25,6 +25,7 @@ const CalcBonds: FC = () => {
   } = useCalcBonds({});
 
   const conditionLoading = (isLoadingBonds || isLoading) && !bondsTable.length;
+
   return (
     <div className={css.calc_container}>
       <div className={css.header}>
