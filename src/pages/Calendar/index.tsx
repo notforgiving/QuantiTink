@@ -1,12 +1,12 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "../../UI/components/Button";
 import { useCalendar } from "./hook/useCalendar";
 import css from "./styles.module.scss";
 import cn from "classnames";
 import { formattedMoneySupply } from "../../utils";
 import Load from "../../UI/components/Load";
 import Input from "UI/components/Input";
+import BackHeader from "components/BackHeader";
 
 const Calendar: FC = () => {
   let { id: accountId } = useParams();
@@ -26,12 +26,9 @@ const Calendar: FC = () => {
 
   return (
     <div>
-      <Button
-        text="Назад"
-        buttonAttributes={{
-          type: "button",
-          onClick: () => navigate(`/account/${accountId}`),
-        }}
+      <BackHeader
+        title="Календарь выплат"
+        backCallback={() => navigate(`/account/${accountId}`)}
       />
       <div className={css.total_wrapper}>
         <span>В течении мес.:</span>

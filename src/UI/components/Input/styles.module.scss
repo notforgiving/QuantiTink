@@ -36,16 +36,17 @@
 
     &:global(._isChecked) {
       .checkbox_square {
-        background: $orange-20;
+        background: #10b981;
         &::before {
-          left: calc(32px - 12px - 4px);
+          left: calc(24px);
         }
       }
     }
 
     &_square {
-      width: 50px;
-      height: 26px;
+      flex: none;
+      width: 42px;
+      height: 22px;
       background: #cccccc;
       border-radius: 24px;
       position: relative;
@@ -56,7 +57,7 @@
         left: 4px;
         top: 50%;
         transform: translateY(-50%);
-        @include square(18px);
+        @include square(14px);
         background: #fff;
         border-radius: 24px;
         transition: 0.3s;

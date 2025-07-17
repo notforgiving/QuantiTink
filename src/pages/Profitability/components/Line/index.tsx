@@ -4,6 +4,7 @@ import cn from "classnames";
 import moment from "moment";
 import { getDeclensionWordMonth } from "utils";
 import { TActiveProfitability } from "pages/Profitability/types";
+import { ReactComponent as ArrowSvg } from "assets/arrow-forward.svg";
 
 interface ILineProps {
   operation: TActiveProfitability;
@@ -13,35 +14,38 @@ const Line: FC<ILineProps> = ({ operation }) => {
   return (
     <div
       className={cn(css.income_item, {
-        _isProfitablePurchase: operation.profitabilityNow.percent > 0,
-        _isUnprofitablePurchase: operation.profitabilityNow.percent <= 0,
+        _isGreen: operation.profitabilityNow.percent > 0,
+        _isRed: operation.profitabilityNow.percent <= 0,
+        _isOrange: operation.ownershipPeriod / 12 >= 3,
       })}
     >
-      <div className={cn(css.income_item_row, "_isBody")}>
-        <div className={css.number}>{operation.number}</div>
-        <div className={css.name}>{operation.name}</div>
-        <div className={css.date}>
-          {moment(operation.date).format("DD.MM.YYYY")}
+      <div className={css.income_item_time}>
+        <span>{moment(operation.date).format("DD.MM.YYYY")}</span>
+        <span>
+          {operation.ownershipPeriod / 12 < 3 && (
+            <>
+              {operation.ownershipPeriod}{" "}
+              {getDeclensionWordMonth(operation.ownershipPeriod)}
+            </>
+          )}
+          {operation.ownershipPeriod / 12 >= 3 && "Льгота"}
+        </span>
+      </div>
+      <div className={css.income_item_bottom}>
+        <div className={css.income_item_prices}>
+          <div className={css.income_item_lot} title="Цена за один лот">
+            <span>{operation.priceTotal.oneLot.formatt}</span>
+            <ArrowSvg />
+            <span>{operation.priceActiality.oneLot.formatt}</span>
+          </div>
+          <div className={css.income_item_value} title="Цена покупки">
+            <span>{operation.priceTotal.value.formatt}</span>
+            <ArrowSvg />
+            <span>{operation.priceActiality.value.formatt}</span>
+          </div>
         </div>
-        <div className={css.quantity}>{operation.quantity}</div>
-        <div className={css.priceTotal}>
-          <strong>{operation.priceTotal.value.formatt}/</strong>
-          <span>({operation.priceTotal.oneLot.formatt})</span>
-        </div>
-        <div className={css.priceActiality}>
-          <strong>{operation.priceActiality.value.formatt}/</strong>
-          <span>({operation.priceActiality.oneLot.formatt})</span>
-        </div>
-        <div className={css.profitabilityNow}>
-          {operation.profitabilityNow.percent}% (
-          {operation.profitabilityNow.money.formatt})
-        </div>
-        <div className={css.ownershipPeriod}>
-          <strong>{(operation.ownershipPeriod / 12).toFixed(2)} года </strong>
-          <span>
-            {operation.ownershipPeriod}{" "}
-            {getDeclensionWordMonth(operation.ownershipPeriod)}
-          </span>
+        <div className={css.income_item_percent}>
+          {operation.profitabilityNow.percent}%
         </div>
       </div>
     </div>

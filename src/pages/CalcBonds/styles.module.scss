@@ -70,23 +70,28 @@
   @include phone {
     grid-template-columns: 1fr;
   }
+
+  .empty {
+    color: #969f9d;
+    font-size: 14px;
+  }
 }
 
 .bond {
   width: 100%;
-  overflow: hidden;
-  position: relative;
   display: grid;
   gap: 10px;
   border-radius: 20px;
-  // box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
 
   &__inner {
+    overflow: hidden;
     border-radius: 20px;
     background: $white-10;
     padding: 20px;
     font-size: 14px;
     display: grid;
+    position: relative;
+    box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
   }
 
   &:hover {
@@ -98,7 +103,7 @@
   @include phone {
     &:hover {
       .bond_actions {
-        transform: translate(0, -100%);
+        transform: translate(100%,0);
       }
     }
     &:global(.isShowMenu) {
@@ -110,11 +115,15 @@
 
   &_actions {
     @include flex-center;
+    flex-direction: column;
     justify-content: space-between;
     padding: 10px 15px;
     @include abs;
-    height: auto;
-    transform: translate(0, -100%);
+    right: 0;
+    left: auto;
+    width: 60px;
+    height: 100%;
+    transform: translate(100%, 0);
     transition: transform 0.5s;
     background: $white-10;
     box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);

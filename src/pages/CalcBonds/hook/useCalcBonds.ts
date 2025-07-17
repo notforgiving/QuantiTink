@@ -67,12 +67,12 @@ type TUseCalcBonds = (props: IUseCalcBonds) => {
     handleChangeCurrentPrice: (isin: string, newPrice: number) => void;
     setSortByProfitability: React.Dispatch<React.SetStateAction<{
         key: "income" | "alfabet";
-        value: 'ask' | 'desk' | null;
+        value: 'ASC' | 'DESC' | null;
     }>>
     sortFunction: (a: IBondsTable, b: IBondsTable) => number;
     sortByProfitability: {
         key: "income" | "alfabet";
-        value: 'ask' | 'desk' | null;
+        value: 'ASC' | 'DESC' | null;
     }
 }
 export const useCalcBonds: TUseCalcBonds = () => {
@@ -81,7 +81,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
     const dispatch = useDispatch();
     const [sortByProfitability, setSortByProfitability] = useState<{
         key: 'income' | 'alfabet',
-        value: 'ask' | 'desk' | null;
+        value: 'ASC' | 'DESC' | null;
     }>({
         key: 'income',
         value: null,
@@ -374,7 +374,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         if (sortByProfitability.key === 'income') {
             if (sortByProfitability.value === null) {
                 return a.name.localeCompare(b.name);
-            } else if (sortByProfitability.value === 'ask') {
+            } else if (sortByProfitability.value === 'ASC') {
                 return a.annualProfitability - b.annualProfitability;
             } else {
                 return b.annualProfitability - a.annualProfitability;
@@ -383,7 +383,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         if (sortByProfitability.key === 'alfabet') {
             if (sortByProfitability.value === null) {
                 return a.name.localeCompare(b.name);
-            } else if (sortByProfitability.value === 'ask') {
+            } else if (sortByProfitability.value === 'ASC') {
                 return a.name.localeCompare(b.name);
             } else {
                 return b.name.localeCompare(a.name);

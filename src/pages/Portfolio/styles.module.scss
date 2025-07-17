@@ -11,7 +11,7 @@
   &:global(.isGreen) {
     .portfolio {
       &_data {
-        border-left: 6px solid #10b981;
+        @include greenLine;
       }
       &_amount {
         span {
@@ -31,7 +31,7 @@
     @include whiteBlock;
     @include flex-center;
     gap: 10px;
-    border-left: 6px solid #d88500;
+    @include orangeLine;
     align-items: flex-start;
     justify-content: space-between;
   }

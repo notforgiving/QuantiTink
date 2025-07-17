@@ -31,12 +31,12 @@ const CalcBonds: FC = () => {
     if (sortByProfitability.value === null) {
       setSortByProfitability({
         key,
-        value: "desk",
+        value: "DESC",
       });
-    } else if (sortByProfitability.value === "desk") {
+    } else if (sortByProfitability.value === "DESC") {
       setSortByProfitability({
         key,
-        value: "ask",
+        value: "ASC",
       });
     } else
       setSortByProfitability({
@@ -70,22 +70,36 @@ const CalcBonds: FC = () => {
         </div>
       </div>
       {bondsTable.length > 1 && !isLoading && (
-        <div className={css.actions}>
-          <div
-            className={css.actions__item}
-            onClick={() => handleSortSlick("income")}
-          >
-            <span>По доходности</span>
-            <SortArrows state={sortByProfitability.key === 'income' ? sortByProfitability.value : null} />
+        <>
+          <div className={css.actions}>
+            <div
+              className={css.actions__item}
+              onClick={() => handleSortSlick("income")}
+            >
+              <span>По доходности</span>
+              <SortArrows
+                state={
+                  sortByProfitability.key === "income"
+                    ? sortByProfitability.value
+                    : null
+                }
+              />
+            </div>
+            <div
+              className={css.actions__item}
+              onClick={() => handleSortSlick("alfabet")}
+            >
+              <span>По алфавиту</span>
+              <SortArrows
+                state={
+                  sortByProfitability.key === "alfabet"
+                    ? sortByProfitability.value
+                    : null
+                }
+              />
+            </div>
           </div>
-          <div
-            className={css.actions__item}
-            onClick={() => handleSortSlick("alfabet")}
-          >
-            <span>По алфавиту</span>
-            <SortArrows state={sortByProfitability.key === 'alfabet' ? sortByProfitability.value : null} />
-          </div>
-        </div>
+        </>
       )}
       <div
         className={cn(css.body, {
@@ -110,11 +124,11 @@ const CalcBonds: FC = () => {
                 handleChangeCurrentPrice={handleChangeCurrentPrice}
               />
             ))}
-            {
-              !isLoading && bondsTable.length === 0 && (
-                <div>Пока вы не добавили не одной облигации</div>
-              )
-            }
+        {!conditionLoading && (
+          <div className={css.empty}>
+            Пока вы не добавили не одной облигации
+          </div>
+        )}
       </div>
     </div>
   );

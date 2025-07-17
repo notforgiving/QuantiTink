@@ -4,19 +4,17 @@ import { ReactComponent as ArrowDownSvg } from "assets/arrowDown.svg";
 import cn from "classnames";
 
 interface ISortArrowsProps {
-  state: "ask" | "desk" | null;
+  state: "ASC" | "DESC" | null;
 }
 
-const SortArrows: FC<ISortArrowsProps> = ({ state }) => {
-  console.log(state,'SortArrows');
-  
+const SortArrows: FC<ISortArrowsProps> = ({ state }) => { 
   return (
     <div
       className={cn(css.sort, {
         // По возрастанию
-        _isAsk: state === "ask",
+        _isAsk: state === "ASC",
         // По убыванию
-        _isDesk: state === "desk",
+        _isDesk: state === "DESC",
       })}
     >
       <ArrowDownSvg className={css.sort__top} />

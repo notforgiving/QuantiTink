@@ -5,7 +5,7 @@ $middleBlue: #42506b;
 $lightBlue: #3d619e;
 $lightGray: #e9e8eb;
 $middleGray: #c1b9ae;
-$red: #d80053;
+$red: #F05555;
 $orange: #f8663f;
 $violet: #441e82;
 $gold: #fcc769;
@@ -93,13 +93,24 @@ $green: green;
   box-shadow: 0px 0px 10px rgba(0, 28, 24, 0.1);
 }
 
+@mixin orangeLine {
+  border-left: 6px solid $orange-20;
+}
+
+@mixin greenLine {
+   border-left: 6px solid #10b981;
+}
+@mixin redLine {
+  border-left: 6px solid $red;
+}
+
 @mixin phone {
   @media screen and (max-width: 700px) {
     @content;
   }
 }
 
-$color-0: #fff;
+$color-0: #ffffff00;
 $white-10: #fff;
 $green-10: #e9f4ec;
 $green-20: #a7cfca;

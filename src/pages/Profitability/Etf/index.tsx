@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "UI/components/Button";
 import css from "../styles.module.scss";
 import { useEtf } from "./hook/useEtf";
 import Input from "UI/components/Input";
 import cn from "classnames";
 import { useProfitability } from "../hook/useProfitability";
 import Line from "../components/Line";
+import BackHeader from "components/BackHeader";
+import SortArrows from "UI/components/SortArrows";
 
 const Etf = () => {
   let { id: accountId, ticker } = useParams();
@@ -44,33 +45,15 @@ const Etf = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <Button
-        className={css.back}
-        text="Назад"
-        buttonAttributes={{
-          type: "button",
-          onClick: () => navigate(`/account/${accountId}`),
-        }}
+      <BackHeader
+        title={name}
+        backCallback={() => navigate(`/account/${accountId}`)}
       />
-      <div className={css.symbols}>
-        <div className={css.green}>
-          <strong></strong>
-          <span>Прибыльная покупка</span>
-        </div>
-        <div className={css.red}>
-          <strong></strong>
-          <span>Убыточная покупка</span>
-        </div>
-        <div className={css.threeYears}>
-          <strong></strong>
-          <span>Есль льгота ЛДВ</span>
-        </div>
-      </div>
-      <div className={cn(css.income, 'isEtf')}>
-        <div className={css.income_title}>{name}</div>
+      <div className={cn(css.income, "isEtf")}>
         <div className={css.income_actions}>
           <Input
             label="Рассчитать с учетом налога"
+            leftLabel
             inputAttributes={{
               type: "checkbox",
               checked: withTax,
@@ -79,6 +62,7 @@ const Etf = () => {
           />
           {!tbankEtf && (
             <Input
+              leftLabel
               label="Рассчитать с учетом комиссии"
               inputAttributes={{
                 type: "checkbox",
@@ -96,46 +80,42 @@ const Etf = () => {
             }}
           />
         </div>
-        <div className={css.income_header}>
-          <div className={cn(css.income_item_row, "_isHeader")}>
-            <div
-              className={css.number}
-              onClick={() =>
-                setCurrentSort({
-                  key: "NUMBER",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              №
-            </div>
-            <div className={css.name}>Название</div>
-            <div
-              className={css.date}
-              onClick={() =>
-                setCurrentSort({
-                  key: "DATE",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              Дата покупки
-            </div>
-            <div className={css.quantity}>Количество</div>
-            <div className={css.priceTotal}>Сумма покупки</div>
-            <div className={css.priceActiality}>Сумма сейчас</div>
-            <div
-              className={css.profitabilityNow}
-              onClick={() =>
-                setCurrentSort({
-                  key: "PROFITABILITY",
-                  dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
-                })
-              }
-            >
-              Доходность этой операции
-            </div>
-            <div className={css.ownershipPeriod}>Срок владения активом</div>
+        <div className={css.income__sort}>
+          <div
+            className={css.income__sort_item}
+            onClick={() =>
+              setCurrentSort({
+                key: "NUMBER",
+                dir: "DESC",
+              })
+            }
+          >
+            <span>По умолчанию</span>
+            <SortArrows state={null} />
+          </div>
+          <div
+            className={css.income__sort_item}
+            onClick={() =>
+              setCurrentSort({
+                key: "DATE",
+                dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
+              })
+            }
+          >
+            <span>Дата</span>
+            <SortArrows state={currentSort.key === 'DATE'  ? currentSort.dir : null} />
+          </div>
+          <div
+            className={css.income__sort_item}
+            onClick={() =>
+              setCurrentSort({
+                key: "PROFITABILITY",
+                dir: currentSort.dir === "ASC" ? "DESC" : "ASC",
+              })
+            }
+          >
+            <span>Доходность</span>
+            <SortArrows state={currentSort.key === 'PROFITABILITY'  ? currentSort.dir : null} />
           </div>
         </div>
         <div className={css.income_list}>

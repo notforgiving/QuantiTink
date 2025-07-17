@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "UI/components/Button";
 import css from "../styles.module.scss";
-import includeCss from './styles.module.scss';
+import includeCss from "./styles.module.scss";
 import { useBonds } from "./hooks/useBonds";
+import BackHeader from "components/BackHeader";
 
 const Bonds: FC = () => {
   const { id: accountId, currency } = useParams();
@@ -14,33 +14,13 @@ const Bonds: FC = () => {
   });
   return (
     <div>
-      <div className={css.header_actions}>
-        <Button
-          text="Назад"
-          buttonAttributes={{
-            type: "button",
-            onClick: () => navigate(`/account/${accountId}`),
-          }}
-        />
-      </div>
-      <div className={css.symbols}>
-        <div className={css.green}>
-          <strong></strong>
-          <span>Прибыльная покупка</span>
-        </div>
-        <div className={css.red}>
-          <strong></strong>
-          <span>Убыточная покупка</span>
-        </div>
-        <div className={css.threeYears}>
-          <strong></strong>
-          <span>Есль льгота ЛДВ</span>
-        </div>
-      </div>
+      <BackHeader
+        title={
+          currency === "rub" ? "Российские облигации" : "Валютные облигации"
+        }
+        backCallback={() => navigate(`/account/${accountId}`)}
+      />
       <div className={css.income}>
-        <div className={css.income_title}>
-          {currency === "rub" ? "Российские облигации" : "Валютные облигации"}
-        </div>
         <div className={includeCss.bond__list}>
           {bondsList.map((item) => (
             <div
@@ -49,8 +29,7 @@ const Bonds: FC = () => {
                 navigate(`/account/${accountId}/bonds/${currency}/${item.figi}`)
               }
             >
-              {item.name} {"   "}
-              / ({item.quantity}) шт
+              {item.name} {"   "}/ ({item.quantity}) шт
             </div>
           ))}
         </div>

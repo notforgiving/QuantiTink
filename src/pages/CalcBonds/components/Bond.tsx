@@ -3,6 +3,9 @@ import css from "../styles.module.scss";
 import cn from "classnames";
 import { IBondsTable } from "../hook/useCalcBonds";
 import Button from "UI/components/Button";
+import { ReactComponent as TrashSvg } from "assets/trash.svg";
+import { ReactComponent as ContractSvg } from "assets/contract.svg";
+import { ReactComponent as ExpandSvg } from "assets/expand.svg";
 
 interface IBondProps {
   itemData: IBondsTable;
@@ -30,25 +33,27 @@ const Bond: FC<IBondProps> = ({
       })}
       onClick={handleClickBond}
     >
-      <div className={css.bond_actions}>
-        <Button
-          text={
-            !showAllData ? "Показать полную таблицу" : "Скрыть лишние данные"
-          }
-          className={css.saveChanges}
-          buttonAttributes={{
-            onClick: () => setShowAllData(!showAllData),
-          }}
-        />
-        <Button
-          text="Удалить"
-          className={css.remove}
-          buttonAttributes={{
-            onClick: () => handleRemoveBond(itemData.isin),
-          }}
-        />
-      </div>
       <div className={css.bond__inner}>
+        <div className={css.bond_actions}>
+          <Button
+            text=""
+            className={css.saveChanges}
+            buttonAttributes={{
+              onClick: () => setShowAllData(!showAllData),
+              title: !showAllData ? "Развернуть блок" : "Свернуть блок",
+            }}
+            icon={!showAllData ? <ExpandSvg /> : <ContractSvg />}
+          />
+          <Button
+            text=""
+            className={css.remove}
+            buttonAttributes={{
+              onClick: () => handleRemoveBond(itemData.isin),
+              title: "Удалить",
+            }}
+            icon={<TrashSvg />}
+          />
+        </div>
         <a
           href={`https://www.tbank.ru/invest/bonds/${itemData.isin}/`}
           target="_blank"
