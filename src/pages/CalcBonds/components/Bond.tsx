@@ -6,6 +6,7 @@ import Button from "UI/components/Button";
 import { ReactComponent as TrashSvg } from "assets/trash.svg";
 import { ReactComponent as ContractSvg } from "assets/contract.svg";
 import { ReactComponent as ExpandSvg } from "assets/expand.svg";
+import { ReactComponent as ReceiptSvg } from "assets/receipt.svg";
 
 interface IBondProps {
   itemData: IBondsTable;
@@ -35,15 +36,28 @@ const Bond: FC<IBondProps> = ({
     >
       <div className={css.bond__inner}>
         <div className={css.bond_actions}>
-          <Button
-            text=""
-            className={css.saveChanges}
-            buttonAttributes={{
-              onClick: () => setShowAllData(!showAllData),
-              title: !showAllData ? "Развернуть блок" : "Свернуть блок",
-            }}
-            icon={!showAllData ? <ExpandSvg /> : <ContractSvg />}
-          />
+          <div className={css.bond_actions_top}>
+            <Button
+              text=""
+              className={css.saveChanges}
+              buttonAttributes={{
+                onClick: () => setShowAllData(!showAllData),
+                title: !showAllData ? "Развернуть блок" : "Свернуть блок",
+              }}
+              icon={!showAllData ? <ExpandSvg /> : <ContractSvg />}
+            />
+            <Button
+              text=""
+              className={css.saveChanges}
+              buttonAttributes={{
+                // onClick: () => setShowAllData(!showAllData),
+                title: !showAllData
+                  ? "Учитывать налоги"
+                  : "Не учитывать налоги",
+              }}
+              icon={<ReceiptSvg />}
+            />
+          </div>
           <Button
             text=""
             className={css.remove}
@@ -111,7 +125,11 @@ const Bond: FC<IBondProps> = ({
             }
           />
         </div>
-        <div className={cn(css.bond_row, "isWrite")}>
+        <div
+          className={cn(css.bond_row, "isWrite", {
+            _isHide: !showAllData,
+          })}
+        >
           <strong>Купонный доход на одну облигацию, руб</strong>
           <span>{itemData.payOneBond.formatt}</span>
         </div>
@@ -192,7 +210,11 @@ const Bond: FC<IBondProps> = ({
           <strong>Суммарно получим купонами</strong>
           <span>{itemData.sumAllCouponsReceived.formatt}</span>
         </div>
-        <div className={cn(css.bond_row, "forbidden")}>
+        <div
+          className={cn(css.bond_row, "forbidden", {
+            _isHide: !showAllData,
+          })}
+        >
           <strong>Маржа от погашения</strong>
           <span>{itemData.marginFromBondRepayment.formatt}</span>
         </div>

@@ -134,9 +134,11 @@ export const useCalcBonds: TUseCalcBonds = () => {
         ///////////////
         const sumAllCouponsReceived = formattedMoneySupply(payOneBond.value * eventsLength * quantity);
         ///////////////
-        const marginFromBondRepayment = aboveNominal ? formattedMoneySupply(0) : formattedMoneySupply(formattInitialNominal.value * quantity - priceInCurrencyView.value);
+        // const marginFromBondRepayment = aboveNominal ? formattedMoneySupply(0) : formattedMoneySupply(formattInitialNominal.value * quantity - priceInCurrencyView.value);
+        const marginFromBondRepayment = formattedMoneySupply(0);
         ///////////////
-        const couponTax = formattedMoneySupply(sumAllCouponsReceived.value * 0.13);
+        // const couponTax = formattedMoneySupply(sumAllCouponsReceived.value * 0.13);
+        const couponTax = formattedMoneySupply(0);
         ///////////////
         const taxOnBondRepayment = Number(yearsToMaturity) >= 3 ? formattedMoneySupply(0) : formattedMoneySupply(marginFromBondRepayment.value * 0.13);
         ///////////////
