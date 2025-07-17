@@ -8,10 +8,11 @@ import { ReactComponent as ArrowSvg } from "assets/arrow-forward.svg";
 
 interface ILineProps {
   name?: boolean;
+  quantity?: boolean;
   operation: TActiveProfitability;
 }
 
-const Line: FC<ILineProps> = ({ operation, name }) => {
+const Line: FC<ILineProps> = ({ operation, name, quantity }) => {
   return (
     <div
       className={cn(css.income_item, {
@@ -44,6 +45,7 @@ const Line: FC<ILineProps> = ({ operation, name }) => {
             <span>{operation.priceTotal.value.formatt}</span>
             <ArrowSvg />
             <span>{operation.priceActiality.value.formatt}</span>
+            {quantity && `(${operation.quantity})`}
           </div>
         </div>
         <div className={css.income_item_percent}>

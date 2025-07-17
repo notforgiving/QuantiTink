@@ -114,7 +114,7 @@ const Shares: FC = () => {
               )
               .sort(sortFunction)
               .map((operation) => (
-                <Line operation={operation} key={operation.date} name/>
+                <Line operation={operation} key={operation.date} name quantity/>
               ))}
         </div>
       </div>
