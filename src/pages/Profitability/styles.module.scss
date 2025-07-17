@@ -74,6 +74,9 @@
           &_percent {
             color: #10b981;
           }
+          &_name {
+            color: #10b981;
+          }
         }
       }
     }
@@ -82,6 +85,9 @@
       .income {
         &_item {
           &_percent {
+            color: $red;
+          }
+          &_name {
             color: $red;
           }
         }
@@ -94,9 +100,11 @@
           &_percent {
             color: $orange-20;
           }
+          &_name {
+            color: $orange-20;
+          }
           &_time {
             span {
-              
               &:last-child {
                 padding: 4px 6px;
                 border-radius: 14px;
@@ -121,6 +129,11 @@
       @include phone {
         align-items: flex-end;
       }
+    }
+    &_name {
+      font-size: 16px;
+      color: #6b7280;
+      font-weight: 600;
     }
     &_prices {
       @include flex-center;

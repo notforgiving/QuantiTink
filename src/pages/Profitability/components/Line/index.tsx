@@ -7,10 +7,11 @@ import { TActiveProfitability } from "pages/Profitability/types";
 import { ReactComponent as ArrowSvg } from "assets/arrow-forward.svg";
 
 interface ILineProps {
+  name?: boolean;
   operation: TActiveProfitability;
 }
 
-const Line: FC<ILineProps> = ({ operation }) => {
+const Line: FC<ILineProps> = ({ operation, name }) => {
   return (
     <div
       className={cn(css.income_item, {
@@ -31,6 +32,7 @@ const Line: FC<ILineProps> = ({ operation }) => {
           {operation.ownershipPeriod / 12 >= 3 && "Льгота"}
         </span>
       </div>
+      {name && <div className={css.income_item_name}>{operation.name}</div>}
       <div className={css.income_item_bottom}>
         <div className={css.income_item_prices}>
           <div className={css.income_item_lot} title="Цена за один лот">
