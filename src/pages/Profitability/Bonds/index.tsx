@@ -29,7 +29,11 @@ const Bonds: FC = () => {
                 navigate(`/account/${accountId}/bonds/${currency}/${item.figi}`)
               }
             >
-              {item.name} {"   "}/ ({item.quantity}) шт
+              <div className={includeCss.bond__item_icon}></div>
+              <div className={includeCss.bond__item_info}>
+                <strong>{item.name}</strong>
+                <span>{item.quantity} шт</span>
+              </div>
             </div>
           ))}
         </div>

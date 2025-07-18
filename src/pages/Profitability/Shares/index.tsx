@@ -25,7 +25,7 @@ const Shares: FC = () => {
     positions,
     operations,
     sortFunction,
-  } = useProfitability({ accountId: accountId || "0" });
+  } = useProfitability({ accountId: accountId || "0"});
   const { result } = useShares({
     withTax,
     comissionToggle,
@@ -68,7 +68,7 @@ const Shares: FC = () => {
             }}
           />
         </div>
-                <div className={css.income__sort}>
+        <div className={css.income__sort}>
           <div
             className={css.income__sort_item}
             onClick={() =>
@@ -91,7 +91,9 @@ const Shares: FC = () => {
             }
           >
             <span>Дата</span>
-            <SortArrows state={currentSort.key === 'DATE'  ? currentSort.dir : null} />
+            <SortArrows
+              state={currentSort.key === "DATE" ? currentSort.dir : null}
+            />
           </div>
           <div
             className={css.income__sort_item}
@@ -103,7 +105,11 @@ const Shares: FC = () => {
             }
           >
             <span>Доходность</span>
-            <SortArrows state={currentSort.key === 'PROFITABILITY'  ? currentSort.dir : null} />
+            <SortArrows
+              state={
+                currentSort.key === "PROFITABILITY" ? currentSort.dir : null
+              }
+            />
           </div>
         </div>
         <div className={css.income_list}>
@@ -114,7 +120,12 @@ const Shares: FC = () => {
               )
               .sort(sortFunction)
               .map((operation) => (
-                <Line operation={operation} key={operation.date} name quantity/>
+                <Line
+                  operation={operation}
+                  key={operation.date}
+                  name
+                  quantity
+                />
               ))}
         </div>
       </div>

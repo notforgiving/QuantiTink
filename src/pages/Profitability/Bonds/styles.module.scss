@@ -1,4 +1,5 @@
-@use "../../../UI/styles/variables";
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
 
 .bond {
   &__list {
@@ -7,13 +8,30 @@
     gap: 5px;
   }
   &__item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    @include variables.standartBlock;
-    @include variables.yellowBlock;
-    padding: 10px;
-    font-size: 18px;
     cursor: pointer;
+    @include whiteBlock;
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 20px 20px;
+    &_icon {
+      @include square(30px);
+      border-radius: 8px;
+      background: #d9d9d9;
+    }
+    &_info {
+      @include flex-center;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+      strong {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      span {
+        color: #b6b6b6;
+        font-size: 12px;
+      }
+    }
   }
 }
