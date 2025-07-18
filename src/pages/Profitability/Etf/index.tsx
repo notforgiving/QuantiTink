@@ -25,7 +25,7 @@ const Etf = () => {
     positions,
     operations,
     sortFunction,
-  } = useProfitability({ accountId: accountId || "0" });
+  } = useProfitability({ accountId: accountId || "0", customWithTax: false });
 
   const { name, result, tbankEtf } = useEtf({
     withTax,
@@ -103,7 +103,9 @@ const Etf = () => {
             }
           >
             <span>Дата</span>
-            <SortArrows state={currentSort.key === 'DATE'  ? currentSort.dir : null} />
+            <SortArrows
+              state={currentSort.key === "DATE" ? currentSort.dir : null}
+            />
           </div>
           <div
             className={css.income__sort_item}
@@ -115,7 +117,11 @@ const Etf = () => {
             }
           >
             <span>Доходность</span>
-            <SortArrows state={currentSort.key === 'PROFITABILITY'  ? currentSort.dir : null} />
+            <SortArrows
+              state={
+                currentSort.key === "PROFITABILITY" ? currentSort.dir : null
+              }
+            />
           </div>
         </div>
         <div className={css.income_list}>

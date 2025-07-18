@@ -23,6 +23,7 @@ import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
 import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
 import { ReactComponent as GoldetfSvg } from "assets/goldetf.svg";
 import { ReactComponent as BigemitentSvg } from "assets/bigemitent.svg";
+import BackHeader from "components/BackHeader";
 
 const Portfolio: FC = () => {
   let { id: accountId } = useParams();
@@ -73,12 +74,13 @@ const Portfolio: FC = () => {
       : 0;
   return (
     <div>
+      <BackHeader title={account?.name} backCallback={() => navigate(`/`)} />
       <div
         className={cn(css.portfolio, {
           isGreen: currentPrice.value > amountInvestments.value,
         })}
       >
-        {account && <div className={css.portfolio__title}>{account?.name}</div>}
+        {/* {account && <div className={css.portfolio__title}>{account?.name}</div>} */}
         <div className={css.portfolio_data}>
           {portfolio && (
             <div

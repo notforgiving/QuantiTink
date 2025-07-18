@@ -64,7 +64,7 @@
     @include whiteBlock;
     border-left: 6px solid $color-0;
     display: grid;
-    gap: 10px;
+    gap: 14px;
     padding: 20px 20px;
 
     &:global(._isGreen) {
@@ -147,8 +147,20 @@
       }
     }
     &_percent {
-      font-weight: 700;
-      font-size: 22px;
+      @include flex-center;
+      gap: 5px;
+      @include phone {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      strong {
+        font-weight: 700;
+        font-size: 22px;
+      }
+      span {
+        font-weight: 500;
+        font-size: 14px;
+      }
     }
     &_lot {
       @include pricesStyle;

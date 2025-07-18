@@ -49,7 +49,8 @@ const Line: FC<ILineProps> = ({ operation, name, quantity }) => {
           </div>
         </div>
         <div className={css.income_item_percent}>
-          {operation.profitabilityNow.percent}%
+          <span>({operation.profitabilityNow.money.formatt})</span>
+          <strong>{operation.profitabilityNow.percent}%</strong>
         </div>
       </div>
     </div>

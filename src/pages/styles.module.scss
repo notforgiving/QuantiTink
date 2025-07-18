@@ -17,6 +17,7 @@
     @include flex-center;
     justify-content: space-around;
     margin-inline: auto;
+    max-width: 800px;
   }
 
   &__item {
