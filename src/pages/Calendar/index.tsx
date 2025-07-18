@@ -3,9 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCalendar } from "./hook/useCalendar";
 import css from "./styles.module.scss";
 import cn from "classnames";
-import { formattedMoneySupply } from "../../utils";
 import Load from "../../UI/components/Load";
-import Input from "UI/components/Input";
 import BackHeader from "components/BackHeader";
 
 const Calendar: FC = () => {
@@ -31,7 +29,6 @@ const Calendar: FC = () => {
         backCallback={() => navigate(`/account/${accountId}`)}
       />
       <div className={css.total_wrapper}>
-        <span>В течении мес.:</span>
         {isLoadingCalc ? (
           <>
             <Load
@@ -55,62 +52,54 @@ const Calendar: FC = () => {
           </>
         ) : (
           <>
-            <div className={css.total}>{monthPayBonds.formatt}</div>
-            <div className={cn(css.total, css.income)}>
-              {monthPayDiv.formatt}
+            <div className={css.total_wrapper_item}>
+              <span>Купоны за месяц:</span>
+              <strong>{monthPayBonds.formatt}</strong>
             </div>
-            <div className={cn(css.total, css.all)}>
-              {
-                formattedMoneySupply(monthPayBonds.value + monthPayDiv.value)
-                  .formatt
-              }
+            <div className={css.total_wrapper_item}>
+              <span>Дивиденды за месяц:</span>
+              <strong>{monthPayDiv.formatt}</strong>
+            </div>
+            <div className={css.total_wrapper_item}>
+              <span>Всего за период:</span>
+              <strong>{yearAllPay.formatt}</strong>
             </div>
           </>
-        )}
-      </div>
-      <div className={css.total_wrapper}>
-        <span>За всё время:</span>
-        {isLoadingCalc ? (
-          <Load
-            style={{
-              width: "106px",
-              height: "52px",
-            }}
-          />
-        ) : (
-          <div className={cn(css.total, css.all)}>{yearAllPay.formatt}</div>
         )}
       </div>
       <div className={css.actions}>
-        <Input
-          label="Дивиденды"
-          inputAttributes={{
-            type: "checkbox",
-            checked: currentFilter === "DIVIDENDS",
-            onClick: () =>
-              setCurrentFilter(
-                currentFilter === "DIVIDENDS" ? "DEFAULT" : "DIVIDENDS"
-              ),
-          }}
-        />
-        <Input
-          label="Месяц"
-          inputAttributes={{
-            type: "checkbox",
-            checked: currentFilter === "MONTH",
-            onClick: () =>
-              setCurrentFilter(currentFilter === "MONTH" ? "DEFAULT" : "MONTH"),
-          }}
-        />
-        <Input
-          label={`Период - ${new Date().getFullYear()}`}
-          inputAttributes={{
-            type: "checkbox",
-            checked: currentFilter === "YEAR",
-            onClick: () =>
-              setCurrentFilter(currentFilter === "YEAR" ? "DEFAULT" : "YEAR"),
-          }}
-        />
+        <div
+          className={cn(css.actions__item, {
+            _isActive: currentFilter === "DEFAULT",
+          })}
+          onClick={() => setCurrentFilter("DEFAULT")}
+        >
+          Год вперед
+        </div>
+        <div
+          className={cn(css.actions__item, {
+            _isActive: currentFilter === "MONTH",
+          })}
+          onClick={() => setCurrentFilter("MONTH")}
+        >
+          Месяц
+        </div>
+        <div
+          className={cn(css.actions__item, {
+            _isActive: currentFilter === "DIVIDENDS",
+          })}
+          onClick={() => setCurrentFilter("DIVIDENDS")}
+        >
+          Дивиденды
+        </div>
+        <div
+          className={cn(css.actions__item, {
+            _isActive: currentFilter === "YEAR",
+          })}
+          onClick={() => setCurrentFilter("YEAR")}
+        >
+          2025
+        </div>
       </div>
       <div className={css.grid}>
         {(isLoadingCalc || isLoadingEventData) && (
@@ -142,7 +131,12 @@ const Calendar: FC = () => {
           payOuts.map((event, index) => {
             return (
               <div
-                className={css.item}
+                className={cn(css.item, {
+                  _isDividend: event.operationType === "Дивиденды",
+                  _isRepayment: event.operationType === "Погашение",
+                  _isEarlyRepayment:
+                    event.operationType === "Досрочное погашение",
+                })}
                 key={`${index}${event.figi}`}
                 title={
                   event.operationType === "Досрочное погашение"
@@ -150,32 +144,12 @@ const Calendar: FC = () => {
                     : ""
                 }
               >
-                <div className={css.item_left}>
-                  <div
-                    className={cn(css.item_type, {
-                      _isDividend: event.operationType === "Дивиденды",
-                      _isRepayment: event.operationType === "Погашение",
-                      _isEarlyRepayment:
-                        event.operationType === "Досрочное погашение",
-                    })}
-                  >
-                    {event.operationType}
-                  </div>
-                  <div className={css.item_date}>{event.paymentTitle}</div>
-                </div>
-                <div className={css.item_body}>
-                  <div className={css.item_info}>
-                    <div className={css.item_name}>{event.name}</div>
-                    <div
-                      className={cn(css.item_price, {
-                        _isDividend: event.operationType === "Дивиденды",
-                        _isRepayment: event.operationType === "Погашение",
-                        _isEarlyRepayment:
-                          event.operationType === "Досрочное погашение",
-                      })}
-                    >
-                      {event.totalAmount.formatt}
-                    </div>
+                <div className={css.item__date}>{event.paymentTitle}</div>
+                <div className={css.item__body}>
+                  <div className={css.item__type}>{event.operationType}</div>
+                  <div className={css.item__info}>
+                    <strong>{event.name}</strong>
+                    <span>{event.totalAmount.formatt}</span>
                   </div>
                 </div>
               </div>

@@ -120,8 +120,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         daysToMaturity: number;
         initialNominal: TFAmount
     }) => {
-        const currencyExchangeRateCorrection = initialNominal.currency === 'usd' ? currencyExchangeRate : 1;
-        const priceInCurrencyView = formattedMoneySupply(formattInitialNominal.value * quantity * (priceInPercent / 100) * currencyExchangeRateCorrection);
+        const priceInCurrencyView = formattedMoneySupply(formattInitialNominal.value * quantity * (priceInPercent / 100));
         const aboveNominal = formattInitialNominal.value * (priceInPercent / 100) > formattInitialNominal.value;
         ///////////////
         const priceWithoutCommission = formattedMoneySupply(priceInCurrencyView.value);
@@ -134,15 +133,15 @@ export const useCalcBonds: TUseCalcBonds = () => {
         ///////////////
         const sumAllCouponsReceived = formattedMoneySupply(payOneBond.value * eventsLength * quantity);
         ///////////////
-        // const marginFromBondRepayment = aboveNominal ? formattedMoneySupply(0) : formattedMoneySupply(formattInitialNominal.value * quantity - priceInCurrencyView.value);
-        const marginFromBondRepayment = formattedMoneySupply(0);
+        const marginFromBondRepayment = aboveNominal ? formattedMoneySupply(0) : formattedMoneySupply(formattInitialNominal.value * quantity - priceInCurrencyView.value);
         ///////////////
         // const couponTax = formattedMoneySupply(sumAllCouponsReceived.value * 0.13);
         const couponTax = formattedMoneySupply(0);
         ///////////////
-        const taxOnBondRepayment = Number(yearsToMaturity) >= 3 ? formattedMoneySupply(0) : formattedMoneySupply(marginFromBondRepayment.value * 0.13);
+        // const taxOnBondRepayment = Number(yearsToMaturity) >= 3 ? formattedMoneySupply(0) : formattedMoneySupply(marginFromBondRepayment.value * 0.13);
+        const taxOnBondRepayment = formattedMoneySupply(0);
         ///////////////
-        const bondRepaymentAmount = formattedMoneySupply(formattInitialNominal.value * quantity * currencyExchangeRateCorrection);
+        const bondRepaymentAmount = formattedMoneySupply(formattInitialNominal.value * quantity);
         ///////////////
         const netAmountInTheEnd = formattedMoneySupply(bondRepaymentAmount.value + sumAllCouponsReceived.value - couponTax.value - taxOnBondRepayment.value);
         ///////////////
@@ -186,7 +185,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
             const quantity = 1;
             const nkd = formattedMoneySupply(getNumberMoney(found.aciValue));
             const payOneBond = formattedMoneySupply(Number((getNumberMoney(events[0].payOneBond) * currencyExchangeRateCorrection).toFixed(2)));
-            const formattInitialNominal = formattedMoneySupply(getNumberMoney(found.initialNominal))
+            const formattInitialNominal = formattedMoneySupply(getNumberMoney(found.initialNominal) * currencyExchangeRateCorrection);
             const daysToMaturity = Math.ceil((moment(found.maturityDate).unix() - moment().unix()) / 86400);
             const yearsToMaturity = (daysToMaturity / 365).toFixed(2);
             const eventsLength = events.length;

@@ -1,4 +1,5 @@
-@use "../../UI/styles/variables";
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
 
 .grid {
   display: flex;
@@ -8,128 +9,93 @@
 }
 
 .total {
-  @include variables.standartBlock;
-  @include variables.orangeBlock;
-  align-items: center;
-  color: #e9e8eb;
-  display: flex;
-  font-size: 22px;
-  justify-content: center;
-  &.shares {
-    @include variables.redBlock;
-  }
-  &.all {
-    @include variables.yellowBlock;
-  }
   &_wrapper {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 40px;
-    @include variables.phone {
-      margin-top: 20px;
+    @include whiteBlock;
+    @include flex-center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+
+    &_item {
+      width: 100%;
+      @include flex-center;
+      justify-content: space-between;
+      gap: 10px;
+      span {
+        color: #6b7280;
+      }
+      strong {
+        color: #10b981;
+        font-weight: 700;
+        font-size: 16px;
+      }
     }
   }
 }
 
 .actions {
   margin-top: 10px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  @include flex-center;
+  gap: 10px;
+  justify-content: flex-start;
+
+  @include phone {
+    justify-content: space-between;
+  }
+
+  &__item {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ececec;
+    text-align: center;
+    font-size: 12px;
+
+    &:global(._isActive) {
+      font-weight: 600;
+      background: #e9f8f1;
+      border: 1px solid #10b981;
+      font-size: 11px;
+    }
+  }
 }
 
 .item {
-  @include variables.standartBlock;
-  @include variables.greyBlock;
-  align-items: center;
-  display: flex;
+  @include flex-center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 20px;
-  padding: 26px 10px 10px;
-  position: relative;
-  @include variables.phone {
-    gap: 20px;
-    align-items: flex-end;
-    padding: 4px 10px 10px;
+  &__date {
+    font-weight: 700;
+    font-size: 18px;
   }
-  &_left {
-    align-items: center;
-    display: flex;
+  &__body {
+    @include whiteBlock;
+    width: 100%;
+    @include flex-center;
     flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
   }
-  &_date {
-    font-size: 26px;
-    @include variables.phone {
-      font-size: 18px;
-    }
+
+  &__type {
+    color: #6b7280;
+    font-size: 12px;
   }
-  &_body {
-    flex: 1;
-  }
-  &_info {
-    align-items: center;
-    display: flex;
-    gap: 20px;
+
+  &__info {
+    @include flex-center;
     justify-content: space-between;
-    flex: 1;
-    @include variables.phone {
-      flex-direction: column-reverse;
-      align-items: flex-end;
-      gap: 5px;
-      text-align: left;
-    }
-  }
-  &_name {
-    font-size: 20px;
-    @include variables.phone {
-      font-size: 16px;
-      width: 100%;
-    }
-  }
-  &_price {
-    @include variables.standartBlock;
-    @include variables.orangeBlock;
-    align-items: center;
-    display: flex;
-    font-size: 22px;
-    justify-content: center;
+    width: 100%;
 
-    &:global(._isDividend) {
-      @include variables.redBlock;
+    strong {
+      font-size: 20px;
+      color: $green-70;
     }
-    &:global(._isRepayment) {
-      @include variables.purpuleBlock;
-    }
-    &:global(._isEarlyRepayment) {
-      @include variables.middleBlueBlock;
-    }
-
-    @include variables.phone {
-      font-size: 18px;
-      padding: 6px;
-    }
-  }
-
-  &_type {
-    @include variables.standartBlock;
-    @include variables.orangeBlock;
-    left: 10px;
-    padding: 2px 5px;
-    position: absolute;
-    top: 5px;
-
-    &:global(._isDividend) {
-      @include variables.redBlock;
-      padding: 2px 5px;
-    }
-    &:global(._isRepayment) {
-      @include variables.purpuleBlock;
-    }
-    &:global(._isEarlyRepayment) {
-      @include variables.middleBlueBlock;
+    span {
+      color: #10b981;
+      font-weight: 700;
+      font-size: 20px;
     }
   }
 }

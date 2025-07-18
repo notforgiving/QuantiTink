@@ -23,7 +23,7 @@ export const currencySlice = createSlice({
             { payload: data }: PayloadAction<TCurrencyResponse[]>
         ) => {
             state.isLoading = false;
-            const currency = data.filter(el => el.category === 'DebitCardsTransfers')[0]
+            const currency = data.filter(el => el.category === 'ATMCashoutRateGroup')[0]
             state.data = currency.buy || 80;
         },
         getCurrencyListErrorAction: (

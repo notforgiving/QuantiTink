@@ -29,6 +29,7 @@ import { ReactComponent as MainImg } from "assets/wallet.svg";
 import { ReactComponent as ProfileImg } from "assets/preson.svg";
 import { ReactComponent as CalcImg } from "assets/calc.svg";
 import cn from "classnames";
+import { currencySlice } from "store/slices/currency.slice";
 
 const UserPage = () => {
   const { isAuth, id: userId } = useAuth();
@@ -60,6 +61,7 @@ const UserPage = () => {
     }
     if (isAuth && userId) {
       dispatch(tokenSlice.actions.getTokenAction(userId));
+      dispatch(currencySlice.actions.getCurrencyListAction());
     }
   }, [dispatch, isAuth, isLoadingUser, navigate, user.email, userId]);
 

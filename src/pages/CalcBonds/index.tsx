@@ -124,7 +124,7 @@ const CalcBonds: FC = () => {
                 handleChangeCurrentPrice={handleChangeCurrentPrice}
               />
             ))}
-        {!conditionLoading && (
+        {!(isLoadingBonds || isLoading) && bondsTable.length===0 && (
           <div className={css.empty}>
             Пока вы не добавили не одной облигации
           </div>
