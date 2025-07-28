@@ -101,6 +101,7 @@ const BondView: FC = () => {
                   _isRed: operation.profitabilityNow.percent <= 0,
                   _isOrange: operation.ownershipPeriod / 12 >= 3,
                 })}
+                key={operation.date}
               >
                 <div className={maincss.income_item_time}>
                   <span>{moment(operation.date).format("DD.MM.YYYY")}</span>
@@ -139,7 +140,7 @@ const BondView: FC = () => {
                     </div>
                   </div>
                   <div className={maincss.income_item_percent}>
-                    {operation.profitabilityNow.percent}%
+                    <strong>{operation.profitabilityNow.percent}%</strong>
                   </div>
                 </div>
               </div>

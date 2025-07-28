@@ -26,6 +26,7 @@ export type TInstrument = {
     aciValue: TFAmount;
     maturityDate: string;
     floatingCouponFlag: boolean;
+    riskLevel: 'RISK_LEVEL_LOW' | 'RISK_LEVEL_MODERATE' | 'RISK_LEVEL_HIGH';
 }
 
 export const BONDS_LOCALSTORAGE_NAME = 'Tbalance_bonds';

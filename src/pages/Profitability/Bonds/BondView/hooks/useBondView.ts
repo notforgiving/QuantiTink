@@ -40,7 +40,7 @@ export const useBondView: TUseBondView = ({ figi, withTax, positions, operations
         const bondCoupones = allOperationsWithBond.filter(el => el.type === 'Выплата купонов');
         const calcAmountBondForPay = bondCoupones.map(bond => {
             const quantityForPay = buyOperations.reduce((acc, byu) => {
-                if (moment(byu.date) <= moment(bond.date)) {
+                if (moment(byu.date).add(1, 'd') <= moment(bond.date)) {
                     return acc + Number(byu.quantity)
                 }
                 return acc;

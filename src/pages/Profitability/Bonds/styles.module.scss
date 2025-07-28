@@ -15,9 +15,12 @@
     gap: 16px;
     padding: 20px 20px;
     &_icon {
-      @include square(30px);
+      @include square(40px);
       border-radius: 8px;
       background: #d9d9d9;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
     &_info {
       @include flex-center;
@@ -32,6 +35,45 @@
         color: #b6b6b6;
         font-size: 12px;
       }
+    }
+  }
+}
+
+.repaymentDate {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+  &__item {
+    @include flex-center;
+    justify-content: flex-start;
+    padding: 5px 10px;
+    background: $green-60;
+    position: relative;
+    z-index: 2;
+    gap: 5px;
+    border-radius: 15px;
+    overflow: hidden;
+
+    span,strong {
+      position: relative;
+      color: $green-10;
+      font-size: 16px;
+    }
+
+    @for $i from 1 to 101 {
+      &:global(.size-#{$i}) {
+        &::before {
+          width: calc(#{$i} * 1%);
+        }
+      }
+    }
+
+    &::before {
+      @include before;
+      height: 100%;
+      width: 0%;
+      background: $orange-20;
     }
   }
 }
