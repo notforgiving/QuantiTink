@@ -49,32 +49,10 @@ type TCalcSummOfAllDeposits = (initialData: TFUnionOperations[]) => number;
 export const calcSummOfAllDeposits: TCalcSummOfAllDeposits = (initialData) => {
   return initialData?.reduce((acc, el) => {
     const portfolioSumm = el.operations.reduce((accumulator, value) => {
-      if (
-        value.type === "Пополнение брокерского счёта" ||
-        value.type === "Пополнение денежных средств со счета" ||
-        (value.type === "Вывод денежных средств со счета" &&
-          value.operationType === "OPERATION_TYPE_OUT_MULTI") ||
-        (value.type === "Вывод денежных средств" &&
-          value.operationType !== "OPERATION_TYPE_OUT_MULTI")
-      ) {
+      if (value.type === "Пополнение брокерского счёта" || value.type === 'Вывод денежных средств') {
         const numberMoney = getNumberMoney(value.payment);
         return accumulator + numberMoney;
       }
-      // if (
-      //   value.type === "Вывод денежных средств со счета" &&
-      //   value.operationType === "OPERATION_TYPE_OUT_MULTI"
-      // ) {
-      //   const numberMoney = getNumberMoney(value.payment);
-      //   return accumulator + numberMoney;
-      // }
-
-      // if (
-      //   value.type === "Вывод денежных средств" &&
-      //   value.operationType !== "OPERATION_TYPE_OUT_MULTI"
-      // ) {
-      //   const numberMoney = getNumberMoney(value.payment);
-      //   return accumulator + numberMoney;
-      // }
       return accumulator;
     }, 0);
     return acc + portfolioSumm;
