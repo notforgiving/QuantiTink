@@ -18,4 +18,5 @@ export const clearImportantLocalData = () => {
     localStorage.removeItem(ACCOUNTS_LOCALSTORAGE_NAME);
     localStorage.removeItem(OPERATIONS_LOCALSTORAGE_NAME);
     localStorage.removeItem(PORTFOLIOS_LOCALSTORAGE_NAME);
+    localStorage.removeItem('T-balance-update');
 }
