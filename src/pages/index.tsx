@@ -72,7 +72,8 @@ const UserPage = () => {
     const differenceTime = updateTrigger
       ? moment().unix() - updateTrigger <= 60
       : false;
-
+    console.log(updateTime,'updateTime',updateTrigger,'updateTrigger',differenceTime,'differenceTime');
+    
     const forkDispatchDataInfo = forkDispatch({
       localStorageName: INFO_LOCALSTORAGE_NAME,
       accountId: "0",
@@ -122,7 +123,7 @@ const UserPage = () => {
         forkDispatchDataOperations && differenceTime
           ? dispatch(getOperationsListSuccessOnly(forkDispatchDataOperations))
           : dispatch(getOperationsListAction(accountsData));
-        if (!differenceTime) {
+        if (differenceTime) {
           console.log(
             "Старые данные, еще норм по времени",
             moment().unix(),
