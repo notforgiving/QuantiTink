@@ -443,27 +443,32 @@ export const useCalcBonds: TUseCalcBonds = () => {
         const updateTime = localStorage.getItem("T-balance-update") || null;
         const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
         const differenceTime = updateTrigger
-            ? moment().unix() - updateTrigger >= 86400
+            ? moment().unix() - updateTrigger <= 86400
             : false;
-
         const forkDispatchDataInfo = forkDispatch({
             localStorageName: ALL_BONDS_LOCALSTORAGE_NAME,
             accountId: "0",
             customTimeUpdate: UPDATETIME
         });
-        forkDispatchDataInfo && !differenceTime
+        forkDispatchDataInfo && differenceTime
             ? dispatch(getAllBondsListSuccessOnly(forkDispatchDataInfo))
             : dispatch(getAllBondsListAction());
-        if (differenceTime) {
-            console.log("Новые данные");
-            localStorage.setItem(
-                "T-balance-update",
-                JSON.stringify(moment().unix())
-            );
+        if (!differenceTime) {
+          console.log(
+            "Старые данные, еще норм по времени",
+            moment().unix(),
+            updateTrigger,
+            moment().unix() - updateTrigger
+          );
+         
         } else {
-            console.log("Старые данные", moment().unix() - updateTrigger);
+          console.log("Обновляем данные");
+           localStorage.setItem(
+            "T-balance-update",
+            JSON.stringify(moment().unix())
+          );
         }
-    }, [dispatch])
+    }, [UPDATETIME, dispatch])
 
     return {
         inputField,

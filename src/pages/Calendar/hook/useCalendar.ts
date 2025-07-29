@@ -85,25 +85,29 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     const updateTime = localStorage.getItem("T-balance-update") || null;
     const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
     const differenceTime = updateTrigger
-      ? moment().unix() - updateTrigger >= 3600
+      ? moment().unix() - updateTrigger <= 3600
       : false;
 
     const eventsPositions = getOnlyEventsPositionsByPortfolio(
       portfolio?.positions || []
     );
     const forkDispatchDataEvents = forkDispatch({ localStorageName: EVENTS_LOCALSTORAGE_NAME, accountId: accountId || '0' });
-    forkDispatchDataEvents && !differenceTime ? dispatch(getEventsListSuccessOnly(forkDispatchDataEvents)) : dispatch(getEventsListAction({ positions: eventsPositions, accountId: accountId || "0" }));
+    forkDispatchDataEvents && differenceTime ? dispatch(getEventsListSuccessOnly(forkDispatchDataEvents)) : dispatch(getEventsListAction({ positions: eventsPositions, accountId: accountId || "0" }));
+    if (!differenceTime) {
+      console.log(
+        "Старые данные, еще норм по времени",
+        moment().unix(),
+        updateTrigger,
+        moment().unix() - updateTrigger
+      );
 
-    if (differenceTime) {
-      console.log("Новые данные");
+    } else {
+      console.log("Обновляем данные");
       localStorage.setItem(
         "T-balance-update",
         JSON.stringify(moment().unix())
       );
-    } else {
-      console.log("Старые данные", moment().unix() - updateTrigger);
     }
-
   }, [accountId, dispatch, portfolio?.positions]);
 
   useEffect(() => {

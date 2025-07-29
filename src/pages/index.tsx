@@ -70,7 +70,7 @@ const UserPage = () => {
     const updateTime = localStorage.getItem("T-balance-update") || null;
     const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
     const differenceTime = updateTrigger
-      ? moment().unix() - updateTrigger >= 60
+      ? moment().unix() - updateTrigger <= 60
       : false;
 
     const forkDispatchDataInfo = forkDispatch({
@@ -92,12 +92,12 @@ const UserPage = () => {
 
     if (token && !isLoadingToken) {
       if (!isLoadingInfo && Object.keys(infoData).length === 0) {
-        forkDispatchDataInfo && !differenceTime
+        forkDispatchDataInfo && differenceTime
           ? dispatch(getInfoSuccessOnly(forkDispatchDataInfo["response"]))
           : dispatch(getInfoAction());
       }
       if (accountsData && accountsData.length === 0 && !isLoadingAccounts) {
-        forkDispatchDataAccounts && !differenceTime
+        forkDispatchDataAccounts && differenceTime
           ? dispatch(
               getAccountsSuccessOnly(forkDispatchDataAccounts["response"])
             )
@@ -112,28 +112,29 @@ const UserPage = () => {
         !isLoadingPortfolios &&
         !isLoadingOperations
       ) {
-        forkDispatchDataPortfolios && !differenceTime
+        forkDispatchDataPortfolios && differenceTime
           ? dispatch(
               getPortfoliosListSuccessOnly(
                 forkDispatchDataPortfolios["response"]
               )
             )
           : dispatch(getPortfoliosListAction(accountsData));
-        forkDispatchDataOperations && !differenceTime
+        forkDispatchDataOperations && differenceTime
           ? dispatch(getOperationsListSuccessOnly(forkDispatchDataOperations))
           : dispatch(getOperationsListAction(accountsData));
-        if (differenceTime) {
-          console.log("Новые данные");
-          localStorage.setItem(
-            "T-balance-update",
-            JSON.stringify(moment().unix())
-          );
-        } else {
+        if (!differenceTime) {
           console.log(
-            "Старые данные",
+            "Старые данные, еще норм по времени",
             moment().unix(),
             updateTrigger,
             moment().unix() - updateTrigger
+          );
+         
+        } else {
+          console.log("Обновляем данные");
+           localStorage.setItem(
+            "T-balance-update",
+            JSON.stringify(moment().unix())
           );
         }
       }

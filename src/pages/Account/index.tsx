@@ -31,7 +31,7 @@ const Account = () => {
     const updateTime = localStorage.getItem("T-balance-update") || null;
     const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
     const differenceTime = updateTrigger
-      ? moment().unix() - updateTrigger >= 60
+      ? moment().unix() - updateTrigger <= 60
       : false;
 
     const forkDispatchDataBonds = forkDispatch({
@@ -49,34 +49,35 @@ const Account = () => {
     if (portfolio?.positions.length !== 0) {
       const bondPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "bond") || [];
-      forkDispatchDataBonds && !differenceTime
+      forkDispatchDataBonds && differenceTime
         ? dispatch(getBondsListSuccessOnly(forkDispatchDataBonds))
         : dispatch(getBondsListAction({ bondPositions, accountId }));
       const etfPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "etf") || [];
-      forkDispatchDataEtfs && !differenceTime
+      forkDispatchDataEtfs && differenceTime
         ? dispatch(getEtfsListSuccessOnly(forkDispatchDataEtfs))
         : dispatch(getEtfsListAction({ etfPositions, accountId }));
       const sharesPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "share") ||
         [];
-      forkDispatchDataShares && !differenceTime
+      forkDispatchDataShares && differenceTime
         ? dispatch(getSharesListSuccessOnly(forkDispatchDataShares))
         : dispatch(getSharesListAction({ sharesPositions, accountId }));
-      if (differenceTime) {
-        console.log("Новые данные");
-        localStorage.setItem(
-          "T-balance-update",
-          JSON.stringify(moment().unix())
-        );
-      } else {
+        if (!differenceTime) {
           console.log(
-            "Старые данные",
+            "Старые данные, еще норм по времени",
             moment().unix(),
             updateTrigger,
             moment().unix() - updateTrigger
           );
-      }
+         
+        } else {
+          console.log("Обновляем данные");
+           localStorage.setItem(
+            "T-balance-update",
+            JSON.stringify(moment().unix())
+          );
+        }
     }
   }, [accountId, dispatch, portfolio]);
   return <Outlet />;
