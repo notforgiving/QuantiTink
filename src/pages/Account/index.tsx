@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useParams } from "react-router-dom";
@@ -27,6 +28,12 @@ const Account = () => {
     searchItemInArrayData(state.portfolios.data || [], "accountId", accountId)
   );
   useEffect(() => {
+    const updateTime = localStorage.getItem("T-balance-update") || null;
+    const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
+    const differenceTime = updateTrigger
+      ? moment().unix() - updateTrigger >= 60
+      : false;
+
     const forkDispatchDataBonds = forkDispatch({
       localStorageName: BONDS_LOCALSTORAGE_NAME,
       accountId,
@@ -42,20 +49,29 @@ const Account = () => {
     if (portfolio?.positions.length !== 0) {
       const bondPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "bond") || [];
-      forkDispatchDataBonds
+      forkDispatchDataBonds && !differenceTime
         ? dispatch(getBondsListSuccessOnly(forkDispatchDataBonds))
         : dispatch(getBondsListAction({ bondPositions, accountId }));
       const etfPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "etf") || [];
-      forkDispatchDataEtfs
+      forkDispatchDataEtfs && !differenceTime
         ? dispatch(getEtfsListSuccessOnly(forkDispatchDataEtfs))
         : dispatch(getEtfsListAction({ etfPositions, accountId }));
       const sharesPositions =
         portfolio?.positions.filter((el) => el.instrumentType === "share") ||
         [];
-      forkDispatchDataShares
+      forkDispatchDataShares && !differenceTime
         ? dispatch(getSharesListSuccessOnly(forkDispatchDataShares))
         : dispatch(getSharesListAction({ sharesPositions, accountId }));
+      if (differenceTime) {
+        console.log("Новые данные");
+        localStorage.setItem(
+          "T-balance-update",
+          JSON.stringify(moment().unix())
+        );
+      } else {
+        console.log("Старые данные", moment().unix() - updateTrigger);
+      }
     }
   }, [accountId, dispatch, portfolio]);
   return <Outlet />;

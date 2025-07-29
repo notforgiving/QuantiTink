@@ -30,6 +30,7 @@ import { ReactComponent as ProfileImg } from "assets/preson.svg";
 import { ReactComponent as CalcImg } from "assets/calc.svg";
 import cn from "classnames";
 import { currencySlice } from "store/slices/currency.slice";
+import moment from "moment";
 
 const UserPage = () => {
   const { isAuth, id: userId } = useAuth();
@@ -66,6 +67,12 @@ const UserPage = () => {
   }, [dispatch, isAuth, isLoadingUser, navigate, user.email, userId]);
 
   useEffect(() => {
+    const updateTime = localStorage.getItem("T-balance-update") || null;
+    const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
+    const differenceTime = updateTrigger
+      ? moment().unix() - updateTrigger >= 60
+      : false;
+
     const forkDispatchDataInfo = forkDispatch({
       localStorageName: INFO_LOCALSTORAGE_NAME,
       accountId: "0",
@@ -85,12 +92,12 @@ const UserPage = () => {
 
     if (token && !isLoadingToken) {
       if (!isLoadingInfo && Object.keys(infoData).length === 0) {
-        forkDispatchDataInfo
+        forkDispatchDataInfo && !differenceTime
           ? dispatch(getInfoSuccessOnly(forkDispatchDataInfo["response"]))
           : dispatch(getInfoAction());
       }
       if (accountsData && accountsData.length === 0 && !isLoadingAccounts) {
-        forkDispatchDataAccounts
+        forkDispatchDataAccounts && !differenceTime
           ? dispatch(
               getAccountsSuccessOnly(forkDispatchDataAccounts["response"])
             )
@@ -105,16 +112,25 @@ const UserPage = () => {
         !isLoadingPortfolios &&
         !isLoadingOperations
       ) {
-        forkDispatchDataPortfolios
+        forkDispatchDataPortfolios && !differenceTime
           ? dispatch(
               getPortfoliosListSuccessOnly(
                 forkDispatchDataPortfolios["response"]
               )
             )
           : dispatch(getPortfoliosListAction(accountsData));
-        forkDispatchDataOperations
+        forkDispatchDataOperations && !differenceTime
           ? dispatch(getOperationsListSuccessOnly(forkDispatchDataOperations))
           : dispatch(getOperationsListAction(accountsData));
+        if (differenceTime) {
+          console.log("Новые данные");
+          localStorage.setItem(
+            "T-balance-update",
+            JSON.stringify(moment().unix())
+          );
+        } else {
+          console.log("Старые данные", moment().unix() - updateTrigger);
+        }
       }
     }
   }, [

@@ -440,14 +440,29 @@ export const useCalcBonds: TUseCalcBonds = () => {
     }, [allBondsData, userId])
 
     useEffect(() => {
+        const updateTime = localStorage.getItem("T-balance-update") || null;
+        const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
+        const differenceTime = updateTrigger
+            ? moment().unix() - updateTrigger >= 86400
+            : false;
+
         const forkDispatchDataInfo = forkDispatch({
             localStorageName: ALL_BONDS_LOCALSTORAGE_NAME,
             accountId: "0",
             customTimeUpdate: UPDATETIME
         });
-        forkDispatchDataInfo
+        forkDispatchDataInfo && !differenceTime
             ? dispatch(getAllBondsListSuccessOnly(forkDispatchDataInfo))
             : dispatch(getAllBondsListAction());
+        if (differenceTime) {
+            console.log("Новые данные");
+            localStorage.setItem(
+                "T-balance-update",
+                JSON.stringify(moment().unix())
+            );
+        } else {
+            console.log("Старые данные", moment().unix() - updateTrigger);
+        }
     }, [dispatch])
 
     return {
