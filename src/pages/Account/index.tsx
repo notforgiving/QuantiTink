@@ -70,7 +70,12 @@ const Account = () => {
           JSON.stringify(moment().unix())
         );
       } else {
-        console.log("Старые данные", moment().unix() - updateTrigger);
+          console.log(
+            "Старые данные",
+            moment().unix(),
+            updateTrigger,
+            moment().unix() - updateTrigger
+          );
       }
     }
   }, [accountId, dispatch, portfolio]);
