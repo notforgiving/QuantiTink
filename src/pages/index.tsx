@@ -72,8 +72,6 @@ const UserPage = () => {
     const differenceTime = updateTrigger
       ? moment().unix() - updateTrigger <= 60
       : false;
-    console.log(updateTime,'updateTime',updateTrigger,'updateTrigger',differenceTime,'differenceTime');
-    
     const forkDispatchDataInfo = forkDispatch({
       localStorageName: INFO_LOCALSTORAGE_NAME,
       accountId: "0",
@@ -124,16 +122,10 @@ const UserPage = () => {
           ? dispatch(getOperationsListSuccessOnly(forkDispatchDataOperations))
           : dispatch(getOperationsListAction(accountsData));
         if (differenceTime) {
-          console.log(
-            "Старые данные, еще норм по времени",
-            moment().unix(),
-            updateTrigger,
-            moment().unix() - updateTrigger
-          );
-         
+          console.log("Старые данные");
         } else {
-          console.log("Обновляем данные");
-           localStorage.setItem(
+          console.log("Обновили данные");
+          localStorage.setItem(
             "T-balance-update",
             JSON.stringify(moment().unix())
           );

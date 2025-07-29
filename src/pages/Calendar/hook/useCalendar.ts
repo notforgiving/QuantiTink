@@ -93,21 +93,15 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     );
     const forkDispatchDataEvents = forkDispatch({ localStorageName: EVENTS_LOCALSTORAGE_NAME, accountId: accountId || '0' });
     forkDispatchDataEvents && differenceTime ? dispatch(getEventsListSuccessOnly(forkDispatchDataEvents)) : dispatch(getEventsListAction({ positions: eventsPositions, accountId: accountId || "0" }));
-    if (!differenceTime) {
-      console.log(
-        "Старые данные, еще норм по времени",
-        moment().unix(),
-        updateTrigger,
-        moment().unix() - updateTrigger
-      );
-
-    } else {
-      console.log("Обновляем данные");
-      localStorage.setItem(
-        "T-balance-update",
-        JSON.stringify(moment().unix())
-      );
-    }
+        if (differenceTime) {
+          console.log("Старые данные");
+        } else {
+          console.log("Обновили данные");
+          localStorage.setItem(
+            "T-balance-update",
+            JSON.stringify(moment().unix())
+          );
+        }
   }, [accountId, dispatch, portfolio?.positions]);
 
   useEffect(() => {

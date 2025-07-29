@@ -33,7 +33,6 @@ const Account = () => {
     const differenceTime = updateTrigger
       ? moment().unix() - updateTrigger <= 60
       : false;
-
     const forkDispatchDataBonds = forkDispatch({
       localStorageName: BONDS_LOCALSTORAGE_NAME,
       accountId,
@@ -63,17 +62,11 @@ const Account = () => {
       forkDispatchDataShares && differenceTime
         ? dispatch(getSharesListSuccessOnly(forkDispatchDataShares))
         : dispatch(getSharesListAction({ sharesPositions, accountId }));
-        if (!differenceTime) {
-          console.log(
-            "Старые данные, еще норм по времени",
-            moment().unix(),
-            updateTrigger,
-            moment().unix() - updateTrigger
-          );
-         
+        if (differenceTime) {
+          console.log("Старые данные");
         } else {
-          console.log("Обновляем данные");
-           localStorage.setItem(
+          console.log("Обновили данные");
+          localStorage.setItem(
             "T-balance-update",
             JSON.stringify(moment().unix())
           );

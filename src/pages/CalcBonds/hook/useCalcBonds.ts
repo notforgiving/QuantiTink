@@ -453,23 +453,16 @@ export const useCalcBonds: TUseCalcBonds = () => {
         forkDispatchDataInfo && differenceTime
             ? dispatch(getAllBondsListSuccessOnly(forkDispatchDataInfo))
             : dispatch(getAllBondsListAction());
-        if (!differenceTime) {
-          console.log(
-            "Старые данные, еще норм по времени",
-            moment().unix(),
-            updateTrigger,
-            moment().unix() - updateTrigger
-          );
-         
+        if (differenceTime) {
+          console.log("Старые данные");
         } else {
-          console.log("Обновляем данные");
-           localStorage.setItem(
+          console.log("Обновили данные");
+          localStorage.setItem(
             "T-balance-update",
             JSON.stringify(moment().unix())
           );
         }
     }, [UPDATETIME, dispatch])
-
     return {
         inputField,
         setInputField,
