@@ -440,7 +440,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
     }, [allBondsData, userId])
 
     useEffect(() => {
-        const updateTime = localStorage.getItem("T-balance-update") || null;
+        const updateTime = localStorage.getItem("T-balance-calc") || null;
         const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
         const differenceTime = updateTrigger
             ? moment().unix() - updateTrigger <= 86400
@@ -458,7 +458,7 @@ export const useCalcBonds: TUseCalcBonds = () => {
         } else {
           console.log("Обновили данные");
           localStorage.setItem(
-            "T-balance-update",
+            "T-balance-calc",
             JSON.stringify(moment().unix())
           );
         }

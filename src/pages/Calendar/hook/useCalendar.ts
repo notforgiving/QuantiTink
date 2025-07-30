@@ -24,7 +24,10 @@ interface IUseCalendar {
 }
 
 type TUseCalendar = (props: IUseCalendar) => {
-  payOuts: TPayOutsEvent[];
+  payOuts: {
+    date: string;
+    array: TPayOutsEvent[];
+}[];
   monthPayBonds: TFFormattPrice;
   monthPayDiv: TFFormattPrice;
   yearAllPay: TFFormattPrice;
@@ -53,7 +56,10 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
   });
   const currency = useSelector((state: StateType) => state.currency.data) || 1;
   const { data: bondsData } = useSelector((state: StateType) => state.bonds);
-  const [payOuts, setPayOuts] = useState<TPayOutsEvent[]>([]);
+  const [payOuts, setPayOuts] = useState<{
+    date: string;
+    array: TPayOutsEvent[];
+}[]>([]);
   const [payOutsFiltred, setPayOutsFiltred] = useState<TPayOutsEvent[]>([]);
   const [monthPayBonds, setMonthPayBonds] = useState<TFFormattPrice>({
     formatt: "0",
@@ -82,7 +88,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
   });
 
   useEffect(() => {
-    const updateTime = localStorage.getItem("T-balance-update") || null;
+    const updateTime = localStorage.getItem("T-balance-celendar") || null;
     const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
     const differenceTime = updateTrigger
       ? moment().unix() - updateTrigger <= 3600
@@ -93,15 +99,15 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
     );
     const forkDispatchDataEvents = forkDispatch({ localStorageName: EVENTS_LOCALSTORAGE_NAME, accountId: accountId || '0' });
     forkDispatchDataEvents && differenceTime ? dispatch(getEventsListSuccessOnly(forkDispatchDataEvents)) : dispatch(getEventsListAction({ positions: eventsPositions, accountId: accountId || "0" }));
-        if (differenceTime) {
-          console.log("Старые данные");
-        } else {
-          console.log("Обновили данные");
-          localStorage.setItem(
-            "T-balance-update",
-            JSON.stringify(moment().unix())
-          );
-        }
+    if (differenceTime) {
+      console.log("Старые данные");
+    } else {
+      console.log("Обновили данные");
+      localStorage.setItem(
+        "T-balance-celendar",
+        JSON.stringify(moment().unix())
+      );
+    }
   }, [accountId, dispatch, portfolio?.positions]);
 
   useEffect(() => {
@@ -216,92 +222,107 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           new Date(b.paymentDate).getTime()
         );
       });
-      setPayOuts(sortArray);
-    }
-  }, [
-    bondsData?.instrument,
-    currency,
-    eventsData,
-    portfolio?.positions,
-    portfolioOperations,
-    sharesData?.instrument,
-  ]);
 
-  useEffect(() => {
-    if (payOuts && !!payOuts.length) {
-      let monthBonds = 0;
-      let monthDiv = 0;
-      let year = 0;
-      // Так как выплаты пропадают из выдачи мы записываем те, которые предназначены на следующий день
-      const nextYearDate = moment().add(1, "y");
-      const nextMonthDate = moment().add(1, "M");
+      const grouped: {
+        [x: string]: TPayOutsEvent[]
+      } = sortArray.reduce((acc: {
+        [x: string]: TPayOutsEvent[]
+      }, item) => {
+        const dateKey = item.paymentTitle;
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(item);
+        return acc;
+      }, {});
+      const result = Object.entries(grouped).map(([date, items]) => ({
+        date,
+        array: items
+      }))
 
-      payOuts.forEach((item) => {
-        if (
-          item.operationType === "Дивиденды" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthDiv += item.totalAmount.value;
-        }
-        if (
-          item.operationType === "Купоны" &&
-          moment(item.paymentDate) < nextMonthDate
-        ) {
-          monthBonds += item.totalAmount.value;
-        }
-        if (moment(item.paymentDate) < nextYearDate) {
-          year += item.totalAmount.value;
-        }
-      });
-
-      setMonthPayBonds(formattedMoneySupply(monthBonds));
-      setMonthPayDiv(formattedMoneySupply(monthDiv));
-      setYearAllPay(formattedMoneySupply(year));
+      setPayOuts(result);
       setIsLoadingCalc(false);
     }
-  }, [accountId, payOuts]);
+  }, [bondsData?.instrument, currency, eventsData, portfolio?.positions, portfolioOperations, sharesData?.instrument]);
+
+  // useEffect(() => {
+  //   if (payOuts && !!payOuts.length) {
+  //     let monthBonds = 0;
+  //     let monthDiv = 0;
+  //     let year = 0;
+  //     // Так как выплаты пропадают из выдачи мы записываем те, которые предназначены на следующий день
+  //     const nextYearDate = moment().add(1, "y");
+  //     const nextMonthDate = moment().add(1, "M");
+
+  //     payOuts.forEach((item) => {
+  //       if (
+  //         item.operationType === "Дивиденды" &&
+  //         moment(item.paymentDate) < nextMonthDate
+  //       ) {
+  //         monthDiv += item.totalAmount.value;
+  //       }
+  //       if (
+  //         item.operationType === "Купоны" &&
+  //         moment(item.paymentDate) < nextMonthDate
+  //       ) {
+  //         monthBonds += item.totalAmount.value;
+  //       }
+  //       if (moment(item.paymentDate) < nextYearDate) {
+  //         year += item.totalAmount.value;
+  //       }
+  //     });
+
+  //     setMonthPayBonds(formattedMoneySupply(monthBonds));
+  //     setMonthPayDiv(formattedMoneySupply(monthDiv));
+  //     setYearAllPay(formattedMoneySupply(year));
+  //     setIsLoadingCalc(false);
+  //   }
+  // }, [accountId, payOuts]);
 
 
-  useEffect(() => {
-    setIsLoadingCalc(true);
-    let monthBonds = 0;
-    let monthDiv = 0;
-    let year = 0;
-    const nextYearDate = moment().year();
-    const nextMonthDate = moment().add(1, "M");
-    const newPayOuts = payOuts.filter(el => {
-      if (currentFilter === 'DIVIDENDS' && el.operationType === 'Дивиденды') {
-        return el;
-      }
-      if (currentFilter === 'MONTH' && moment(el.paymentDate) < nextMonthDate) {
-        return el;
-      }
-      if (currentFilter === 'YEAR' && moment(el.paymentDate).year() === nextYearDate) {
-        return el;
-      }
-      if (currentFilter === 'DEFAULT') {
-        return el;
-      }
-      return false;
-    })
-    newPayOuts.forEach((item) => {
-      if ((item.operationType === 'Купоны' || item.operationType === 'Амортизация' || item.operationType === 'Погашение') && moment(item.paymentDate) < nextMonthDate) {
-        monthBonds += item.totalAmount.value;
-      }
-      if (item.operationType === 'Дивиденды' && moment(item.paymentDate) < nextMonthDate) {
-        monthDiv += item.totalAmount.value;
-      }
-      year += item.totalAmount.value;
-    })
-    setMonthPayBonds(formattedMoneySupply(monthBonds));
-    setMonthPayDiv(formattedMoneySupply(monthDiv));
-    setYearAllPay(formattedMoneySupply(year));
-    setPayOutsFiltred(newPayOuts);
-    setIsLoadingCalc(false);
-  }, [currentFilter, payOuts])
+  // useEffect(() => {
+  //   setIsLoadingCalc(true);
+  //   let monthBonds = 0;
+  //   let monthDiv = 0;
+  //   let year = 0;
+  //   const nextYearDate = moment().year();
+  //   const nextMonthDate = moment().add(1, "M");
+  //   const newPayOuts = payOuts.filter(el => {
+  //     if (currentFilter === 'DIVIDENDS' && el.operationType === 'Дивиденды') {
+  //       return el;
+  //     }
+  //     if (currentFilter === 'MONTH' && moment(el.paymentDate) < nextMonthDate) {
+  //       return el;
+  //     }
+  //     if (currentFilter === 'YEAR' && moment(el.paymentDate).year() === nextYearDate) {
+  //       return el;
+  //     }
+  //     if (currentFilter === 'DEFAULT') {
+  //       return el;
+  //     }
+  //     return false;
+  //   })
+
+  //   newPayOuts.forEach((item) => {
+  //     if ((item.operationType === 'Купоны' || item.operationType === 'Амортизация' || item.operationType === 'Погашение') && moment(item.paymentDate) < nextMonthDate) {
+  //       monthBonds += item.totalAmount.value;
+  //     }
+  //     if (item.operationType === 'Дивиденды' && moment(item.paymentDate) < nextMonthDate) {
+  //       monthDiv += item.totalAmount.value;
+  //     }
+  //     year += item.totalAmount.value;
+  //   })
+
+  //   setMonthPayBonds(formattedMoneySupply(monthBonds));
+  //   setMonthPayDiv(formattedMoneySupply(monthDiv));
+  //   setYearAllPay(formattedMoneySupply(year));
+
+  //   setPayOutsFiltred(newPayOuts);
+  //   setIsLoadingCalc(false);
+  // }, [currentFilter, payOuts])
 
   return {
-    payOuts: payOutsFiltred,
+    payOuts,
     monthPayBonds,
     monthPayDiv,
     yearAllPay,

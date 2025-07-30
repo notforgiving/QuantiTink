@@ -83,7 +83,7 @@
     top: 50%;
     transform: translate(-50%, -50%) scale(0);
     width: 90vw;
-    height: 90vh;
+    height: calc(90vh - 54px - 64px);
     z-index: 10;
     @include standartBlock;
     background: #fff;

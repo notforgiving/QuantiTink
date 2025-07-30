@@ -5,6 +5,7 @@ import css from "./styles.module.scss";
 import cn from "classnames";
 import Load from "../../UI/components/Load";
 import BackHeader from "components/BackHeader";
+import { formattedMoneySupply } from "utils";
 
 const Calendar: FC = () => {
   let { id: accountId } = useParams();
@@ -28,25 +29,25 @@ const Calendar: FC = () => {
         title="Календарь выплат"
         backCallback={() => navigate(`/account/${accountId}`)}
       />
-      <div className={css.total_wrapper}>
+      {/* <div className={css.total_wrapper}>
         {isLoadingCalc ? (
           <>
             <Load
               style={{
-                width: "106px",
-                height: "52px",
+                width: "100%",
+                height: "16px",
               }}
             />
             <Load
               style={{
-                width: "106px",
-                height: "52px",
+                width: "100%",
+                height: "16px",
               }}
             />
             <Load
               style={{
-                width: "106px",
-                height: "52px",
+                width: "100%",
+                height: "16px",
               }}
             />
           </>
@@ -66,8 +67,8 @@ const Calendar: FC = () => {
             </div>
           </>
         )}
-      </div>
-      <div className={css.actions}>
+      </div> */}
+      {/* <div className={css.actions}>
         <div
           className={cn(css.actions__item, {
             _isActive: currentFilter === "DEFAULT",
@@ -100,7 +101,7 @@ const Calendar: FC = () => {
         >
           2025
         </div>
-      </div>
+      </div> */}
       <div className={css.grid}>
         {(isLoadingCalc || isLoadingEventData) && (
           <>
@@ -124,34 +125,47 @@ const Calendar: FC = () => {
             />
           </>
         )}
-        {}
         {!isLoadingCalc &&
           !isLoadingEventData &&
           payOuts.length !== 0 &&
           payOuts.map((event, index) => {
             return (
-              <div
-                className={cn(css.item, {
-                  _isDividend: event.operationType === "Дивиденды",
-                  _isRepayment: event.operationType === "Погашение",
-                  _isEarlyRepayment:
-                    event.operationType === "Досрочное погашение",
-                })}
-                key={`${index}${event.figi}`}
-                title={
-                  event.operationType === "Досрочное погашение"
-                    ? event.note
-                    : ""
-                }
-              >
-                <div className={css.item__date}>{event.paymentTitle}</div>
-                <div className={css.item__body}>
-                  <div className={css.item__type}>{event.operationType}</div>
+              <div className={css.item} key={`${index}${event.date}`}>
+                <div className={css.item__date}>
+                  <strong>{event.date}</strong>
+                  <span>
+                    Итого:{" "}
+                    <span className="green">
+                      {
+                        formattedMoneySupply(
+                          event.array.reduce(
+                            (acc, el) => acc + el.totalAmount.value,
+                            0
+                          )
+                        ).formatt
+                      }
+                    </span>
+                  </span>
+                </div>
+                {event.array.map((el) => (
+                  <div
+                    className={css.item__body}
+                    title={
+                      el.operationType === "Досрочное погашение" ? el.note : ""
+                    }
+                  >
+                    <div className={css.item__type}>{el.operationType}</div>
+                    <div className={css.item__info}>
+                      <strong>{el.name}</strong>
+                      <span>{el.totalAmount.formatt}</span>
+                    </div>
+                  </div>
+                ))}
+                {/* <div className={css.item__type}>{event.operationType}</div>
                   <div className={css.item__info}>
                     <strong>{event.name}</strong>
                     <span>{event.totalAmount.formatt}</span>
-                  </div>
-                </div>
+                  </div> */}
               </div>
             );
           })}

@@ -28,7 +28,7 @@ const Account = () => {
     searchItemInArrayData(state.portfolios.data || [], "accountId", accountId)
   );
   useEffect(() => {
-    const updateTime = localStorage.getItem("T-balance-update") || null;
+    const updateTime = localStorage.getItem("T-balance-account") || null;
     const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
     const differenceTime = updateTrigger
       ? moment().unix() - updateTrigger <= 60
@@ -67,7 +67,7 @@ const Account = () => {
         } else {
           console.log("Обновили данные");
           localStorage.setItem(
-            "T-balance-update",
+            "T-balance-account",
             JSON.stringify(moment().unix())
           );
         }

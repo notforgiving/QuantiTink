@@ -1,5 +1,5 @@
 import { useAuth } from "hooks/useAuth";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { StateType } from "store/root-reducer";
@@ -54,96 +54,80 @@ const UserPage = () => {
 
   useEffect(() => {
     const userLocal = localStorage.getItem(USER_LOCALSTORAGE_NAME);
-    if (!isAuth && !userLocal) {
-      navigate(`/auth`);
-    }
-    if (userLocal && !isLoadingUser && user.email === null) {
-      dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
-    }
+
+    if (!isAuth && !userLocal) navigate(`/auth`);
+
+    if (userLocal && !isLoadingUser && user.email === null) dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
+
     if (isAuth && userId) {
       dispatch(tokenSlice.actions.getTokenAction(userId));
       dispatch(currencySlice.actions.getCurrencyListAction());
     }
   }, [dispatch, isAuth, isLoadingUser, navigate, user.email, userId]);
 
-  useEffect(() => {
-    const updateTime = localStorage.getItem("T-balance-update") || null;
-    const updateTrigger = updateTime ? JSON.parse(updateTime) : null;
-    const differenceTime = updateTrigger
-      ? moment().unix() - updateTrigger <= 60
-      : false;
-    const forkDispatchDataInfo = forkDispatch({
-      localStorageName: INFO_LOCALSTORAGE_NAME,
-      accountId: "0",
-    });
-    const forkDispatchDataAccounts = forkDispatch({
-      localStorageName: ACCOUNTS_LOCALSTORAGE_NAME,
-      accountId: "0",
-    });
-    const forkDispatchDataPortfolios = forkDispatch({
-      localStorageName: PORTFOLIOS_LOCALSTORAGE_NAME,
-      accountId: "0",
-    });
-    const forkDispatchDataOperations = forkDispatch({
-      localStorageName: OPERATIONS_LOCALSTORAGE_NAME,
-      accountId: "0",
-    });
+  const CACHE_KEY = "T-balance-pages";
+  const CACHE_TTL_SECONDS = 60;
 
-    if (token && !isLoadingToken) {
-      if (!isLoadingInfo && Object.keys(infoData).length === 0) {
-        forkDispatchDataInfo && differenceTime
-          ? dispatch(getInfoSuccessOnly(forkDispatchDataInfo["response"]))
-          : dispatch(getInfoAction());
-      }
-      if (accountsData && accountsData.length === 0 && !isLoadingAccounts) {
-        forkDispatchDataAccounts && differenceTime
-          ? dispatch(
-              getAccountsSuccessOnly(forkDispatchDataAccounts["response"])
-            )
-          : dispatch(getAccountsListAction());
-      }
-      if (
-        accountsData &&
-        accountsData.length !== 0 &&
-        portfoliosData &&
-        portfoliosData.length === 0 &&
-        !isLoadingAccounts &&
-        !isLoadingPortfolios &&
-        !isLoadingOperations
-      ) {
-        forkDispatchDataPortfolios && differenceTime
-          ? dispatch(
-              getPortfoliosListSuccessOnly(
-                forkDispatchDataPortfolios["response"]
-              )
-            )
-          : dispatch(getPortfoliosListAction(accountsData));
-        forkDispatchDataOperations && differenceTime
-          ? dispatch(getOperationsListSuccessOnly(forkDispatchDataOperations))
-          : dispatch(getOperationsListAction(accountsData));
-        if (differenceTime) {
-          console.log("Старые данные");
-        } else {
-          console.log("Обновили данные");
-          localStorage.setItem(
-            "T-balance-update",
-            JSON.stringify(moment().unix())
-          );
-        }
+  const isCacheValid = (cacheKey: string) => {
+    const cachedTimestamp = localStorage.getItem(cacheKey);
+    if (!cachedTimestamp) return false;
+
+    const timestamp = JSON.parse(cachedTimestamp);
+    const now = moment().unix();
+
+    return now - timestamp <= CACHE_TTL_SECONDS;
+  };
+
+  const forked = useMemo(() => {
+  if (!token || isLoadingToken) return null;
+
+  return {
+    info: forkDispatch({ localStorageName: INFO_LOCALSTORAGE_NAME, accountId: "0" }),
+    accounts: forkDispatch({ localStorageName: ACCOUNTS_LOCALSTORAGE_NAME, accountId: "0" }),
+    portfolios: forkDispatch({ localStorageName: PORTFOLIOS_LOCALSTORAGE_NAME, accountId: "0" }),
+    operations: forkDispatch({ localStorageName: OPERATIONS_LOCALSTORAGE_NAME, accountId: "0" }),
+  };
+}, [token, isLoadingToken]);
+
+  useEffect(() => {
+    if (!token || isLoadingToken) return;
+
+    const useCache = isCacheValid(CACHE_KEY);
+
+    // INFO
+    if (!isLoadingInfo && Object.keys(infoData).length === 0) {
+      forked?.info && useCache
+        ? dispatch(getInfoSuccessOnly(forked.info.response))
+        : dispatch(getInfoAction());
+    }
+    // ACCOUNTS
+    if (accountsData && accountsData.length === 0 && !isLoadingAccounts) {
+      forked?.accounts && useCache
+        ? dispatch(getAccountsSuccessOnly(forked.accounts.response))
+        : dispatch(getAccountsListAction());
+    }
+    // PORTFOLIOS & OPERATIONS
+    const shouldFetchPortfoliosAndOperations =
+      !isLoadingAccounts &&
+      !isLoadingPortfolios &&
+      !isLoadingOperations &&
+      accountsData?.length !== 0 &&
+      portfoliosData?.length === 0 &&
+      accountsData;
+
+    if (shouldFetchPortfoliosAndOperations) {
+      if (useCache && forked?.portfolios && forked.operations) {
+        dispatch(getPortfoliosListSuccessOnly(forked.portfolios.response));
+        dispatch(getOperationsListSuccessOnly(forked.operations));
+        console.log("Используем кэшированные данные");
+      } else {
+        dispatch(getPortfoliosListAction(accountsData));
+        dispatch(getOperationsListAction(accountsData));
+        console.log("Обновили данные");
+        localStorage.setItem(CACHE_KEY, JSON.stringify(moment().unix()));
       }
     }
-  }, [
-    accountsData,
-    dispatch,
-    infoData,
-    isLoadingAccounts,
-    isLoadingInfo,
-    isLoadingOperations,
-    isLoadingPortfolios,
-    isLoadingToken,
-    portfoliosData,
-    token,
-  ]);
+  }, [accountsData, dispatch, forked?.accounts, forked?.info, forked?.operations, forked?.portfolios, infoData, isLoadingAccounts, isLoadingInfo, isLoadingOperations, isLoadingPortfolios, isLoadingToken, portfoliosData, token]);
 
   return (
     <Container>
