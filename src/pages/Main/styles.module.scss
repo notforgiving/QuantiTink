@@ -4,7 +4,7 @@
 .main {
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 30px;
+  gap: 20px;
   &:global(._isLoading) {
     @include flex-center;
   }
@@ -19,7 +19,7 @@
   & .grid {
     background: #ffffff;
     border-radius: 25px;
-    padding: 30px 20px;
+    padding: 20px 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -39,7 +39,7 @@
         font-weight: 500;
       }
       strong {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 700;
         color: #ef444c;
       }
@@ -51,7 +51,7 @@
           font-weight: 500;
         }
         strong {
-          font-size: 30px;
+          font-size: 28px;
           font-weight: 600;
           color: #000000;
         }
@@ -87,6 +87,7 @@
     font-weight: 600;
     font-size: 22px;
     padding-block: 15px;
+    padding-left: 20px;
   }
 
   & .accounts {
