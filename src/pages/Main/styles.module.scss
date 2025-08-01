@@ -65,21 +65,32 @@
   }
 
   & .token {
-    display: grid;
-    grid-template-areas:
-      "title title"
-      "input button";
-    grid-template-columns: 80% auto;
-    gap: 10px;
+    // display: grid;
+    // grid-template-areas:
+    //   "title title"
+    //   "input button";
+    // grid-template-columns: 80% auto;
+    // gap: 10px;
     &_title {
-      grid-area: title;
+      // grid-area: title;
       display: block;
+      padding: 20px 0;
+      font-size: 20px;
+      line-height: 1.3;
+      text-align: center;
+
+      a {
+        color: #3bc2a1;
+        font-weight: 500;
+      }
     }
     :global(.input_component) {
-      grid-area: input;
+      // grid-area: input;
+      margin-bottom: 10px;
     }
     :global(.Button_component) {
-      grid-area: button;
+      // grid-area: button;
+      width: 100%;
     }
   }
 

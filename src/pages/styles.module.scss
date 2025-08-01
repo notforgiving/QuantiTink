@@ -35,6 +35,10 @@
       }
     }
 
+    &:global(._isDisabled) {
+      pointer-events: none;
+    }
+
     &:hover {
       svg,
       span {

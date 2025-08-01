@@ -57,7 +57,8 @@ const UserPage = () => {
 
     if (!isAuth && !userLocal) navigate(`/auth`);
 
-    if (userLocal && !isLoadingUser && user.email === null) dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
+    if (userLocal && !isLoadingUser && user.email === null)
+      dispatch(userSlice.actions.userSuccessAction(JSON.parse(userLocal)));
 
     if (isAuth && userId) {
       dispatch(tokenSlice.actions.getTokenAction(userId));
@@ -79,15 +80,27 @@ const UserPage = () => {
   };
 
   const forked = useMemo(() => {
-  if (!token || isLoadingToken) return null;
+    if (!token || isLoadingToken) return null;
 
-  return {
-    info: forkDispatch({ localStorageName: INFO_LOCALSTORAGE_NAME, accountId: "0" }),
-    accounts: forkDispatch({ localStorageName: ACCOUNTS_LOCALSTORAGE_NAME, accountId: "0" }),
-    portfolios: forkDispatch({ localStorageName: PORTFOLIOS_LOCALSTORAGE_NAME, accountId: "0" }),
-    operations: forkDispatch({ localStorageName: OPERATIONS_LOCALSTORAGE_NAME, accountId: "0" }),
-  };
-}, [token, isLoadingToken]);
+    return {
+      info: forkDispatch({
+        localStorageName: INFO_LOCALSTORAGE_NAME,
+        accountId: "0",
+      }),
+      accounts: forkDispatch({
+        localStorageName: ACCOUNTS_LOCALSTORAGE_NAME,
+        accountId: "0",
+      }),
+      portfolios: forkDispatch({
+        localStorageName: PORTFOLIOS_LOCALSTORAGE_NAME,
+        accountId: "0",
+      }),
+      operations: forkDispatch({
+        localStorageName: OPERATIONS_LOCALSTORAGE_NAME,
+        accountId: "0",
+      }),
+    };
+  }, [token, isLoadingToken]);
 
   useEffect(() => {
     if (!token || isLoadingToken) return;
@@ -127,7 +140,22 @@ const UserPage = () => {
         localStorage.setItem(CACHE_KEY, JSON.stringify(moment().unix()));
       }
     }
-  }, [accountsData, dispatch, forked?.accounts, forked?.info, forked?.operations, forked?.portfolios, infoData, isLoadingAccounts, isLoadingInfo, isLoadingOperations, isLoadingPortfolios, isLoadingToken, portfoliosData, token]);
+  }, [
+    accountsData,
+    dispatch,
+    forked?.accounts,
+    forked?.info,
+    forked?.operations,
+    forked?.portfolios,
+    infoData,
+    isLoadingAccounts,
+    isLoadingInfo,
+    isLoadingOperations,
+    isLoadingPortfolios,
+    isLoadingToken,
+    portfoliosData,
+    token,
+  ]);
 
   return (
     <Container>
@@ -148,6 +176,7 @@ const UserPage = () => {
           <div
             className={cn(css.menu__item, {
               _isActive: location.pathname.includes("/calcBonds"),
+              _isDisabled: !token,
             })}
             onClick={() => navigate(`/calcBonds`)}
           >

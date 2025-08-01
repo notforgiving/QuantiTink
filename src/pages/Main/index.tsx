@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../store/root-reducer";
@@ -66,7 +67,8 @@ const Main: FC = () => {
       {!isLoadingToken && token === null && (
         <div className={css.token}>
           <strong className={css.token_title}>
-            Чтобы начать работу, введите Tinkoff токен
+            Добро пожаловать! <br /> Вы попали в приложение для анализа инвестиций в T-банке. 
+            Введите токен ниже для продолжения работы. <a href="https://developer.tbank.ru/invest/intro/intro/token#%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C-%D1%82%D0%BE%D0%BA%D0%B5%D0%BD" rel="noreferrer" target="_blank">Инструкция как создать токен </a>
           </strong>
           <Input
             inputAttributes={{
