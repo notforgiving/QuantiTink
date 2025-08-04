@@ -27,7 +27,7 @@ type TUseCalendar = (props: IUseCalendar) => {
   payOuts: {
     date: string;
     array: TPayOutsEvent[];
-}[];
+  }[];
   monthPayBonds: TFFormattPrice;
   monthPayDiv: TFFormattPrice;
   yearAllPay: TFFormattPrice;
@@ -59,7 +59,7 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
   const [payOuts, setPayOuts] = useState<{
     date: string;
     array: TPayOutsEvent[];
-}[]>([]);
+  }[]>([]);
   const [payOutsFiltred, setPayOutsFiltred] = useState<TPayOutsEvent[]>([]);
   const [monthPayBonds, setMonthPayBonds] = useState<TFFormattPrice>({
     formatt: "0",
@@ -147,12 +147,16 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           event.hasOwnProperty("dividendNet") &&
           event.dividendNet.currency === "rub"
         ) {
+          const eventsPositions = getOnlyEventsPositionsByPortfolio(
+            portfolio?.positions || []
+          ).filter(el=>el.figi === event.figi)[0];
           // Надо проверить, что событие уже прошло и найти такую же выплату в операциях после отсечки
           // Если нет такой выплаты смотрим сколько у нас было активов на эту дату, считаем лоты
           // Выдаем количество лотов для учета дивидендов конкретной выплаты
           const waitEventDividends = calcLotsForDividends(
             portfolioOperations || [],
-            event
+            event,
+            eventsPositions || [],
           );
 
           tempObject.paymentDate = event.paymentDate;

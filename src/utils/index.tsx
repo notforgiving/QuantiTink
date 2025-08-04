@@ -49,7 +49,10 @@ type TCalcSummOfAllDeposits = (initialData: TFUnionOperations[]) => number;
 export const calcSummOfAllDeposits: TCalcSummOfAllDeposits = (initialData) => {
   return initialData?.reduce((acc, el) => {
     const portfolioSumm = el.operations.reduce((accumulator, value) => {
-      if (value.type === "Пополнение брокерского счёта" || value.type === 'Вывод денежных средств') {
+      if (
+        value.type === "Пополнение брокерского счёта" ||
+        value.type === "Вывод денежных средств"
+      ) {
         const numberMoney = getNumberMoney(value.payment);
         return accumulator + numberMoney;
       }
@@ -144,7 +147,9 @@ export const calcLotsForDividends = (
   /** Список операций по портфелю */
   operations: TFOperation[],
   /** Событие, которое мы рассматриваем */
-  event: TPortfolioEvents
+  event: TPortfolioEvents,
+  /** Позиция которую мы проверяем */
+  eventsPosition: TFPosition
 ) => {
   if (operations && !!operations.length) {
     // Выплачены дивиденды или нет
@@ -166,12 +171,13 @@ export const calcLotsForDividends = (
     // Посчитать количество лотов, которое надо проверять
     // Нам надо подсчитать сколько лотов у нас было на момент отсечки и
     // вернуть число лотов для рассчета дивидендов
-    let quantity = 0;
-    operationsBuyTicker.forEach((item) => {
-      if (moment(item.date) < moment(event.lastBuyDate)) {
-        quantity += Number(item.quantity);
+    let quantity = Number(eventsPosition?.quantityLots?.units);
+    operationsBuyTicker.forEach((oparation) => {
+      if (moment(oparation.date) > moment(event.lastBuyDate)) {
+        quantity -= Number(oparation.quantity);
       }
     });
+
     // Находим все дивиденды, которые пришли по событиям
     const searchDividends = dividendsOperations.findIndex((el) => {
       return (

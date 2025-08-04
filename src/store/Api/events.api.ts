@@ -5,7 +5,7 @@ import { TEvents, TPortfolioEvents } from "../../types/event.type";
 import { TOKEN_LOCALSTORAGE_NAME } from "types/token.type";
 
 export async function fetchAllGetEventsAPI(positions: TFPosition[]) {
-    let results: TPortfolioEvents[] = [];
+    let results: TPortfolioEvents[][] = [];
     try {
         return Promise.all(positions.map(async pos => {
             if (pos.instrumentType === 'bond') {
@@ -72,9 +72,10 @@ export async function fetchGetDividendsEventsAPI(figi: string) {
     if (data.status === 500) {
         throw data.error;
     }
-    const newResult = data.dividends.map((el: TEvents) => ({
+    const newResult: TPortfolioEvents[] = data.dividends.map((el: TEvents) => ({
         figi,
         ...el,
     }))
-    return newResult;
+
+    return newResult.splice(0, newResult.length - 1);
 }
