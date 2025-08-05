@@ -1,1 +1,0 @@
-export const useToken = () => localStorage.getItem('Tbalance_token')

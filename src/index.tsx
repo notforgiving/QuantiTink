@@ -3,9 +3,10 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./UI/styles/main.scss";
 import { Provider } from "react-redux";
-import store from "./store";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { store } from "api/store";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -21,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
