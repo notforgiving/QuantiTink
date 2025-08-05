@@ -8,7 +8,6 @@ import { auth } from 'index';
 function mapFirebaseUser(user: FirebaseUser): User {
   return {
     email: user.email ?? '',
-    accesstoken: '',
   };
 }
 

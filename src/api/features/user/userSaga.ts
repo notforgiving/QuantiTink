@@ -18,7 +18,6 @@ import { parseFirebaseError } from 'utils/parseFirebaseError';
 function mapFirebaseUser(user: FirebaseUser): User {
   return {
     email: user.email ?? '',
-    accesstoken: '',
   };
 }
 
