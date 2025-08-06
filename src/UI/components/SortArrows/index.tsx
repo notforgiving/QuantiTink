@@ -1,7 +1,8 @@
 import React, { FC } from "react";
-import css from "./styles.module.scss";
 import { ReactComponent as ArrowDownSvg } from "assets/arrowDown.svg";
 import cn from "classnames";
+
+import css from "./styles.module.scss";
 
 interface ISortArrowsProps {
   state: "ASC" | "DESC" | null;

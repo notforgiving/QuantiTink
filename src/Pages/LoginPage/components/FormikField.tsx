@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
-import css from '../styles.module.scss'
 import Input from "UI/components/Input";
+
+import css from '../styles.module.scss'
 
 type FormikFieldProps<T> = {
   name: keyof T;

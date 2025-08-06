@@ -1,16 +1,19 @@
 import React, { FC, useEffect, useState } from "react";
-import css from "./styles.module.scss";
-import { ReactComponent as LogoSvg } from "assets/logo.svg";
-import { loginRequest, registerRequest } from "api/features/user/userSlice";
 import { useDispatch } from "react-redux";
-import { useAuth } from "api/features/user/useAuth";
-import { AppDispatch } from "api/store";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "api/features/user/useAuth";
+import { loginRequest, registerRequest } from "api/features/user/userSlice";
+import { AppDispatch } from "api/store";
+import { ReactComponent as LogoSvg } from "assets/logo.svg";
 import { Form, Formik } from "formik";
-import * as Yup from "yup";
+import Atom from "UI/components/Atom";
 import Button from "UI/components/Button";
-import { FormValues } from "./types";
+import * as Yup from "yup";
+
 import FormikField from "./components/FormikField";
+import { FormValues } from "./types";
+
+import css from "./styles.module.scss";
 
 const getValidationSchema = (isLoginMode: boolean) =>
   Yup.lazy(() =>
@@ -40,6 +43,10 @@ const LoginPage: FC = () => {
       navigate("/", { replace: true });
     }
   }, [isAuth, navigate]);
+
+  if (loading) {
+    return <Atom />;
+  }
 
   return (
     <div className={css.auth}>

@@ -1,11 +1,19 @@
-import React from "react";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 // import Main from "./pages/Main";
 // import Portfolio from "./pages/Portfolio";
 // import Calendar from "./pages/Calendar";
 import { useAuth } from "api/features/user/useAuth";
-import LoginPage from "Pages/LoginPage";
+import { setupAuthListener } from "api/features/user/userSessionListener";
 import HomePage from "Pages/HomePage";
+import LoginPage from "Pages/LoginPage";
+import ProfilePage from "Pages/ProfilePage";
 import ProtectedLayout from "UI/components/ProtectedLayout";
 // import Account from "pages/Account";
 // import Etf from "pages/Profitability/Etf";
@@ -28,28 +36,32 @@ function App() {
     return isAuth ? <Navigate to="/" replace /> : <Outlet />;
   };
 
+  useEffect(() => {
+    setupAuthListener();
+  }, []);
+
   return (
-<BrowserRouter>
-  <Routes>
-    {/* Публичный маршрут авторизации */}
-    <Route element={<AuthRoute />}>
-      <Route path="/login" element={<LoginPage />} />
-    </Route>
+    <BrowserRouter>
+      <Routes>
+        {/* Публичный маршрут авторизации */}
+        <Route element={<AuthRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
 
-    {/* Защищённые маршруты + layout с меню */}
-    <Route element={<ProtectedRoute />}>
-      <Route element={<ProtectedLayout />}>
-        <Route path="/" element={<HomePage />} />
-        {/* другие защищённые страницы */}
-        {/* <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} /> */}
-      </Route>
-    </Route>
+        {/* Защищённые маршруты + layout с меню */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedLayout />}>
+            <Route path="/" element={<HomePage />} />
+            {/* другие защищённые страницы */}
+            <Route path="/profile" element={<ProfilePage />} />
+            {/* <Route path="/settings" element={<SettingsPage />} /> */}
+          </Route>
+        </Route>
 
-    {/* Фолбэк на авторизацию */}
-    <Route path="*" element={<Navigate to="/login" replace />} />
-  </Routes>
-</BrowserRouter>
+        {/* Фолбэк на авторизацию */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

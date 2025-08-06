@@ -2,4 +2,4 @@ import { createTypedHook } from 'hooks/createTypedHook';
 
 import { RootState } from '../../store';
 
-export const useAuth = createTypedHook((state: RootState) => state.user);
+export const useToken = createTypedHook((state: RootState) => state.token);

@@ -1,12 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./UI/styles/main.scss";
 import { Provider } from "react-redux";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
 import { store } from "api/store";
+import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+import App from "./App";
+
+import "./UI/styles/main.scss";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

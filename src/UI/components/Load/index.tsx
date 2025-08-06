@@ -1,5 +1,6 @@
 import React, { CSSProperties, FC } from "react";
 import cn from "classnames";
+
 import css from './styles.module.scss';
 
 interface ILoadProps {

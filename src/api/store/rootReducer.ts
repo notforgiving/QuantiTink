@@ -1,10 +1,20 @@
 import { combineReducers } from 'redux';
-import userReducer from '../features/user/userSlice';
 
-const rootReducer = combineReducers({
+import tokenReducer from '../features/token/tokenSlice';
+import userReducer, { logout } from '../features/user/userSlice';
+
+const appReducer = combineReducers({
   user: userReducer,
+  token: tokenReducer,
+  // Добавь остальные редьюсеры
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
+const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: any) => {
+  if (action.type === logout.type) {
+    state = undefined; // очищает всё хранилище
+  }
+
+  return appReducer(state, action);
+};
 
 export default rootReducer;

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 import { User } from './userTypes';
 
 interface UserState {
@@ -50,9 +51,18 @@ const userSlice = createSlice({
     },
 
     // --- Установка пользователя вручную ---
-    setUser(state, action: PayloadAction<User>) {
+    authStateCheckRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    authStateCheckSuccess(state, action: PayloadAction<User | null>) {
       state.currentUser = action.payload;
-      state.isAuth = true;
+      state.isAuth = !!action.payload;
+      state.loading = false;
+    },
+    authStateCheckFailure(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+      state.loading = false;
     },
 
     // --- Выход ---
@@ -72,7 +82,9 @@ export const {
   loginRequest,
   loginSuccess,
   loginFailure,
-  setUser,
+  authStateCheckRequest,
+  authStateCheckSuccess,
+  authStateCheckFailure,
   logout,
 } = userSlice.actions;
 

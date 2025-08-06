@@ -1,0 +1,49 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  &__header {
+    @include flex-center;
+    justify-content: flex-start;
+    font-weight: 600;
+    font-size: 22px;
+    padding-block: 10px;
+  }
+  &__grid {
+    display: grid;
+    gap: 16px;
+  }
+  &__item {
+    border-radius: $border-radius;
+    padding: 14px;
+    background: #ffffff;
+    box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
+  }
+  &__itemBody {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+  &__itemIcon {
+    flex: none;
+    @include square(40px);
+    @include flex-center;
+    border-radius: 100%;
+    background: #e0f7f0;
+    svg {
+      flex: none;
+      width: 20px;
+      color: #00c98d;
+    }
+  }
+  &__gridData {
+    font-size: 16px;
+  }
+
+  &__exit {
+    margin-top: 40px;
+  }
+}

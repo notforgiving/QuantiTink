@@ -1,22 +1,25 @@
+import { PayloadAction } from '@reduxjs/toolkit';
+import { firebaseLogin, firebaseLogout, firebaseRegister } from 'api/requests/userApi';
+import { User as FirebaseUser, UserCredential } from 'firebase/auth';
+import { SagaIterator } from 'redux-saga';
 import { call, put, takeLatest } from 'redux-saga/effects';
+
+import { parseFirebaseError } from 'utils/parseFirebaseError';
+
 import {
-  registerRequest,
-  registerSuccess,
-  registerFailure,
+  loginFailure,
   loginRequest,
   loginSuccess,
-  loginFailure,
   logout,
+  registerFailure,
+  registerRequest,
+  registerSuccess,
 } from './userSlice';
-import { PayloadAction } from '@reduxjs/toolkit';
 import { User } from './userTypes';
-import { User as FirebaseUser, UserCredential } from 'firebase/auth';
-import { firebaseLogin, firebaseLogout, firebaseRegister } from 'api/requests/userApi';
-import { SagaIterator } from 'redux-saga';
-import { parseFirebaseError } from 'utils/parseFirebaseError';
 
 function mapFirebaseUser(user: FirebaseUser): User {
   return {
+    id: user.uid ?? '',
     email: user.email ?? '',
   };
 }

@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import css from "./styles.module.scss";
-import cn from "classnames";
-import { ReactComponent as MainImg } from "assets/wallet.svg";
-import { ReactComponent as ProfileImg } from "assets/preson.svg";
-import { ReactComponent as CalcImg } from "assets/calc.svg";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ReactComponent as CalcImg } from "assets/calc.svg";
+import { ReactComponent as ProfileImg } from "assets/preson.svg";
+import { ReactComponent as MainImg } from "assets/wallet.svg";
+import cn from "classnames";
+
+import css from "./styles.module.scss";
 
 const menuItems = [
   {

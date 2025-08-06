@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes, FC, ReactNode } from "react";
-import css from "./styles.module.scss";
 import cn from "classnames";
+
+import css from "./styles.module.scss";
 
 interface IButtonProps {
   text: string | ReactNode;
