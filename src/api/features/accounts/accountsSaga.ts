@@ -1,12 +1,12 @@
-import { fetchGetAccountsAPI, fetchGetPortfolioAPI } from "api/requests/accountsApi";
+import { fetchGetAccountsAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI } from "api/requests/accountsApi";
 import { RootState } from "api/store";
 import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 
 import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
 
-import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, setPortfolioForAccount, TAccount } from "./accountsSlice";
-import { TPortfolioResponse } from "./accountsTypes";
+import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, setOperationsForAccount, setPortfolioForAccount, TAccount } from "./accountsSlice";
+import { TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
 
 export function* fetchAccountsWorker() {
   try {
@@ -47,10 +47,30 @@ function* fetchPortfoliosSaga() {
   }
 }
 
+function* fetchOperationsSaga() {
+  const accounts: TAccount[] = yield select((state: RootState) => state.accounts.data);
+  const token: TTokenState = yield select(selectTokenData);
+
+  for (const account of accounts) {
+    try {
+      const response: TOperationsResponse = yield call(
+        () => fetchGetOperationsAPI({ token: token.data, accountId: account.id })
+      );
+
+      yield put(
+        setOperationsForAccount({ accountId: account.id, response })
+      );
+    } catch (e) {
+      console.error(`Ошибка загрузки операций для account ${account.id}`, e);
+    }
+  }
+}
+
 export function* accountsSaga() {
   yield takeLatest(fetchAccountsRequest.type, fetchAccountsWorker);
 }
 
 export function* watchAccountsLoaded() {
   yield takeEvery(fetchAccountsSuccess.type, fetchPortfoliosSaga);
+  yield takeEvery(fetchAccountsSuccess.type, fetchOperationsSaga);
 }

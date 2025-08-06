@@ -70,6 +70,9 @@ export const ionIcons = [
   Icon33Svg,
 ];
 
-export const getIconByRubAlfabet = (value: string) => {
-  return ionIcons[rusAlfabet.indexOf(value) || 0];
+export const getAccountIcon = (accountName: string): React.FC<React.SVGProps<SVGSVGElement>> => {
+  const firstLetter = accountName?.[0]?.toUpperCase() ?? '';
+  const index = rusAlfabet.indexOf(firstLetter);
+
+  return ionIcons[index] ?? ionIcons[0];
 };

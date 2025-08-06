@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TPortfolioResponse } from "./accountsTypes";
+import { TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
 
 type TFlattenedPortfolio = Omit<TPortfolioResponse, 'accountId'>;
+
+type TFlattenedOperations = Omit<TOperationsResponse, 'accountId'>;
 
 // Тип одного аккаунта
 export type TAccount = {
@@ -13,6 +15,7 @@ export type TAccount = {
   openedDate: string;
   closedDate: string;
   accessLevel: string;
+  operations?: TFlattenedOperations['operations'];
 } & TFlattenedPortfolio;
 
 // Стейт слайса
@@ -61,6 +64,16 @@ const accountsSlice = createSlice({
         Object.assign(account, restPortfolio);
       }
     },
+    setOperationsForAccount: (
+      state,
+      action: PayloadAction<{ accountId: TAccount['id']; response: TOperationsResponse }>
+    ) => {
+      const { accountId, response } = action.payload;
+      const account = state.data.find((acc) => acc.id === accountId);
+      if (account) {
+        account.operations = response.operations;
+      }
+    },
   },
 });
 
@@ -70,7 +83,8 @@ export const {
   fetchAccountsFailure,
   clearAccounts,
   setPortfolioForAccount,
+  setOperationsForAccount,
 } = accountsSlice.actions;
 
-// Оборачиваем с redux-persist
+
 export default accountsSlice.reducer;

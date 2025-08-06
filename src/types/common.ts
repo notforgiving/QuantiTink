@@ -23,3 +23,10 @@ export enum InstrumentType {
   StructuredProduct = "structured_product",
   ForeignShare = "foreign_share",
 }
+
+export type TTrade = {
+  tradeId: string;
+  dateTime: string; // ISO строка
+  quantity: string;
+  price: TMoneyValue;
+};

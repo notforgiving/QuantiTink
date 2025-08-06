@@ -1,4 +1,4 @@
-import { InstrumentType, TMoneyValue } from "types/common";
+import { InstrumentType, TMoneyValue, TTrade } from "types/common";
 
 export type TPortfolioPosition = {
   figi: string;
@@ -39,4 +39,29 @@ export type TPortfolioResponse = {
     units: string;
     nano: number;
   };
+};
+
+export type TOperation = {
+  id: string;
+  parentOperationId: string;
+  currency: string;
+  payment: TMoneyValue;
+  price: TMoneyValue;
+  state: 'OPERATION_STATE_UNSPECIFIED' | 'OPERATION_STATE_EXECUTED' | 'OPERATION_STATE_CANCELED';
+  quantity: string;
+  quantityRest: string;
+  figi: string;
+  instrumentType: InstrumentType;
+  date: string; // ISO строка
+  type: "Выплата дивидендов" | "Выплата купонов" | "Продажа ценных бумаг" | "Удержание комиссии за операцию" | "Покупка ценных бумаг" | "Пополнение брокерского счёта" | "Удержание налога по дивидендам" | "Выплата дивидендов на карту" | "Вывод денежных средств" | "Покупка ценных бумаг с карты";
+  operationType: string; // например, "OPERATION_TYPE_SELL"
+  trades: TTrade[];
+  assetUid: string;
+  positionUid: string;
+  instrumentUid: string;
+  childOperations: TOperation[];
+};
+
+export type TOperationsResponse = {
+  operations: TOperation[];
 };
