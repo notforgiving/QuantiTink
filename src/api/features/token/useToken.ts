@@ -1,5 +1,7 @@
-import { createTypedHook } from 'hooks/createTypedHook';
+import { RootState } from "api/store";
 
-import { RootState } from '../../store';
+import { createTypedHook } from "hooks/selectors";
 
-export const useToken = createTypedHook((state: RootState) => state.token);
+export const selectTokenData = (state: RootState) => state.token;
+export const useToken = createTypedHook(selectTokenData);
+

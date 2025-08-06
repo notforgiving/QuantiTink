@@ -13,7 +13,7 @@ import css from "./styles.module.scss";
 
 const ProfilePage: FC = () => {
   const { currentUser } = useUser();
-  const { token, loading } = useToken();
+  const { data: tokenData, loading } = useToken();
   const dispatch = useDispatch<AppDispatch>();
   const handleLogout = () => {
     dispatch(logout());
@@ -42,11 +42,14 @@ const ProfilePage: FC = () => {
             disabled: true,
           }}
         />
-        {token && (
-          <div>
-            <span>Ваш токен: {token} </span>
-            <button onClick={handleDeleteToken} disabled={loading}>{loading ? 'Удаление' : 'Удалить'}</button>
-          </div>
+        {tokenData && (
+          <Button
+            text={loading ? "Удаление" : "Удалить токен"}
+            buttonAttributes={{
+              onClick: handleDeleteToken,
+              disabled: loading,
+            }}
+          />
         )}
       </div>
       <Button

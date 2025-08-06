@@ -2,4 +2,4 @@ import { createTypedHook } from 'hooks/selectors';
 
 import { RootState } from '../../store';
 
-export const useUser = createTypedHook((state: RootState) => state.user);
+export const useCurrency = createTypedHook((state: RootState) => state.currency);

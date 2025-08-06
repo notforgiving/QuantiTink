@@ -1,15 +1,13 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { User } from './userTypes';
+import { User } from "./userTypes";
 
-interface UserState {
+const initialState: {
   currentUser: User | null;
   isAuth: boolean;
   loading: boolean;
   error: string | null;
-}
-
-const initialState: UserState = {
+} = {
   currentUser: null,
   isAuth: false,
   loading: false,
@@ -17,10 +15,9 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    // --- Регистрация ---
     registerRequest(state, _action: PayloadAction<{ email: string; password: string }>) {
       state.loading = true;
       state.error = null;
@@ -35,7 +32,6 @@ const userSlice = createSlice({
       state.loading = false;
     },
 
-    // --- Логин ---
     loginRequest(state, _action: PayloadAction<{ email: string; password: string }>) {
       state.loading = true;
       state.error = null;
@@ -50,7 +46,6 @@ const userSlice = createSlice({
       state.loading = false;
     },
 
-    // --- Установка пользователя вручную ---
     authStateCheckRequest(state) {
       state.loading = true;
       state.error = null;
@@ -65,13 +60,12 @@ const userSlice = createSlice({
       state.loading = false;
     },
 
-    // --- Выход ---
-    logout(state) {
-      state.currentUser = null;
-      state.isAuth = false;
-      state.error = null;
-      state.loading = false;
+    logout() {
+      // не нужно вручную обнулять, делаем сброс ниже
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(userSlice.actions.logout, () => initialState);
   },
 });
 

@@ -1,4 +1,4 @@
-import { createTypedHook } from 'hooks/createTypedHook';
+import { createTypedHook } from 'hooks/selectors';
 
 import { RootState } from '../../store';
 

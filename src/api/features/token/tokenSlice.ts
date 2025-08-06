@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface TokenState {
-  token: string | null;
+export type TTokenState = {
+  data: string | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: TokenState = {
-  token: null,
+const initialState: TTokenState = {
+  data: null,
   loading: false,
   error: null,
 };
@@ -16,54 +16,47 @@ const tokenSlice = createSlice({
   name: "token",
   initialState,
   reducers: {
-    // === Чтение токена ===
     fetchTokenRequest: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
     },
     fetchTokenSuccess: (state, action: PayloadAction<string>) => {
       state.loading = false;
-      state.token = action.payload;
+      state.data = action.payload;
     },
     fetchTokenFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },
 
-    // === Запись токена ===
     writeTokenRequest: (state, _action: PayloadAction<{ token: string; userId: string }>) => {
       state.loading = true;
       state.error = null;
     },
     writeTokenSuccess: (state, action: PayloadAction<string>) => {
       state.loading = false;
-      state.token = action.payload;
+      state.data = action.payload;
     },
     writeTokenFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },
 
-    // === Удаление токена ===
     deleteTokenRequest: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
     },
-    deleteTokenSuccess: (state) => {
-      state.loading = false;
-      state.token = null;
-    },
+    deleteTokenSuccess: () => initialState,
     deleteTokenFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },
 
-    // === Очистка локального состояния ===
-    clearToken: (state) => {
-      state.token = null;
-      state.loading = false;
-      state.error = null;
-    },
+    clearToken: () => initialState,
+  },
+  extraReducers: (builder) => {
+    // Можно использовать если нужно сбрасывать еще по другим actions
+    // builder.addCase(someOtherSlice.actions.logout, () => initialState);
   },
 });
 
