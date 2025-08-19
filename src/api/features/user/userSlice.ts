@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { User } from "./userTypes";
+import { TTheme, User } from "./userTypes";
 
 const initialState: {
   currentUser: User | null;
@@ -59,9 +59,22 @@ const userSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-
     logout() {
       // не нужно вручную обнулять, делаем сброс ниже
+    },
+    setThemeRequest(state, _action: PayloadAction<TTheme>) {
+      state.loading = true;
+      state.error = null;
+    },
+    setThemeSuccess(state, action: PayloadAction<TTheme>) {
+      if (state.currentUser) {
+        state.currentUser.theme = action.payload;
+      }
+      state.loading = false;
+    },
+    setThemeFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -80,6 +93,9 @@ export const {
   authStateCheckSuccess,
   authStateCheckFailure,
   logout,
+  setThemeRequest,
+  setThemeSuccess,
+  setThemeFailure,
 } = userSlice.actions;
 
 export default userSlice.reducer;

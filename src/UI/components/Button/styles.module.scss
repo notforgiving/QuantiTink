@@ -1,6 +1,14 @@
 @use "../../../UI/styles/variables" as *;
 @use "../../../UI/styles/mixines" as *;
 
+[data-theme="dark"] {
+  .btn {
+    &:global(._isEmptyText) {
+      color: opacity-color($white-10, 0.7);
+    }
+  }
+}
+
 .btn {
   border: none;
   padding: 12px 14px;
@@ -10,7 +18,11 @@
   letter-spacing: 1px;
   cursor: pointer;
   transition: 0.3s;
-  background: linear-gradient(130deg, rgb(0, 175, 134) 0%, rgb(0, 150, 115) 100%);
+  background: linear-gradient(
+    130deg,
+    rgb(0, 175, 134) 0%,
+    rgb(0, 150, 115) 100%
+  );
   color: $white-10;
   border: 1px solid transparent;
   position: relative;
@@ -18,7 +30,7 @@
   &:hover {
     background: transparent;
     @include border;
-    color: #00c98d;
+    color: $green-90;
   }
 
   &:disabled {
@@ -26,7 +38,7 @@
     opacity: 0.5;
 
     &:hover {
-      background: #00c98d;
+      background: $green-90;
       color: $white-10;
     }
   }
@@ -52,7 +64,7 @@
   &:global(._isEmptyText) {
     padding: 0;
     background: none;
-    color: #10b981;
+    color: $green-90;
     width: fit-content;
     border: none;
     border-radius: 0;
@@ -69,11 +81,11 @@
 
   &:global(._isBorderStyle) {
     background: transparent;
-    border: 1px solid #00c98d;
-    color: #00c98d;
+    border: 1px solid $green-90;
+    color: $green-90;
 
     &:hover {
-      background: #00c98d;
+      background: $green-90;
       color: $white-10;
       border: 1px solid transparent;
     }

@@ -1,6 +1,18 @@
 @use "src/UI/styles/variables" as *;
 @use "src/UI/styles/mixines" as *;
 
+[data-theme="dark"] {
+  .profile {
+    &__item {
+      background: linear-gradient(
+        130deg,
+        rgb(0, 175, 134) 0%,
+        rgb(0, 150, 115) 100%
+      );
+    }
+  }
+}
+
 .profile {
   display: flex;
   flex-direction: column;
@@ -19,7 +31,7 @@
   &__item {
     border-radius: $border-radius;
     padding: 14px;
-    background: #ffffff;
+    background: $white-10;
     box-shadow: 0px 0px 10px opacity-color($green-70, 0.1);
   }
   &__itemBody {

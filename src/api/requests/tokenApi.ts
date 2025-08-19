@@ -4,9 +4,11 @@ import { db } from "index";
 
 import { decryptData, encryptData } from "../../utils/cryptoJS";
 
+const NAME_DB_TABLE = 'users';
+
 export async function fetchReadTokenAPI(userId: string): Promise<string | null> {
   try {
-    const usersRef = collection(db, "users");
+    const usersRef = collection(db, NAME_DB_TABLE);
     const q = query(usersRef, where("userid", "==", userId), limit(1));
     const snapshot = await getDocs(q);
 
@@ -46,7 +48,7 @@ export async function fetchWriteTokenAPI({ token, userId }: WriteTokenParams): P
 
     const encryptedToken = encryptData(token, secretKey);
 
-    const usersRef = collection(db, "users");
+    const usersRef = collection(db, NAME_DB_TABLE);
     const q = query(usersRef, where("userid", "==", userId), limit(1));
     const snapshot = await getDocs(q);
 
@@ -64,7 +66,7 @@ export async function fetchWriteTokenAPI({ token, userId }: WriteTokenParams): P
 
     } else {
       // 🆕 Новый пользователь — создадим документ
-      await setDoc(doc(collection(db, "users")), {
+      await setDoc(doc(collection(db, NAME_DB_TABLE)), {
         userid: userId,
         token: encryptedToken,
       });
@@ -92,7 +94,7 @@ export async function fetchDeleteTokenAPI(userId: string): Promise<boolean> {
       return false;
     }
 
-    const usersRef = collection(db, "users");
+    const usersRef = collection(db, NAME_DB_TABLE);
     const q = query(usersRef, where("userid", "==", userId));
     const snapshot = await getDocs(q);
 
@@ -102,7 +104,7 @@ export async function fetchDeleteTokenAPI(userId: string): Promise<boolean> {
     }
 
     const userDoc = snapshot.docs[0];
-    const userDocRef = doc(db, "users", userDoc.id);
+    const userDocRef = doc(db, NAME_DB_TABLE, userDoc.id);
 
     await updateDoc(userDocRef, {
       token: null,

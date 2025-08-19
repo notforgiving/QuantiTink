@@ -1,6 +1,30 @@
 @use "src/UI/styles/variables" as *;
 @use "src/UI/styles/mixines" as *;
 
+[data-theme="dark"] {
+  .menu {
+    background: opacity-color($green-60, 0.2);
+    &__item {
+      &:global(._isActive) {
+        svg,
+        span {
+          color: $gold-10;
+        }
+      }
+      &:hover {
+        svg,
+        span {
+          color: $gold-10;
+        }
+      }
+      svg,
+      span {
+        color: $white-10;
+      }
+    }
+  }
+}
+
 .menu {
   position: fixed;
   left: 0%;
@@ -31,7 +55,7 @@
     &:global(._isActive) {
       svg,
       span {
-        color: #1AA44D;
+        color: $green-80;
       }
     }
 
@@ -42,14 +66,14 @@
     &:hover {
       svg,
       span {
-        color: #1AA44D;
+        color: $green-80;
       }
     }
 
     svg {
       width: 18px;
       height: auto;
-      color: #000;
+      color: $black-0;
       transition: $transition;
     }
     span {

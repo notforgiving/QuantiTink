@@ -1,80 +1,27 @@
-@use "utils" as *;
+$color-0: #ffffff00;
+$white-10: #ffffff;
+$green-0: #f5f8f7;
+$green-10: #e9f4ec;
+$green-20: #a7cfca;
+$green-30: #43e3a7;
+$green-40: #00d885;
+$green-50: #02d787;
+$green-60: #1e8276;
+$green-70: #001c18;
+$green-80: #1aa44d;
+$green-90: #3bc2a1;
+$orange-10: #fef1e0;
+$orange-20: #d88500;
+$red-10: #f05555;
+$gold-10: #fcc769;
+$gray-10: #6b7280;
+$gray-20: #4b5563;
+$black-0: #000;
 
-$darkBlue: #2a394f;
-$middleBlue: #42506b;
-$lightBlue: #3d619e;
-$lightGray: #e9e8eb;
-$middleGray: #c1b9ae;
-$red: #F05555;
-$orange: #f8663f;
-$violet: #441e82;
-$gold: #fcc769;
-$green: green;
-
-@mixin standartBlock {
-  padding: 10px;
-  border-radius: 5px;
-}
-
-@mixin greyBlock {
-  background: $green-10;
-  color: $green-70;
-}
-
-@mixin redBlock {
-  background: $red;
-  color: $lightGray;
-  &:hover {
-    background: lighten($red, 10%);
-  }
-}
-
-@mixin blueBlock {
-  background: $lightBlue;
-  color: $lightGray;
-  &:hover {
-    background: lighten($lightBlue, 10%);
-  }
-}
-
-@mixin orangeBlock {
-  background: $orange;
-  color: $lightGray;
-  &:hover {
-    background: darken($orange, 5%);
-  }
-}
-
-@mixin yellowBlock {
-  background: transparentize($orange-20, 0.3);
-  color: $green-70;
-  transition: 0.3s;
-
-  &:hover {
-    background: lighten($orange-20, 3%);
-  }
-}
-
-@mixin purpuleBlock {
-  background: transparentize($violet, 0.2);
-  color: #fff;
-  &:hover {
-    background: lighten($violet, 10%);
-  }
-}
-
-@mixin beigeBlock {
-  background: $middleGray;
-  color: $lightBlue;
-  &:hover {
-    background: lighten($middleGray, 10%);
-  }
-}
-
-@mixin middleBlueBlock {
-  background: $middleBlue;
-  color: $lightGray;
-}
+$border-radius: 15px;
+$border: 1px solid $green-40;
+$transition: 0.3s;
+$maxWidthApp: 1920px;
 
 @mixin inputBaseStyles {
   padding: 5px 10px;
@@ -83,11 +30,11 @@ $green: green;
   width: 100%;
   color: $middleBlue;
   font-size: 16px;
-  background: rgb(255, 255, 255);
+  background: $white-10;
 }
 
 @mixin whiteBlock {
-  background: #ffffff;
+  background: $white-10;
   border-radius: 25px;
   padding: 30px 20px;
   box-shadow: 0px 0px 10px rgba(0, 28, 24, 0.1);
@@ -98,10 +45,11 @@ $green: green;
 }
 
 @mixin greenLine {
-   border-left: 6px solid #10b981;
+  border-left: 6px solid $green-30;
 }
+
 @mixin redLine {
-  border-left: 6px solid $red;
+  border-left: 6px solid $red-10;
 }
 
 @mixin phone {
@@ -109,20 +57,3 @@ $green: green;
     @content;
   }
 }
-
-$color-0: #ffffff00;
-$white-10: #fff;
-$green-10: #e9f4ec;
-$green-20: #a7cfca;
-$green-30: #43e3a7;
-$green-40: #00d885;
-$green-50: #02d787;
-$green-60: #1e8276;
-$green-70: #001c18;
-$orange-10: #fef1e0;
-$orange-20: #d88500;
-
-$border-radius: 15px;
-$border: 1px solid $green-40;
-$transition: 0.3s;
-$maxWidthApp: 1920px;

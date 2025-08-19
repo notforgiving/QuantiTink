@@ -1,5 +1,5 @@
 import { TAccount } from "api/features/accounts/accountsSlice";
-import { TOperationsResponse, TPortfolioResponse } from "api/features/accounts/accountsTypes";
+import { TInstrumentResponse, TOperationsResponse, TPortfolioResponse } from "api/features/accounts/accountsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
 import moment from "moment";
 
@@ -77,6 +77,33 @@ export async function fetchGetOperationsAPI({ token, accountId }: {
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error?.message || "Ошибка загрузки аккаунтов");
+  }
+
+  return data;
+}
+
+export async function fetchGetPositionBondAPI({ token, figi }: {
+  token: TTokenState['data'],
+  figi: string
+}): Promise<TInstrumentResponse> {
+  const response = await fetch(
+    "https://invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/BondBy",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idType: "INSTRUMENT_ID_TYPE_FIGI",
+        id: figi,
+      }),
+    }
+  );
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message || `Ошибка загрузки данных по облигации ${figi}`);
   }
 
   return data;

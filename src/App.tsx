@@ -11,6 +11,7 @@ import {
 // import Calendar from "./pages/Calendar";
 import { useAuth } from "api/features/user/useAuth";
 import { setupAuthListener } from "api/features/user/userSessionListener";
+import AccountPage from "Pages/AccountPage";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
 import ProfilePage from "Pages/ProfilePage";
@@ -52,9 +53,14 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
             <Route path="/" element={<HomePage />} />
-            {/* другие защищённые страницы */}
+
+            {/* Страницы брокерского счёта */}
+            <Route path="/:id" element={<AccountPage />} />
+            {/* <Route path="/:id/transactions" element={<AccountTransactions />} />
+        <Route path="/:id/analytics" element={<AccountAnalytics />} />
+        <Route path="/:id/settings" element={<AccountSettings />} /> */}
+
             <Route path="/profile" element={<ProfilePage />} />
-            {/* <Route path="/settings" element={<SettingsPage />} /> */}
           </Route>
         </Route>
 

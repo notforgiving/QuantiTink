@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { useDispatch } from "react-redux";
 import { deleteTokenRequest } from "api/features/token/tokenSlice";
 import { useToken } from "api/features/token/useToken";
-import { logout } from "api/features/user/userSlice";
+import { logout, setThemeRequest } from "api/features/user/userSlice";
 import { useUser } from "api/features/user/useUser";
 import { AppDispatch } from "api/store";
 import { ReactComponent as EmailSvg } from "assets/email.svg";
@@ -12,7 +12,7 @@ import Input from "UI/components/Input";
 import css from "./styles.module.scss";
 
 const ProfilePage: FC = () => {
-  const { currentUser } = useUser();
+  const { currentUser, loading: loadingUser } = useUser();
   const { data: tokenData, loading } = useToken();
   const dispatch = useDispatch<AppDispatch>();
   const handleLogout = () => {
@@ -39,7 +39,14 @@ const ProfilePage: FC = () => {
           leftLabel
           inputAttributes={{
             type: "checkbox",
-            disabled: true,
+            checked: currentUser?.theme === "dark",
+            onClick: () =>
+              dispatch(
+                setThemeRequest(
+                  currentUser?.theme === "dark" ? "light" : "dark"
+                )
+              ),
+            disabled: loadingUser,
           }}
         />
         {tokenData && (

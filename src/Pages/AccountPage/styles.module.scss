@@ -1,0 +1,172 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+[data-theme="dark"] {
+  .portfolio {
+    &_data {
+      background: opacity-color($green-70, 0.2);
+      box-shadow: 0px 0px 10px opacity-color($white-10, 0.1);
+    }
+    &_block {
+      background: opacity-color($green-70, 0.2);
+      box-shadow: 0px 0px 10px opacity-color($white-10, 0.1);
+      strong,
+      span,
+      svg {
+        color: opacity-color($white-10, 0.7);
+      }
+    }
+    &_amount {
+      strong {
+        color: opacity-color($white-10, 0.7);
+      }
+    }
+    &_start {
+      color: opacity-color($white-10, 0.7);
+    }
+  }
+}
+
+.portfolio {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 20px;
+
+  &:global(._isGreen) {
+    .portfolio {
+      &_data {
+        @include greenLine;
+      }
+      &_amount {
+        span {
+          color: $green-90;
+        }
+      }
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 22px;
+    padding-block: 15px;
+  }
+
+  &_data {
+    @include whiteBlock;
+    @include flex-center;
+    gap: 10px;
+    @include orangeLine;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  &_block {
+    @include whiteBlock;
+    @include flex-center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    &:global(.isActive) {
+      padding: 0;
+      overflow: hidden;
+      gap: 0;
+      .portfolio_blockItem {
+        align-items: flex-start;
+        padding: 12px 20px;
+
+        span {
+          display: flex;
+          gap: 5px;
+          font-weight: normal;
+          font-size: 16px;
+          &:last-child {
+            font-weight: 600;
+          }
+        }
+        strong {
+          line-height: 20px;
+        }
+      }
+    }
+  }
+  &_blockItem {
+    width: 100%;
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+    transition: background 0.3s;
+
+    &:global(.isShare),
+    &:global(.isBond),
+    &:global(.isEtf) {
+      cursor: pointer;
+
+      &:hover {
+        background: opacity-color($green-90, 0.1);
+      }
+    }
+
+    &:first-child {
+      span {
+        font-weight: 700;
+        font-size: 18px;
+      }
+    }
+
+    svg {
+      color: $green-70;
+      width: 20px;
+      height: auto;
+    }
+    strong {
+      flex: 1;
+      color: $green-70;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    span {
+      text-align: right;
+      color: $green-70;
+    }
+  }
+  &_amount {
+    display: grid;
+    gap: 10px;
+    font-weight: 700;
+    strong {
+      font-size: 28px;
+      color: $green-70;
+    }
+    span {
+      font-size: 16px;
+      color: $orange-20;
+    }
+  }
+  &_actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+
+    :global(.Button_component) {
+      &::before {
+        width: 120%;
+        height: 120%;
+      }
+    }
+  }
+  &_start {
+    color: $green-70;
+  }
+  &_rebalance {
+    font-size: 20px;
+    background: $green-90;
+    background: linear-gradient(
+      130deg,
+      rgba(0, 175, 134, 1) 0%,
+      rgba(0, 150, 115, 1) 100%
+    );
+  }
+}

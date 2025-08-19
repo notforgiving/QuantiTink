@@ -30,3 +30,9 @@ export type TTrade = {
   quantity: string;
   price: TMoneyValue;
 };
+
+export type TBrand = {
+  logoName: string;
+  logoBaseColor: string;
+  textColor: string;
+}

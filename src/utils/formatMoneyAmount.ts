@@ -2,13 +2,11 @@ import { TMoneyValue } from "types/common";
 
 
 export type TFormatMoney = {
-    value: number; formatted: string
+  value: number;
+  formatted: string;
 }
 
-export function formatMoney(
-  input: TMoneyValue | number | undefined,
-  currencyOverride?: string
-): TFormatMoney {
+export function formatMoney(input: TMoneyValue | number | undefined, currencyOverride?: string): TFormatMoney {
   let value: number;
   let currency: string;
 
@@ -33,5 +31,8 @@ export function formatMoney(
     maximumFractionDigits: 2,
   }) + ` ${currencySymbol}`;
 
-  return { value, formatted };
+  return {
+    value,
+    formatted
+  };
 }

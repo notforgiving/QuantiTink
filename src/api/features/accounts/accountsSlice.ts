@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
+import { TInstrumentResponse, TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
 
 type TFlattenedPortfolio = Omit<TPortfolioResponse, 'accountId'>;
 
@@ -74,6 +74,43 @@ const accountsSlice = createSlice({
         account.operations = response.operations;
       }
     },
+    fetchBondPositionsRequest(
+      state,
+      action: PayloadAction<{ accountId: TAccount["id"] }>
+    ) {
+      state.loading = true;
+    },
+    fetchBondPositionsSuccess(
+      state,
+      action: PayloadAction<{ accountId: TAccount["id"] }>
+    ) {
+      state.loading = false;
+    },
+    fetchBondPositionsFailure(
+      state,
+      action: PayloadAction<{ accountId: TAccount["id"]; error: string }>
+    ) {
+      state.loading = false;
+      state.error = action.payload.error;
+    },
+    setBondForAccount: (
+      state,
+      action: PayloadAction<{
+        accountId: TAccount["id"];
+        figi: string;
+        bond: TInstrumentResponse["instrument"];
+      }>
+    ) => {
+      const { accountId, figi, bond } = action.payload;
+      const account = state.data.find((acc) => acc.id === accountId);
+      if (account && account.positions) {
+        account.positions = account.positions.map((pos) =>
+          pos.instrumentType === "bond" && pos.figi === figi
+            ? { ...pos, instrument: bond }
+            : pos
+        );
+      }
+    },
   },
 });
 
@@ -84,6 +121,10 @@ export const {
   clearAccounts,
   setPortfolioForAccount,
   setOperationsForAccount,
+  fetchBondPositionsRequest,
+  fetchBondPositionsSuccess,
+  fetchBondPositionsFailure,
+  setBondForAccount,
 } = accountsSlice.actions;
 
 

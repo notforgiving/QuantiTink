@@ -6,6 +6,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { PersistGate } from "redux-persist/integration/react";
+import ThemeProvider from "UI/components/ThemeProvider";
 
 import App from "./App";
 
@@ -34,7 +35,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </PersistGate>
   </Provider>
 );

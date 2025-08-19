@@ -1,4 +1,4 @@
-import { InstrumentType, TMoneyValue, TTrade } from "types/common";
+import { InstrumentType, TBrand, TMoneyValue, TTrade } from "types/common";
 
 export type TPortfolioPosition = {
   figi: string;
@@ -53,7 +53,7 @@ export type TOperation = {
   figi: string;
   instrumentType: InstrumentType;
   date: string; // ISO строка
-  type: "Выплата дивидендов" | "Выплата купонов" | "Продажа ценных бумаг" | "Удержание комиссии за операцию" | "Покупка ценных бумаг" | "Пополнение брокерского счёта" | "Удержание налога по дивидендам" | "Выплата дивидендов на карту" | "Вывод денежных средств" | "Покупка ценных бумаг с карты";
+  type: "Выплата дивидендов" | "Выплата купонов" | "Продажа ценных бумаг" | "Удержание комиссии за операцию" | "Покупка ценных бумаг" | "Пополнение брокерского счёта" | 'Удержание налога' | "Удержание налога по дивидендам" | "Выплата дивидендов на карту" | "Вывод денежных средств" | "Покупка ценных бумаг с карты";
   operationType: string; // например, "OPERATION_TYPE_SELL"
   trades: TTrade[];
   assetUid: string;
@@ -65,3 +65,65 @@ export type TOperation = {
 export type TOperationsResponse = {
   operations: TOperation[];
 };
+
+export type TInstrument = {
+  assetUid: string;
+  callDate?: string; // ISO date
+  countryOfRisk: string;
+  blockedTcaFlag: boolean;
+
+  dlongClient: TMoneyValue;
+  dshortClient: TMoneyValue;
+  dshort: TMoneyValue;
+  dshortMin: TMoneyValue;
+  dlong: TMoneyValue;
+  dlongMin: TMoneyValue;
+  klong: TMoneyValue;
+  kshort: TMoneyValue;
+
+  maturityDate?: string;
+  sellAvailableFlag: boolean;
+  first1dayCandleDate?: string;
+  placementPrice: TMoneyValue;
+  sector: string;
+  brand: TBrand;
+  liquidityFlag: boolean;
+  forIisFlag: boolean;
+  positionUid: string;
+  shortEnabledFlag: boolean;
+  name: string;
+  exchange: string;
+  subordinatedFlag: boolean;
+  floatingCouponFlag: boolean;
+  figi: string;
+  lot: number;
+  uid: string;
+  requiredTests: string[];
+  nominal: TMoneyValue;
+  currency: string;
+  aciValue: TMoneyValue;
+  buyAvailableFlag: boolean;
+  weekendFlag: boolean;
+  classCode: string;
+  ticker: string;
+  couponQuantityPerYear?: number;
+  forQualInvestorFlag: boolean;
+  initialNominal: TMoneyValue;
+  apiTradeAvailableFlag: boolean;
+  first1minCandleDate?: string;
+  stateRegDate?: string;
+  issueSizePlan?: string;
+  minPriceIncrement: TMoneyValue;
+  otcFlag: boolean;
+  issueKind: string;
+  placementDate?: string;
+  amortizationFlag: boolean;
+  perpetualFlag: boolean;
+  issueSize?: string;
+  countryOfRiskName: string;
+  isin: string;
+}
+
+export type TInstrumentResponse ={
+  instrument: TInstrument;
+}

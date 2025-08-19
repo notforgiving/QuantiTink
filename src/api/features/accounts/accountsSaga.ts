@@ -1,12 +1,13 @@
-import { fetchGetAccountsAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI } from "api/requests/accountsApi";
+import { fetchGetAccountsAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI, fetchGetPositionBondAPI } from "api/requests/accountsApi";
 import { RootState } from "api/store";
-import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import { all, call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 
 import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
 
-import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, setOperationsForAccount, setPortfolioForAccount, TAccount } from "./accountsSlice";
-import { TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
+import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchBondPositionsFailure, fetchBondPositionsRequest, fetchBondPositionsSuccess, setBondForAccount, setOperationsForAccount, setPortfolioForAccount, TAccount } from "./accountsSlice";
+import { TInstrumentResponse, TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
+import { selectAccountById } from "./useAccounts";
 
 export function* fetchAccountsWorker() {
   try {
@@ -66,8 +67,82 @@ function* fetchOperationsSaga() {
   }
 }
 
+// воркер для одной облигации (с перехватом ошибки, чтобы не падала вся пачка)
+function* fetchBondForPositionWorker({
+  accountId,
+  figi,
+  token,
+}: {
+  accountId: string;
+  figi: string;
+  token: TTokenState['data'];
+}) {
+  try {
+    const bondResp: TInstrumentResponse = yield call(fetchGetPositionBondAPI, {
+      token,
+      figi,
+    });
+
+    // обновляем конкретную позицию
+    yield put(
+      setBondForAccount({
+        accountId,
+        figi,
+        bond: bondResp.instrument,
+      })
+    );
+  } catch (err: any) {
+    // Можно залогировать/собрать ошибки по FIGI, но не роняем всю загрузку
+    console.error(`Не удалось загрузить bond по ${figi}:`, err?.message || err);
+  }
+}
+
+function* fetchAccountByIdSaga(action: ReturnType<typeof fetchBondPositionsRequest>) {
+  const { accountId } = action.payload;
+  const account: TAccount | undefined = yield select(selectAccountById, accountId);
+  try {
+    if (!account) {
+      yield put(
+        fetchBondPositionsFailure({
+          accountId,
+          error: `Аккаунт ${accountId} не найден`,
+        })
+      );
+      return;
+    }
+    const token: TTokenState['data'] = yield select(selectTokenData);
+    if (!token) {
+      yield put(
+        fetchBondPositionsFailure({
+          accountId,
+          error: "Токен отсутствует",
+        })
+      );
+      return;
+    }
+    // берём только bond-позиции, устраняем дубликаты по FIGI
+    const bondPositions = (account.positions ?? []).filter(
+      (p) => p.instrumentType === "bond" && p.figi
+    );
+    const uniqueFigis = Array.from(new Set(bondPositions.map((p) => p.figi)));
+    yield all(
+      uniqueFigis.map((figi) =>
+        call(function* () {
+          yield* fetchBondForPositionWorker({ accountId, figi, token });
+        })
+      )
+    );
+
+    // успех — выключаем лоадер
+    yield put(fetchBondPositionsSuccess({ accountId }));
+  } catch (e: any) {
+    yield put(fetchBondPositionsFailure(e.message));
+  }
+}
+
 export function* accountsSaga() {
   yield takeLatest(fetchAccountsRequest.type, fetchAccountsWorker);
+  yield takeLatest(fetchBondPositionsRequest.type, fetchAccountByIdSaga);
 }
 
 export function* watchAccountsLoaded() {

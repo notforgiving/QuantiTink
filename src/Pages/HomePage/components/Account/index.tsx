@@ -28,7 +28,7 @@ const Account: FC<IAccountProps> = ({
 
   return (
     <NavLink
-      to={`/account/${id}`}
+      to={`/${id}`}
       className={cn(css.account, {
         _isGreen: isPositive,
       })}

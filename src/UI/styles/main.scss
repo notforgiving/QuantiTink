@@ -3,6 +3,13 @@
 @use "mixines" as *;
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+[data-theme="dark"] {
+  body {
+    background: opacity-color($green-70, 0.9);
+    color: $white-10;
+  }
+}
+
 #root {
   min-height: 100vh;
   display: flex;
@@ -16,7 +23,7 @@ body {
   font-weight: 400;
   font-size: 14px;
   color: $green-70;
-  background: #F5F8F7;
+  background: $green-0;
 }
 
 * {
@@ -53,6 +60,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $gold;
+  background: $gold-10;
   border-radius: 10px;
 }
