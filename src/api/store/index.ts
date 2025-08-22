@@ -8,14 +8,13 @@ import rootSaga from "./rootSaga";
 
 const sagaMiddleware = createSagaMiddleware();
 
-// Конфигурация redux-persist
+// persist config для root
 const persistConfig = {
   key: "root",
   storage,
-  // whitelist: ["user", "token", "currency", "accounts"], // 👈 укажи здесь только те slice'ы, которые нужно сохранять
+  blacklist: ["accounts"], // 👈 важно исключить accounts, он уже persist-нутый отдельно
 };
 
-// Оборачиваем rootReducer через persistReducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
@@ -24,7 +23,6 @@ export const store = configureStore({
     getDefaultMiddleware({
       thunk: false,
       serializableCheck: {
-        // redux-persist нуждается в исключениях для некоторых нестандартных экшенов
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
     }).concat(sagaMiddleware),
@@ -32,7 +30,6 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-// persistStore — обёртка для store, запускает механизм восстановления
 export const persistor = persistStore(store);
 
 export type AppDispatch = typeof store.dispatch;

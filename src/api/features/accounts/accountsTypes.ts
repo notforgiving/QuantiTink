@@ -1,4 +1,4 @@
-import { InstrumentType, TBrand, TMoneyValue, TTrade } from "types/common";
+import { InstrumentType, TBrand, TMoneyValue, TQuotation, TTrade } from "types/common";
 
 export type TPortfolioPosition = {
   figi: string;
@@ -32,7 +32,7 @@ export type TPortfolioResponse = {
   totalAmountSp: TMoneyValue;
   totalAmountPortfolio: TMoneyValue;
   expectedYield: TMoneyValue;
-  positions: TPortfolioPosition[];
+  positions: (TPortfolioPosition & TBondInstrument & TShareInstrument)[];
   virtualPositions: unknown[];
   dailyYield: TMoneyValue;
   dailyYieldRelative: {
@@ -66,7 +66,7 @@ export type TOperationsResponse = {
   operations: TOperation[];
 };
 
-export type TInstrument = {
+export type TBondInstrument = {
   assetUid: string;
   callDate?: string; // ISO date
   countryOfRisk: string;
@@ -124,6 +124,112 @@ export type TInstrument = {
   isin: string;
 }
 
-export type TInstrumentResponse ={
-  instrument: TInstrument;
+export type TBondsInstrumentResponse ={
+  instrument: TBondInstrument;
+}
+
+// Основной тип инструмента
+export type TEtfInstrument = {
+  releasedDate: string; // ISO-строка
+  fixedCommission: TMoneyValue;
+  assetUid: string;
+  figi: string;
+  dshortMin: TMoneyValue;
+  countryOfRisk: string;
+  lot: number;
+  uid: string;
+  requiredTests: string[];
+  blockedTcaFlag: boolean;
+  dlong: TMoneyValue;
+  dlongClient: TMoneyValue;
+  sellAvailableFlag: boolean;
+  currency: string;
+  first1dayCandleDate: string; // ISO-строка
+  sector: string;
+  brand: TBrand;
+  buyAvailableFlag: boolean;
+  weekendFlag: boolean;
+  classCode: string;
+  focusType: string;
+  ticker: string;
+  forQualInvestorFlag: boolean;
+  liquidityFlag: boolean;
+  forIisFlag: boolean;
+  positionUid: string;
+  apiTradeAvailableFlag: boolean;
+  dlongMin: TMoneyValue;
+  shortEnabledFlag: boolean;
+  kshort: TMoneyValue;
+  first1minCandleDate: string; // ISO-строка
+  minPriceIncrement: TMoneyValue;
+  otcFlag: boolean;
+  dshortClient: TMoneyValue;
+  klong: TMoneyValue;
+  dshort: TMoneyValue;
+  rebalancingFreq: string;
+  name: string;
+  numShares: TMoneyValue;
+  exchange: string;
+  countryOfRiskName: string;
+  isin: string;
+};
+
+export type TEtfsInstrumentResponse = {
+  instrument: TEtfInstrument;
+};
+
+export interface TShareInstrument {
+  assetUid: string;
+  figi: string;
+  uid: string;
+  positionUid: string;
+  ticker: string;
+  classCode: string;
+  name: string;
+  isin: string;
+  currency: string;
+  exchange: string;
+  sector: string;
+  countryOfRisk: string;
+  countryOfRiskName: string;
+
+  lot: number;
+  issueSize: string;
+  issueSizePlan: string;
+
+  forQualInvestorFlag: boolean;
+  forIisFlag: boolean;
+  shortEnabledFlag: boolean;
+  apiTradeAvailableFlag: boolean;
+  buyAvailableFlag: boolean;
+  sellAvailableFlag: boolean;
+  weekendFlag: boolean;
+  otcFlag: boolean;
+  blockedTcaFlag: boolean;
+  liquidityFlag: boolean;
+  divYieldFlag: boolean;
+
+  first1dayCandleDate: string;   // ISO date string
+  first1minCandleDate: string;   // ISO date string
+  ipoDate: string;               // ISO date string
+
+  requiredTests: string[];
+
+  nominal: TMoneyValue;
+  minPriceIncrement: TMoneyValue;
+
+  dlong: TMoneyValue;
+  dlongMin: TMoneyValue;
+  dlongClient: TMoneyValue;
+  dshort: TMoneyValue;
+  dshortMin: TMoneyValue;
+  dshortClient: TMoneyValue;
+  klong: TMoneyValue;
+  kshort: TMoneyValue;
+
+  brand: TBrand;
+}
+
+export interface TSharesInstrumentResponse {
+  instrument: TShareInstrument;
 }

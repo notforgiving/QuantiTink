@@ -1,15 +1,24 @@
-import { useEffect, useMemo } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { fetchBondPositionsRequest, TAccount } from "api/features/accounts/accountsSlice";
+import { fetchPositionsRequest, TAccount } from "api/features/accounts/accountsSlice";
 import { useAccounts } from "api/features/accounts/useAccounts";
 import moment from "moment";
+import { TBondCurrency } from "types/common";
 
 import { formatMoney, TFormatMoney } from "utils/formatMoneyAmount";
+import { getBondName } from "utils/getBondName";
 
 type TPortfolioGrowth = {
     amount: TFormatMoney;  // сумма прироста (рубли, может быть + или -)
     percent: number; // процент прироста (может быть + или -)
 };
+
+type TPortfolioBondsItem = {
+    value: TFormatMoney;
+    percent: number;
+    name: string;
+    icon: ReactNode;
+}
 
 type TUseAccount = (props: string) => {
     /** Объект портфолио */
@@ -36,22 +45,37 @@ type TUseAccount = (props: string) => {
     currentYield: number;
     /** Годовая доходность */
     yearlyYield: number;
+    /** Объем акций в портфеле */
+    portfolioShare: {
+        value: TFormatMoney;
+        percent: number;
+    };
+    /** Массив облигаций */
+    portfolioBonds: Record<string, TPortfolioBondsItem> | null;
+    /** Общая доходность по всей прибыли */
+    totalYield: number;
+    /** Общая годовая доходность по всей прибыли */
+    totalYearlyYield: number;
 }
 
 export const useAccount: TUseAccount = (accountId) => {
     const accounts = useAccounts();
-    const account = accounts?.data.find((el) => el.id === accountId) || null;
-    const dispatch = useDispatch();
-    useEffect(() => {
-        if (!account?.id) return;
-        dispatch(fetchBondPositionsRequest({ accountId: account?.id }))
-    }, [account?.id, dispatch])
 
-    // Сумма портфеля форматированная
-    const totalAmountPortfolio = useMemo(
-        () => formatMoney(account?.totalAmountPortfolio),
-        [account?.totalAmountPortfolio]
+    const account = useMemo(
+        () => accounts?.data.find((el) => el.id === accountId) ?? null,
+        [accounts?.data, accountId]
     );
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!account?.id || !account?.positions) return;
+        dispatch(fetchPositionsRequest({ accountId: account?.id }))
+    }, [account?.id, account?.positions, dispatch])
+
+    const portfolioValue = useMemo(() => {
+        if (!account) return formatMoney(0);
+        return formatMoney(account.totalAmountPortfolio)
+    }, [account]);
 
     const { totalDeposits, firstDepositDate, totalPaidTaxes, totalCommissions, totalCoupons, totalDividends, totalPayouts } = useMemo(() => {
         const operations = account?.operations ?? [];
@@ -64,10 +88,15 @@ export const useAccount: TUseAccount = (accountId) => {
         let firstDate: moment.Moment | null = null;
 
         for (const op of operations) {
-            const value = Math.abs(formatMoney(op.payment).value);
+            const value = formatMoney(op.payment).value
+            const absValue = Math.abs(value);
             switch (op.type) {
-                case "Пополнение брокерского счёта": {
+                case 'Вывод денежных средств': {
                     deposits += value;
+                    break;
+                }
+                case "Пополнение брокерского счёта": {
+                    deposits += absValue;
                     const opDate = moment(op.date);
                     if (!firstDate || opDate.isBefore(firstDate)) {
                         firstDate = opDate;
@@ -75,21 +104,21 @@ export const useAccount: TUseAccount = (accountId) => {
                     break;
                 }
                 case 'Удержание комиссии за операцию': {
-                    commissions += value;
+                    commissions += absValue;
                     break;
                 }
                 case "Удержание налога по дивидендам":
                 case "Удержание налога": {
-                    taxes += value;
+                    taxes += absValue;
                     break;
                 }
                 case 'Выплата купонов': {
-                    coupons += value;
+                    coupons += absValue;
                     break;
                 }
                 case 'Выплата дивидендов':
                 case 'Выплата дивидендов на карту': {
-                    dividends += value * 0.87;
+                    dividends += absValue * 0.87;
                     break;
                 }
             }
@@ -115,25 +144,9 @@ export const useAccount: TUseAccount = (accountId) => {
         return moment.duration(now.diff(firstDepositDate));
     }, [firstDepositDate]);
 
-    const { currentYield, yearlyYield } = useMemo(() => {
-        if (totalDeposits.value === 0) {
-            return { currentYield: 0, yearlyYield: 0 };
-        }
-
-        const currentYield = (totalPayouts.value / totalDeposits.value) * 100;
-
-        const days = accountAge ? Math.max(Math.floor(accountAge.asDays()), 1) : 1;
-        const yearlyYield = ((totalPayouts.value / totalDeposits.value) * (365 / days)) * 100;
-
-        return {
-            currentYield: Number(currentYield.toFixed(2)),
-            yearlyYield: Number(yearlyYield.toFixed(2)),
-        };
-    }, [accountAge, totalDeposits.value, totalPayouts.value]);
-
     // Процент роста портфеля
     const portfolioGrowth = useMemo(() => {
-        const amount = totalAmountPortfolio.value - totalDeposits.value;
+        const amount = portfolioValue.value - totalDeposits.value;
         const percent = (amount / totalDeposits.value) * 100;
 
         return {
@@ -142,13 +155,90 @@ export const useAccount: TUseAccount = (accountId) => {
             // процент прироста
             percent: Number(percent.toFixed(2)),
         };
-    }, [totalDeposits.value, totalAmountPortfolio.value]);
+    }, [portfolioValue.value, totalDeposits.value]);
 
+    const { currentYield, yearlyYield, totalYield, totalYearlyYield } = useMemo(() => {
+        if (totalDeposits.value === 0) {
+            return { currentYield: 0, yearlyYield: 0, totalYield: 0, totalYearlyYield: 0 };
+        }
+        const currentYield = (totalPayouts.value / totalDeposits.value) * 100;
+
+        const days = accountAge ? Math.max(Math.floor(accountAge.asDays()), 1) : 1;
+        const yearlyYield = ((totalPayouts.value / totalDeposits.value) * (365 / days)) * 100;
+
+        const totalYield = ((totalPayouts.value + portfolioGrowth.amount.value) / totalDeposits.value) * 100
+        const totalYearlyYield = (((totalPayouts.value + portfolioGrowth.amount.value) / totalDeposits.value) * (365 / days)) * 100;
+
+        return {
+            currentYield: Number(currentYield.toFixed(2)),
+            yearlyYield: Number(yearlyYield.toFixed(2)),
+            totalYield: Number(totalYield.toFixed(2)),
+            totalYearlyYield: Number(totalYearlyYield.toFixed(2)),
+        };
+    }, [accountAge, portfolioGrowth?.amount.value, totalDeposits.value, totalPayouts.value]);
+
+    const portfolioShare = useMemo(() => {
+        let sharesValue = formatMoney(0);
+
+        if (!account?.totalAmountShares || !portfolioValue) {
+            return { value: sharesValue, percent: 0 }; // или null
+        }
+
+        sharesValue = formatMoney(account.totalAmountShares);
+
+        const percent =
+            portfolioValue.value > 0
+                ? Number(((sharesValue.value / portfolioValue.value) * 100).toFixed(2))
+                : 0;
+
+        return {
+            value: sharesValue,
+            percent,
+        };
+    }, [account?.totalAmountShares, portfolioValue]);
+
+    const portfolioBonds = useMemo(() => {
+        if (!account || !account.positions) return null;
+        const result: Record<string, TPortfolioBondsItem> = {};
+        account.positions
+            .filter((pos) => pos.instrumentType === "bond")
+            .forEach((pos) => {
+                if (!pos.initialNominal) return;
+                const currency = pos.initialNominal.currency as TBondCurrency;
+                if (!currency) return;
+
+                const price = formatMoney(pos.currentPrice);
+                const lots = Number(pos.quantity.units);
+                const value = price.value * lots;
+
+                if (!result[currency]) {
+                    const currencyData = getBondName(currency);
+                    result[currency] = {
+                        value: formatMoney(0),
+                        percent: 0,
+                        name: currencyData.name,
+                        icon: currencyData.icon,
+                    };
+                }
+
+                result[currency].value = formatMoney(result[currency].value.value + value);
+            });
+
+        // посчитаем проценты после суммы
+        Object.keys(result).forEach((currency) => {
+            result[currency].percent =
+                portfolioValue.value > 0
+                    ? Number(((result[currency].value.value / portfolioValue.value) * 100).toFixed(2))
+                    : 0;
+        });
+
+        return result;
+    }, [account, portfolioValue.value]);
 
 
     return {
         account,
-        totalAmountPortfolio,
+        totalAmountPortfolio: portfolioValue,
         totalDeposits,
         portfolioGrowth,
         accountAge,
@@ -159,5 +249,9 @@ export const useAccount: TUseAccount = (accountId) => {
         totalPayouts,
         currentYield,
         yearlyYield,
+        totalYield,
+        totalYearlyYield,
+        portfolioShare,
+        portfolioBonds,
     }
 }

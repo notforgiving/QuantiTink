@@ -1,3 +1,6 @@
+import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
+import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
+
 export type TTariff = 'investor' | 'trader'; // и т.д.
 export type TRiskLevel = 'STANDARD' | 'LOW' | 'HIGH'; // если знаешь другие
 export type TWorkInstrument =
@@ -11,6 +14,11 @@ export type TMoneyValue = {
   units: string;
   nano: number;
 };
+
+export type TQuotation = {
+  units: string | number;
+  nano: number;
+}
 
 export enum InstrumentType {
   Bond = "bond",
@@ -36,3 +44,20 @@ export type TBrand = {
   logoBaseColor: string;
   textColor: string;
 }
+
+export const BondCurrencyConfig = {
+  rub: {
+    name: "Рублевые облигации",
+    icon: <RubbondsSvg />,
+  },
+  usd: {
+    name: "Долларовые облигации",
+    icon: <UsdbondsSvg />,
+  },
+  cny: {
+    name: "Облигации в юанях",
+    icon: <UsdbondsSvg />,
+  },
+} as const;
+
+export type TBondCurrency = keyof typeof BondCurrencyConfig;

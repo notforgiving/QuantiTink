@@ -1,18 +1,18 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ReactComponent as BigemitentSvg } from "assets/bigemitent.svg";
+// import { ReactComponent as BigemitentSvg } from "assets/bigemitent.svg";
 import { ReactComponent as CalendarSvg } from "assets/calendar.svg";
 import { ReactComponent as CashSvg } from "assets/cash.svg";
-import { ReactComponent as CubeSvg } from "assets/cube.svg";
-import { ReactComponent as GoldetfSvg } from "assets/goldetf.svg";
+// import { ReactComponent as CubeSvg } from "assets/cube.svg";
+// import { ReactComponent as GoldetfSvg } from "assets/goldetf.svg";
 import { ReactComponent as WalletSvg } from "assets/ionicons/icon2.svg";
 import { ReactComponent as PodiumSvg } from "assets/podium.svg";
 import { ReactComponent as ReceiptSvg } from "assets/receipt.svg";
-import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
+// import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
 import { ReactComponent as ServerSvg } from "assets/server.svg";
 import { ReactComponent as SharesSvg } from "assets/shares.svg";
 import { ReactComponent as TicketSvg } from "assets/ticket.svg";
-import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
+// import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import Button from "UI/components/Button";
@@ -40,6 +40,10 @@ const AccountPage: FC = () => {
     totalPayouts,
     currentYield,
     yearlyYield,
+    totalYield,
+    totalYearlyYield,
+    portfolioShare,
+    portfolioBonds,
   } = useAccount(id || "");
 
   return (
@@ -115,8 +119,6 @@ const AccountPage: FC = () => {
               {totalCoupons.formatted} / {totalDividends.formatted}
             </span>
           </div>
-        </div>
-        <div className={css.portfolio_block}>
           <div className={css.portfolio_blockItem}>
             <PodiumSvg />
             <strong>Доходность / в год</strong>
@@ -125,50 +127,49 @@ const AccountPage: FC = () => {
             </span>
           </div>
         </div>
+        <div className={css.portfolio_block}>
+          <div className={css.portfolio_blockItem}>
+            <PodiumSvg />
+            <strong>Общая доходность / годовая</strong>
+            <span>
+              {`${totalYield}%`} / {`${totalYearlyYield}%`}
+            </span>
+          </div>
+        </div>
         <div className={cn(css.portfolio_block, "isActive")}>
           <div
             className={cn(css.portfolio_blockItem, "isShare")}
-            // onClick={() => navigate(`/account/${accountId}/shares`)}
+            onClick={() => navigate(`/${account?.id}/shares`)}
           >
             <SharesSvg />
             <strong>Акции:</strong>
             <span>
-              <span>0</span> <span>(0%)</span>
+              <span>{portfolioShare.value.formatted}</span>{" "}
+              <span>({portfolioShare.percent}%)</span>
             </span>
           </div>
-          {/* {rubBonds.value !== 0 && (
-            <div
-              className={cn(css.portfolio_blockItem, "isBond")}
-              onClick={() => navigate(`/account/${accountId}/bonds/rub`)}
-            >
-              <RubbondsSvg />
-              <strong>Рублевые облигации:</strong>
-              <span>
-                <span>{rubBonds.formatt}</span>
-                <span>({rubBonds.percent}%)</span>
-              </span>
-            </div>
-          )}
-          {usdBonds.value !== 0 && (
-            <div
-              className={cn(css.portfolio_blockItem, "isBond")}
-              onClick={() => navigate(`/account/${accountId}/bonds/usd`)}
-            >
-              <UsdbondsSvg />
-              <strong>Валютные облигации:</strong>
-              <span>
-                <span>{usdBonds.formatt}</span>{" "}
-                <span>({usdBonds.percent}%)</span>
-              </span>
-            </div>
-          )} */}
+          {portfolioBonds &&
+            Object.entries(portfolioBonds).map(([key, bond]) => (
+              <div
+                className={cn(css.portfolio_blockItem, "isBond")}
+                onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
+                key={key}
+              >
+                {bond.icon}
+                <strong>{bond.name}</strong>
+                <span>
+                  <span>{bond.value.formatted}</span>
+                  <span>({bond.percent}%)</span>
+                </span>
+              </div>
+            ))}
           {/* {etfArray &&
             !!etfArray.length &&
             etfArray.map((etf) => (
               <div
                 className={cn(css.portfolio_blockItem, "isEtf")}
                 onClick={() =>
-                  navigate(`/account/${accountId}/etf/${etf.ticker}`)
+                  navigate(`/${accountId}/etf/${etf.ticker}`)
                 }
               >
                 {etf.ticker === "TGLD" && <GoldetfSvg />}

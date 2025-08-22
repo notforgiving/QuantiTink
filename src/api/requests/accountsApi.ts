@@ -1,5 +1,5 @@
 import { TAccount } from "api/features/accounts/accountsSlice";
-import { TInstrumentResponse, TOperationsResponse, TPortfolioResponse } from "api/features/accounts/accountsTypes";
+import { TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "api/features/accounts/accountsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
 import moment from "moment";
 
@@ -85,9 +85,9 @@ export async function fetchGetOperationsAPI({ token, accountId }: {
 export async function fetchGetPositionBondAPI({ token, figi }: {
   token: TTokenState['data'],
   figi: string
-}): Promise<TInstrumentResponse> {
+}): Promise<TBondsInstrumentResponse> {
   const response = await fetch(
-    "https://invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/BondBy",
+    "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/BondBy",
     {
       method: "POST",
       headers: {
@@ -95,7 +95,7 @@ export async function fetchGetPositionBondAPI({ token, figi }: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        idType: "INSTRUMENT_ID_TYPE_FIGI",
+        idType: 'INSTRUMENT_ID_TYPE_FIGI',
         id: figi,
       }),
     }
@@ -109,4 +109,56 @@ export async function fetchGetPositionBondAPI({ token, figi }: {
   return data;
 }
 
+export async function fetchGetPositionEtfAPI({ token, figi }: {
+  token: TTokenState['data'],
+  figi: string
+}): Promise<TEtfsInstrumentResponse> {
+  const response = await fetch(
+    "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/EtfBy",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idType: 'INSTRUMENT_ID_TYPE_FIGI',
+        id: figi,
+      }),
+    }
+  );
 
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message || `Ошибка загрузки данных по фонду ${figi}`);
+  }
+
+  return data;
+}
+
+export async function fetchGetPositionShareAPI({ token, figi }: {
+  token: TTokenState['data'],
+  figi: string
+}): Promise<TSharesInstrumentResponse> {
+  const response = await fetch(
+    "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/ShareBy",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idType: 'INSTRUMENT_ID_TYPE_FIGI',
+        id: figi,
+      }),
+    }
+  );
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message || `Ошибка загрузки данных по акции ${figi}`);
+  }
+
+  return data;
+}

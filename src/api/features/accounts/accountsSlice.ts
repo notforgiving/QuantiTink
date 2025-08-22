@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TInstrumentResponse, TOperationsResponse, TPortfolioResponse } from "./accountsTypes";
+import { TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 
 type TFlattenedPortfolio = Omit<TPortfolioResponse, 'accountId'>;
 
@@ -37,7 +37,6 @@ const accountsSlice = createSlice({
   reducers: {
     fetchAccountsRequest(state) {
       state.loading = true;
-      state.error = null;
     },
     fetchAccountsSuccess(state, action: PayloadAction<TAccount[]>) {
       state.data = action.payload;
@@ -47,69 +46,109 @@ const accountsSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    clearAccounts(state) {
-      state.data = [];
-      state.error = null;
-      state.loading = false;
-    },
     setPortfolioForAccount: (
       state,
       action: PayloadAction<{ accountId: TAccount['id']; portfolio: TPortfolioResponse }>
     ) => {
       const { accountId, portfolio } = action.payload;
-      const account = state.data.find((acc) => acc.id === accountId);
-      if (account) {
-        const { accountId, ...restPortfolio } = portfolio;
-
-        Object.assign(account, restPortfolio);
-      }
+      return {
+        ...state,
+        data: state.data.map((acc) =>
+          acc.id === accountId ? { ...acc, ...portfolio } : acc
+        ),
+      };
     },
     setOperationsForAccount: (
       state,
       action: PayloadAction<{ accountId: TAccount['id']; response: TOperationsResponse }>
     ) => {
       const { accountId, response } = action.payload;
-      const account = state.data.find((acc) => acc.id === accountId);
-      if (account) {
-        account.operations = response.operations;
-      }
+      return {
+        ...state,
+        data: state.data.map((acc) =>
+          acc.id === accountId ? { ...acc, operations: response.operations } : acc
+        ),
+      };
     },
-    fetchBondPositionsRequest(
+    fetchPositionsRequest(
       state,
       action: PayloadAction<{ accountId: TAccount["id"] }>
     ) {
       state.loading = true;
+      state.error = null;
     },
-    fetchBondPositionsSuccess(
+    fetchPositionsSuccess(
       state,
       action: PayloadAction<{ accountId: TAccount["id"] }>
     ) {
       state.loading = false;
+      state.error = null;
     },
-    fetchBondPositionsFailure(
+    fetchPositionsFailure(
       state,
       action: PayloadAction<{ accountId: TAccount["id"]; error: string }>
     ) {
       state.loading = false;
       state.error = action.payload.error;
     },
-    setBondForAccount: (
+    setInstrumentPositionForAccount: (
       state,
       action: PayloadAction<{
         accountId: TAccount["id"];
         figi: string;
-        bond: TInstrumentResponse["instrument"];
+        instrumentType: "bond" | "etf";
+        instrument: Partial<TBondsInstrumentResponse["instrument"] & TEtfsInstrumentResponse["instrument"]>;
       }>
     ) => {
-      const { accountId, figi, bond } = action.payload;
-      const account = state.data.find((acc) => acc.id === accountId);
-      if (account && account.positions) {
-        account.positions = account.positions.map((pos) =>
-          pos.instrumentType === "bond" && pos.figi === figi
-            ? { ...pos, instrument: bond }
-            : pos
-        );
-      }
+      const { accountId, figi, instrumentType, instrument } = action.payload;
+
+      return {
+        ...state,
+        data: state.data.map((acc) =>
+          acc.id === accountId && acc.positions
+            ? {
+              ...acc,
+              positions: acc.positions.map((pos) => {
+                if (pos.instrumentType === instrumentType && pos.figi === figi) {
+                  const { figi: _f, ticker: _t, ...rest } = instrument;
+                  return { ...pos, ...rest };
+                }
+                return pos;
+              }),
+            }
+            : acc
+        ),
+      };
+    },
+    setShareInstrumentPositionForAccount: (
+      state,
+      action: PayloadAction<{
+        accountId: TAccount["id"];
+        figi: string;
+        instrumentType: "share";
+        instrument: TSharesInstrumentResponse["instrument"];
+      }>
+    ) => {
+      const { accountId, figi, instrumentType, instrument } = action.payload;
+      console.log(instrument, 'instrument');
+
+      return {
+        ...state,
+        data: state.data.map((acc) =>
+          acc.id === accountId && acc.positions
+            ? {
+              ...acc,
+              positions: acc.positions.map((pos) => {
+                if (pos.instrumentType === instrumentType && pos.figi === figi) {
+                  // const { figi: _f, ticker: _t, ...rest } = instrument;
+                  return { ...pos, ...instrument };
+                }
+                return pos;
+              }),
+            }
+            : acc
+        ),
+      };
     },
   },
 });
@@ -118,13 +157,13 @@ export const {
   fetchAccountsRequest,
   fetchAccountsSuccess,
   fetchAccountsFailure,
-  clearAccounts,
   setPortfolioForAccount,
   setOperationsForAccount,
-  fetchBondPositionsRequest,
-  fetchBondPositionsSuccess,
-  fetchBondPositionsFailure,
-  setBondForAccount,
+  fetchPositionsRequest,
+  fetchPositionsSuccess,
+  fetchPositionsFailure,
+  setInstrumentPositionForAccount,
+  setShareInstrumentPositionForAccount,
 } = accountsSlice.actions;
 
 

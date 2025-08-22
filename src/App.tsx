@@ -15,6 +15,7 @@ import AccountPage from "Pages/AccountPage";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
 import ProfilePage from "Pages/ProfilePage";
+import SharesPage from "Pages/SharesPage";
 import ProtectedLayout from "UI/components/ProtectedLayout";
 // import Account from "pages/Account";
 // import Etf from "pages/Profitability/Etf";
@@ -56,8 +57,8 @@ function App() {
 
             {/* Страницы брокерского счёта */}
             <Route path="/:id" element={<AccountPage />} />
-            {/* <Route path="/:id/transactions" element={<AccountTransactions />} />
-        <Route path="/:id/analytics" element={<AccountAnalytics />} />
+            <Route path="/:id/shares" element={<SharesPage />} />
+            {/* <Route path="/:id/analytics" element={<AccountAnalytics />} />
         <Route path="/:id/settings" element={<AccountSettings />} /> */}
 
             <Route path="/profile" element={<ProfilePage />} />
