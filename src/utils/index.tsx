@@ -142,68 +142,52 @@ export const getPercentByTarget = (base: number, target: number): number => {
   return Number(((base / target) * 100).toFixed(2));
 };
 
+const OPERATION_TYPES = {
+  BUY: ["Покупка ценных бумаг", "Покупка ценных бумаг с карты"],
+  SELL: "Продажа ценных бумаг",
+  DIVIDEND: ["Выплата дивидендов", "Выплата дивидендов на карту"],
+};
+
 // Функция для проверки начислений по дивидендам
 export const calcLotsForDividends = (
   /** Список операций по портфелю */
   operations: TFOperation[],
   /** Событие, которое мы рассматриваем */
-  event: TPortfolioEvents,
-  /** Позиция которую мы проверяем */
-  eventsPosition: TFPosition
+  event: TPortfolioEvents
 ) => {
-  if (operations && !!operations.length) {
-    // Выплачены дивиденды или нет
-    let receivedPayment = false;
-    // Получаем из операций только дивиденды по акциям
-    const dividendsOperations = operations.filter(
-      (el) =>
-        (el.type === "Выплата дивидендов" ||
-          el.type === "Выплата дивидендов на карту") &&
-        el.instrumentType === "share"
-    );
-    // Ищем все покупки данной бумаги в операциях
-    const operationsBuyTicker = operations.filter(
-      (el) =>
-        el.type === "Покупка ценных бумаг" &&
-        el.figi === event.figi &&
-        el.instrumentType === "share"
-    );
-    // Посчитать количество лотов, которое надо проверять
-    // Нам надо подсчитать сколько лотов у нас было на момент отсечки и
-    // вернуть число лотов для рассчета дивидендов
-    let quantity = Number(eventsPosition?.quantityLots?.units);
-    operationsBuyTicker.forEach((oparation) => {
-      if (moment(oparation.date) > moment(event.lastBuyDate)) {
-        quantity -= Number(oparation.quantity);
-      }
-    });
-
-    // Находим все дивиденды, которые пришли по событиям
-    const searchDividends = dividendsOperations.findIndex((el) => {
-      return (
-        Number(getNumberMoney(el.payment).toFixed(2)) ===
-        Number((getNumberMoney(event.dividendNet) * quantity).toFixed(2))
-      );
-    });
-    // Если выплату не нашли, то оставляем ее в списке
-    if (searchDividends !== -1) {
-      return {
-        receivedPayment: true,
-        quantity: 0,
-      };
-    }
-    // Если выплату нашли, то отдаем receivedPayment - false и
-    // количество для подсчета, которое должо прийти
-    return {
-      receivedPayment,
-      quantity,
-    };
+  if (!operations || operations.length === 0) {
+    return { receivedPayment: false, quantity: 0 };
   }
 
-  return {
-    receivedPayment: false,
-    quantity: 0,
-  };
+  const lastBuyDate = moment(event.lastBuyDate);
+
+  // Считаем количество акций на дату
+  const numberShares = operations
+    .filter(
+      (op) =>
+        op.figi === event.figi &&
+        moment(op.date).isSameOrBefore(lastBuyDate) &&
+        (OPERATION_TYPES.BUY.includes(op.type) ||
+          op.type === OPERATION_TYPES.SELL)
+    )
+    .reduce((acc, op) => {
+      const qty = Number(op.quantity);
+      return op.type === OPERATION_TYPES.SELL ? acc - qty : acc + qty;
+    }, 0);
+
+  const paymentValue = Number(
+    (numberShares * getNumberMoney(event.dividendNet)).toFixed(2)
+  );
+
+  const receivedPayment = operations.some(
+    (op) =>
+      OPERATION_TYPES.DIVIDEND.includes(op.type) &&
+      op.instrumentType === "share" &&
+      op.figi === event.figi &&
+      getNumberMoney(op.payment) === paymentValue
+  );
+
+  return { receivedPayment, quantity: numberShares };
 };
 
 interface IUseCalcRebalancePortfolioProps {

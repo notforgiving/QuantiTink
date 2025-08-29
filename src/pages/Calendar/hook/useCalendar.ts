@@ -147,16 +147,14 @@ export const useCalendar: TUseCalendar = ({ accountId }) => {
           event.hasOwnProperty("dividendNet") &&
           event.dividendNet.currency === "rub"
         ) {
-          const eventsPositions = getOnlyEventsPositionsByPortfolio(
-            portfolio?.positions || []
-          ).filter(el=>el.figi === event.figi)[0];
           // Надо проверить, что событие уже прошло и найти такую же выплату в операциях после отсечки
           // Если нет такой выплаты смотрим сколько у нас было активов на эту дату, считаем лоты
           // Выдаем количество лотов для учета дивидендов конкретной выплаты
+          // if(event.figi === 'BBG004S68829') console.log(event,'1');
+          
           const waitEventDividends = calcLotsForDividends(
             portfolioOperations || [],
             event,
-            eventsPositions || [],
           );
 
           tempObject.paymentDate = event.paymentDate;
