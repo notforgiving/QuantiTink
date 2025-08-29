@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import LineBlock from "UI/components/LineBlock";
+import ProfitabilityLine from "UI/components/ProfitabilityLine";
 
 import { useShare } from "./hook/useShare";
 
@@ -22,15 +23,14 @@ const ShareItem: FC = () => {
     totalYield,
     totalYearlyYield,
     recommendBuyToReduceAvg,
+    lastBuyOperationsUI,
   } = useShare({
     id: id ?? "",
     figi: figi ?? "",
   });
 
-const recommendation = recommendBuyToReduceAvg(1); // снизить среднюю на 1 рубль
+  const recommendation = recommendBuyToReduceAvg(1); // снизить среднюю на 1 рубль
 
-console.log(recommendation);
-  
   return (
     <div>
       <BackHeader
@@ -79,8 +79,29 @@ console.log(recommendation);
             <strong>Фин результат: </strong>
             <span>{pnl.total.formatted}</span>
           </div>
+          {recommendation && (
+            <div className={cn(css.share__info)}>
+              <span>{recommendation.message}</span>
+            </div>
+          )}
         </div>
       </LineBlock>
+      <div className={css.share__purchases}>
+        {!!lastBuyOperationsUI.length &&
+          lastBuyOperationsUI.map((item) => (
+            <ProfitabilityLine
+              profitability={item.profitability}
+              dateFormatted={item.dateFormatted}
+              time={item.time}
+              pricePerPurchaseLot={item.pricePerPurchaseLot}
+              pricePerLotNow={item.pricePerLotNow}
+              quantity={item.quantity}
+              totalPurchasePrice={item.totalPurchasePrice}
+              totalPriceNow={item.totalPriceNow}
+              key={item.totalPurchasePrice.value}
+            />
+          ))}
+      </div>
     </div>
   );
 };

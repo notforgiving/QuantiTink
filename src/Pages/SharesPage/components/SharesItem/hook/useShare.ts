@@ -30,6 +30,19 @@ type TUseShare = (props: TUseShareProps) => {
         totalCost: number;
         message: string;
     } | null;
+    lastBuyOperationsUI: {
+        profitability: {
+            amount: TFormatMoney;
+            percent: string;
+        };
+        totalPriceNow: TFormatMoney;
+        pricePerLotNow: TFormatMoney;
+        totalPurchasePrice: TFormatMoney;
+        pricePerPurchaseLot: TFormatMoney;
+        quantity: number;
+        dateFormatted: string;
+        time: number;
+    }[]
 }
 
 export const useShare: TUseShare = ({ id, figi }) => {
@@ -83,7 +96,6 @@ export const useShare: TUseShare = ({ id, figi }) => {
     const { paidCommissions, dividendsReceived } = useMemo(() => {
         let commissions = 0;
         let dividends = 0;
-        let tempQuantity = 0;
 
         for (const op of shareOperations) {
             const value = formatMoney(op.payment).value;
@@ -95,12 +107,6 @@ export const useShare: TUseShare = ({ id, figi }) => {
                 case "Выплата дивидендов на карту":
                     dividends += value;
                     break;
-                case "Покупка ценных бумаг":
-                case "Покупка ценных бумаг с карты":
-                    if (quantity !== tempQuantity) {
-                        tempQuantity += Number(op.quantity);
-                    }
-                    break;
             }
         }
 
@@ -108,7 +114,7 @@ export const useShare: TUseShare = ({ id, figi }) => {
             paidCommissions: formatMoney(-commissions),
             dividendsReceived: formatMoney(dividends * 0.87), // налог 13%
         };
-    }, [quantity, shareOperations]);
+    }, [shareOperations]);
 
     const yieldAmount = useMemo(() => {
         let realized = 0;
@@ -200,30 +206,72 @@ export const useShare: TUseShare = ({ id, figi }) => {
 
     const recommendBuyToReduceAvg = useCallback(
         (reduceBy: number = 1) => {
-            console.log(yieldAmount, share?.currentPrice, 'yieldAmount');
-
             const { avgPrice, qty } = yieldAmount;
             if (!share?.currentPrice || avgPrice === 0) return null;
-
             const price = formatMoney(share.currentPrice).value;
-
             const denominator = avgPrice - reduceBy - price;
-            console.log(denominator, avgPrice, reduceBy, price, 'denominator');
-
             if (denominator <= 0) return null;
-
             const additionalQty = Math.ceil(qty / denominator);
             const totalCost = additionalQty * price;
-
             return {
                 additionalQty,
                 price,
                 totalCost,
-                message: `Чтобы снизить среднюю цену на ${reduceBy}₽, нужно купить ${additionalQty} акций по ${price}₽ на сумму ${totalCost}₽`,
+                message: `Чтобы снизить среднюю цену на ${reduceBy}₽, нужно купить ${additionalQty} акций по ${formatMoney(price).formatted} на сумму ${formatMoney(totalCost).formatted}`,
             };
         },
         [yieldAmount, share?.currentPrice]
     );
+
+    const lastBuyOperations = useMemo(() => {
+        if (!quantity) return [];
+
+        const result: typeof shareOperations = [];
+        let collected = 0;
+        for (const op of shareOperations) {
+            if (
+                op.type === "Покупка ценных бумаг" ||
+                op.type === "Покупка ценных бумаг с карты"
+            ) {
+                result.push(op);
+                collected += Number(op.quantity);
+                if (collected >= quantity) break;
+            }
+        }
+
+        return result;
+    }, [shareOperations, quantity]);
+
+    const lastBuyOperationsUI = useMemo(() => {
+        return lastBuyOperations.map((op) => {
+            const buyDate = moment(op.date);
+            const now = moment();
+
+            const duration = moment.duration(now.diff(buyDate));
+            const months = Math.max(Math.floor(duration.asMonths()), 0);
+
+            const quantity = Number(op.quantity);
+            const currentPrice = formatMoney(share?.currentPrice);
+            const buyPrice = formatMoney(op.price);
+            const totalPriceNow = formatMoney(currentPrice.value * quantity);
+            const totalPurchasePrice = formatMoney(buyPrice.value * quantity);
+            const profitabilityValue = formatMoney(totalPriceNow.value - totalPurchasePrice.value)
+            const profitability = {
+                amount: profitabilityValue,
+                percent: ((profitabilityValue.value / totalPurchasePrice.value) * 100).toFixed(2),
+            }
+            return {
+                profitability,
+                totalPriceNow,
+                pricePerLotNow: currentPrice,
+                totalPurchasePrice,
+                pricePerPurchaseLot: buyPrice,
+                quantity,
+                dateFormatted: buyDate.format("DD.MM.YYYY"),
+                time: months, // сколько месяцев прошло
+            };
+        });
+    }, [lastBuyOperations, share?.currentPrice]);
 
     return {
         share,
@@ -236,5 +284,6 @@ export const useShare: TUseShare = ({ id, figi }) => {
         totalYield: yieldAmount.totalYield,
         totalYearlyYield: yieldAmount.totalYearlyYield,
         recommendBuyToReduceAvg,
+        lastBuyOperationsUI,
     };
 }

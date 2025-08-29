@@ -15,10 +15,10 @@ const AccountPageWrapper: FC = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!account?.id || !account?.positions) return;
-    dispatch(fetchPositionsRequest({ accountId: account?.id }));
-  }, [account?.id, account?.positions, dispatch]);
+useEffect(() => {
+  if (!account?.id) return;
+  dispatch(fetchPositionsRequest({ accountId: account.id }));
+}, [account?.id, dispatch]);
 
   return <Outlet />;
 };

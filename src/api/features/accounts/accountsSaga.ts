@@ -179,8 +179,6 @@ function* fetchShareForPositionWorker({
 
 function* fetchAccountByIdSaga(action: ReturnType<typeof fetchPositionsRequest>) {
   const { accountId } = action.payload;
-  // console.log(accountId,'fetchAccountByIdSaga');
-  
   const account: TAccount | undefined = yield select(selectAccountById, accountId);
   try {
     if (!account) {
@@ -243,22 +241,14 @@ function* fetchAccountByIdSaga(action: ReturnType<typeof fetchPositionsRequest>)
   }
 }
 
+function* watchAccountsAndPositions() {
+  yield take(fetchAccountsSuccess.type); // ждём пока аккаунты загрузятся
+  yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
+}
+
 export function* accountsSaga() {
   yield takeLatest(fetchAccountsRequest.type, fetchAccountsWorker);
-  // запускаем отдельный "координатор"
-  yield fork(function* watchAccountsAndPositions() {
-    while (true) {
-      // ждем пока аккаунты загрузятся
-      yield take(fetchAccountsSuccess.type);
-
-      // ждем запрос позиций и получаем action
-      const action: ReturnType<typeof fetchPositionsRequest> = yield take(fetchPositionsRequest.type);
-      // console.log(action,'accountsSaga');
-      
-      // передаем action в сагу
-      yield call(fetchAccountByIdSaga, action);
-    }
-  });
+  yield fork(watchAccountsAndPositions);
 }
 
 export function* watchAccountsLoaded() {

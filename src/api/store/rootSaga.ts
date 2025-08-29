@@ -1,4 +1,5 @@
 import { accountsSaga, watchAccountsLoaded } from 'api/features/accounts/accountsSaga';
+import { calendarSaga } from 'api/features/calendar/calendarSaga';
 import { currencySaga } from 'api/features/currency/currencySaga';
 import { infoSaga } from 'api/features/info/infoSaga';
 import { tokenSaga } from 'api/features/token/tokenSaga';
@@ -13,5 +14,6 @@ export default function* rootSaga() {
     accountsSaga(),
     watchAccountsLoaded(),
     infoSaga(),
+    calendarSaga(),
   ]);
 }

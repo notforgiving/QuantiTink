@@ -80,7 +80,7 @@ const AccountPageMakeup: FC = () => {
               icon={<CalendarSvg />}
               buttonAttributes={{
                 type: "button",
-                // onClick: () => navigate(`/account/${accountId}/calendar`),
+                onClick: () => navigate(`/${id}/calendar`),
                 // disabled:
                 //   shares.value === 0 &&
                 //   rubBonds.value === 0 &&

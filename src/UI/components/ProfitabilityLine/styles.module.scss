@@ -1,0 +1,81 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.purchases {
+  display: grid;
+  gap: 14px;
+  &__top {
+    @include flex-center;
+    justify-content: space-between;
+    opacity: 0.6;
+    span {
+      font-size: 12px;
+    }
+  }
+  &__bottom {
+    @include flex-center;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  &__left {
+    display: grid;
+    justify-items: flex-start;
+    gap: 10px;
+  }
+  &__line {
+    @include flex-center;
+    gap: 8px;
+    strong {
+      font-weight: 500;
+      font-size: 16px;
+
+      @include phone {
+        display: none;
+      }
+    }
+    span {
+      font-size: 16px;
+      @include flex-center;
+      gap: 8px;
+
+      @include phone {
+        font-size: 14px;
+      }
+    }
+    svg {
+      width: 12px;
+      height: auto;
+      flex: none;
+    }
+  }
+  &__lot {
+    font-size: 14px;
+    opacity: 0.6;
+  }
+  &__total {
+    font-weight: 600;
+  }
+  &__right {
+    @include flex-center;
+    align-items: flex-end;
+    gap: 10px;
+    color: $orange-20;
+
+    @include phone {
+      gap: 8px;
+      flex-direction: column;
+    }
+
+    &:global(._isGreen) {
+      color: $green-90;
+    }
+    span {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    strong {
+      font-size: 22px;
+      font-weight: 700;
+    }
+  }
+}

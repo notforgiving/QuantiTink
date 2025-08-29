@@ -18,7 +18,7 @@
 .back {
   padding-top: calc(54px + 10px);
   @include phone {
-    padding-top: calc(56px + 10px);
+    padding-top: calc(56px + 20px);
   }
 
   &__inner {

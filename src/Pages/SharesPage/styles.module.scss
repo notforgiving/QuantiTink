@@ -22,6 +22,7 @@
     gap: 16px;
     padding: 20px 20px;
     &_icon {
+      flex: none;
       @include square(40px);
       border-radius: 8px;
       background: #d9d9d9;
@@ -35,6 +36,7 @@
     &_precent {
       flex: 1;
       text-align: right;
+      white-space: nowrap;
       font-size: 20px;
       font-weight: 700;
     }

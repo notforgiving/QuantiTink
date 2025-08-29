@@ -38,6 +38,10 @@ $maxWidthApp: 1920px;
   border-radius: 25px;
   padding: 30px 20px;
   box-shadow: 0px 0px 10px rgba(0, 28, 24, 0.1);
+
+  @include phone {
+    padding: 20px 20px;
+  }
 }
 
 @mixin orangeLine {

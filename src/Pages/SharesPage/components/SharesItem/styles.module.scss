@@ -8,7 +8,7 @@
     .share__info {
       &:global(.isColor) {
         span {
-          color: $green-30;
+          color: $green-90;
         }
       }
     }
@@ -17,6 +17,9 @@
     @include flex-center;
     justify-content: flex-start;
     gap: 10px;
+    @include phone {
+      justify-content: space-between;
+    }
     &:global(.isColor) {
       span {
         color: $orange-20;
@@ -31,8 +34,24 @@
     &.color {
       color: $orange-20;
       &:global(._isGreen) {
-        color: $green-30;
+        color: $green-90;
       }
+      span {
+        @include phone {
+          text-align: right;
+          flex: none;
+        }
+      }
+    }
+  }
+
+  &__purchases {
+    margin-top: 40px;
+    display: grid;
+    gap: 16px;
+
+    @include phone {
+      margin-top: 20px;
     }
   }
 }

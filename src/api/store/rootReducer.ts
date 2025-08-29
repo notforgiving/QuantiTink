@@ -3,6 +3,7 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // <--- ВАЖНО
 
 import accountsReducer from '../features/accounts/accountsSlice';
+import calendarReducer from '../features/calendar/calendarSlice';
 import currencyReducer from '../features/currency/currencySlice';
 import infoReducer from '../features/info/infoSlice';
 import tokenReducer from '../features/token/tokenSlice';
@@ -22,6 +23,7 @@ const appReducer = combineReducers({
   token: tokenReducer,
   currency: currencyReducer,
   accounts: persistedAccountsReducer, // 👈 тут уже persist-нутый
+  calendar: calendarReducer,
   info: infoReducer,
 });
 

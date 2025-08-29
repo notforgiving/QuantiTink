@@ -1,4 +1,4 @@
-import { InstrumentType, TBrand, TMoneyValue, TQuotation, TTrade } from "types/common";
+import { InstrumentType, TBrand, TMoneyValue, TTrade } from "types/common";
 
 export type TPortfolioPosition = {
   figi: string;
@@ -124,7 +124,7 @@ export type TBondInstrument = {
   isin: string;
 }
 
-export type TBondsInstrumentResponse ={
+export type TBondsInstrumentResponse = {
   instrument: TBondInstrument;
 }
 

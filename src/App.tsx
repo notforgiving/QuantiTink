@@ -10,6 +10,7 @@ import { useAuth } from "api/features/user/useAuth";
 import { setupAuthListener } from "api/features/user/userSessionListener";
 import AccountPageWrapper from "Pages/AccountPage";
 import AccountPageMakeup from "Pages/AccountPage/makeup";
+import CalendarPage from "Pages/CalendarPage";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
 import ProfilePage from "Pages/ProfilePage";
@@ -50,6 +51,7 @@ function App() {
             {/* Страницы брокерского счёта */}
             <Route path="/:id" element={<AccountPageWrapper />}>
               <Route index element={<AccountPageMakeup />} />
+              <Route path="calendar" element={<CalendarPage />} />
               <Route path="shares" element={<SharesPage />} />
               <Route path="shares/:figi" element={<ShareItem />} />
             </Route>
