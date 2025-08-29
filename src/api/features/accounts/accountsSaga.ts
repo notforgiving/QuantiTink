@@ -179,6 +179,8 @@ function* fetchShareForPositionWorker({
 
 function* fetchAccountByIdSaga(action: ReturnType<typeof fetchPositionsRequest>) {
   const { accountId } = action.payload;
+  // console.log(accountId,'fetchAccountByIdSaga');
+  
   const account: TAccount | undefined = yield select(selectAccountById, accountId);
   try {
     if (!account) {
@@ -251,7 +253,8 @@ export function* accountsSaga() {
 
       // ждем запрос позиций и получаем action
       const action: ReturnType<typeof fetchPositionsRequest> = yield take(fetchPositionsRequest.type);
-
+      // console.log(action,'accountsSaga');
+      
       // передаем action в сагу
       yield call(fetchAccountByIdSaga, action);
     }

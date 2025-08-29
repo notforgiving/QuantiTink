@@ -130,8 +130,6 @@ const accountsSlice = createSlice({
       }>
     ) => {
       const { accountId, figi, instrumentType, instrument } = action.payload;
-      console.log(instrument, 'instrument');
-
       return {
         ...state,
         data: state.data.map((acc) =>

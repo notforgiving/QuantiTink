@@ -1,0 +1,17 @@
+@use "../../../UI/styles/variables" as *;
+@use "../../../UI/styles/mixines" as *;
+
+[data-theme="dark"] {
+  .lineBlock {
+    background: opacity-color($green-70, 0.2);
+    box-shadow: 0px 0px 10px opacity-color($white-10, 0.1);
+  }
+}
+
+.lineBlock {
+  @include whiteBlock;
+  @include orangeLine;
+  &:global(._isGreen) {
+    @include greenLine;
+  }
+}

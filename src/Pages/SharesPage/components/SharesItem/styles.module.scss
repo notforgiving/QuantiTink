@@ -1,0 +1,38 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.share {
+  display: grid;
+  gap: 10px;
+  &:global(._isGreen) {
+    .share__info {
+      &:global(.isColor) {
+        span {
+          color: $green-30;
+        }
+      }
+    }
+  }
+  &__info {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+    &:global(.isColor) {
+      span {
+        color: $orange-20;
+      }
+    }
+    strong {
+      font-weight: 700;
+    }
+    span {
+    }
+
+    &.color {
+      color: $orange-20;
+      &:global(._isGreen) {
+        color: $green-30;
+      }
+    }
+  }
+}

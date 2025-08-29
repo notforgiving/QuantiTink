@@ -10,13 +10,18 @@ const SharesPage: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { shares } = useShares(id ?? "");
+
   return (
     <div>
       <BackHeader title={"Акции"} backCallback={() => navigate(`/${id}`)} />
       <div className={css.shares}>
         {shares &&
-          shares.map((el) => (
-            <div className={css.shares__item} key={el.figi}>
+          shares.map((el, index) => (
+            <div
+              className={css.shares__item}
+              key={el.figi}
+              onClick={() => navigate(`/${id}/shares/${el.figi}`)}
+            >
               <div
                 className={css.shares__item_icon}
                 style={{
@@ -28,6 +33,7 @@ const SharesPage: FC = () => {
                 }}
               />
               <div className={css.shares__item_name}>{el.name}</div>
+              <div className={css.shares__item_precent}>{el.percent} %</div>
             </div>
           ))}
       </div>

@@ -6,24 +6,16 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-// import Main from "./pages/Main";
-// import Portfolio from "./pages/Portfolio";
-// import Calendar from "./pages/Calendar";
 import { useAuth } from "api/features/user/useAuth";
 import { setupAuthListener } from "api/features/user/userSessionListener";
-import AccountPage from "Pages/AccountPage";
+import AccountPageWrapper from "Pages/AccountPage";
+import AccountPageMakeup from "Pages/AccountPage/makeup";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
 import ProfilePage from "Pages/ProfilePage";
 import SharesPage from "Pages/SharesPage";
+import ShareItem from "Pages/SharesPage/components/SharesItem";
 import ProtectedLayout from "UI/components/ProtectedLayout";
-// import Account from "pages/Account";
-// import Etf from "pages/Profitability/Etf";
-// import Shares from "pages/Profitability/Shares";
-// import Bonds from "pages/Profitability/Bonds";
-// import CalcBonds from "pages/CalcBonds";
-// import BondView from "pages/Profitability/Bonds/BondView";
-// import Profile from "pages/Profile";
 
 function App() {
   const ProtectedRoute = () => {
@@ -56,11 +48,11 @@ function App() {
             <Route path="/" element={<HomePage />} />
 
             {/* Страницы брокерского счёта */}
-            <Route path="/:id" element={<AccountPage />} />
-            <Route path="/:id/shares" element={<SharesPage />} />
-            {/* <Route path="/:id/analytics" element={<AccountAnalytics />} />
-        <Route path="/:id/settings" element={<AccountSettings />} /> */}
-
+            <Route path="/:id" element={<AccountPageWrapper />}>
+              <Route index element={<AccountPageMakeup />} />
+              <Route path="shares" element={<SharesPage />} />
+              <Route path="shares/:figi" element={<ShareItem />} />
+            </Route>
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>

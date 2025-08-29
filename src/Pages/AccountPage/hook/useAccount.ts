@@ -1,6 +1,5 @@
-import { ReactNode, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { fetchPositionsRequest, TAccount } from "api/features/accounts/accountsSlice";
+import { ReactNode, useMemo } from "react";
+import { TAccount } from "api/features/accounts/accountsSlice";
 import { useAccounts } from "api/features/accounts/useAccounts";
 import moment from "moment";
 import { TBondCurrency } from "types/common";
@@ -65,12 +64,6 @@ export const useAccount: TUseAccount = (accountId) => {
         () => accounts?.data.find((el) => el.id === accountId) ?? null,
         [accounts?.data, accountId]
     );
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (!account?.id || !account?.positions) return;
-        dispatch(fetchPositionsRequest({ accountId: account?.id }))
-    }, [account?.id, account?.positions, dispatch])
 
     const portfolioValue = useMemo(() => {
         if (!account) return formatMoney(0);
@@ -166,7 +159,7 @@ export const useAccount: TUseAccount = (accountId) => {
         const days = accountAge ? Math.max(Math.floor(accountAge.asDays()), 1) : 1;
         const yearlyYield = ((totalPayouts.value / totalDeposits.value) * (365 / days)) * 100;
 
-        const totalYield = ((totalPayouts.value + portfolioGrowth.amount.value) / totalDeposits.value) * 100
+        const totalYield = ((totalPayouts.value + portfolioGrowth.amount.value) / totalDeposits.value) * 100;
         const totalYearlyYield = (((totalPayouts.value + portfolioGrowth.amount.value) / totalDeposits.value) * (365 / days)) * 100;
 
         return {
