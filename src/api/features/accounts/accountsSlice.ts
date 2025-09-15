@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
+import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 
 type TFlattenedPortfolio = Omit<TPortfolioResponse, 'accountId'>;
 
@@ -35,7 +35,7 @@ const accountsSlice = createSlice({
   name: "accounts",
   initialState,
   reducers: {
-    fetchAccountsRequest(state) {
+    fetchAccountsRequest(state, _action: PayloadAction<void>) {
       state.loading = true;
     },
     fetchAccountsSuccess(state, action: PayloadAction<TAccount[]>) {
@@ -148,6 +148,50 @@ const accountsSlice = createSlice({
         ),
       };
     },
+    fetchAssetRequest(state, action: PayloadAction<{ accountId: TAccount["id"], currency: string }>) {
+      state.loading = true;
+    },
+    fetchAssetSuccess(
+      state,
+      action: PayloadAction<{ accountId: TAccount["id"] }>
+    ) {
+      state.loading = false;
+      state.error = null;
+    },
+    fetchAssetFailure(
+      state,
+      action: PayloadAction<{ accountId: TAccount["id"], error: string }>
+    ) {
+      state.loading = false;
+      state.error = action.payload.error;
+    },
+    setAssetForAccount: (
+      state,
+      action: PayloadAction<{
+        accountId: TAccount["id"];
+        figi: string;
+        asset: TAssetResponse['asset'];
+      }>
+    ) => {
+      const { accountId, figi, asset } = action.payload;
+      return {
+        ...state,
+        data: state.data.map((acc) =>
+          acc.id === accountId && acc.positions
+            ? {
+              ...acc,
+              positions: acc.positions.map((pos) => {
+                if (pos.figi === figi) {
+                  return { ...pos, asset: asset };
+                }
+                return pos;
+              }
+              ),
+            }
+            : acc
+        ),
+      };
+    },
   },
 });
 
@@ -162,6 +206,10 @@ export const {
   fetchPositionsFailure,
   setInstrumentPositionForAccount,
   setShareInstrumentPositionForAccount,
+  fetchAssetRequest,
+  fetchAssetSuccess,
+  fetchAssetFailure,
+  setAssetForAccount,
 } = accountsSlice.actions;
 
 

@@ -21,6 +21,16 @@ export type TPortfolioPosition = {
   ticker: string;
 };
 
+export type TPortfolioPositionFull =
+  TPortfolioPosition &
+  (
+    & TBondInstrument
+    & TEtfInstrument
+    & TShareInstrument
+  ) & {
+    asset?: TAsset; // добавляем позже
+  };
+
 export type TPortfolioResponse = {
   accountId: string;
   totalAmountShares: TMoneyValue;
@@ -32,7 +42,7 @@ export type TPortfolioResponse = {
   totalAmountSp: TMoneyValue;
   totalAmountPortfolio: TMoneyValue;
   expectedYield: TMoneyValue;
-  positions: (TPortfolioPosition & TBondInstrument & TShareInstrument)[];
+ positions: TPortfolioPositionFull[];
   virtualPositions: unknown[];
   dailyYield: TMoneyValue;
   dailyYieldRelative: {
@@ -232,4 +242,88 @@ export interface TShareInstrument {
 
 export interface TSharesInstrumentResponse {
   instrument: TShareInstrument;
+}
+
+export type TAsset = {
+  uid: string;
+  type: string; // "ASSET_TYPE_SECURITY"
+  name: string;
+  nameBrief: string;
+  description: string;
+  requiredTests: string[];
+  security: {
+    isin: string;
+    type: string; // "bond"
+    instrumentKind: string; // "INSTRUMENT_TYPE_BOND"
+    bond: {
+      currentNominal: {
+        units: string;
+        nano: number;
+      };
+      borrowName: string; // Эмитент
+      issueSize: {
+        units: string;
+        nano: number;
+      };
+      nominal: {
+        units: string;
+        nano: number;
+      };
+      nominalCurrency: string;
+      issueKind: string;
+      interestKind: string;
+      couponQuantityPerYear: number;
+      indexedNominalFlag: boolean;
+      subordinatedFlag: boolean;
+      collateralFlag: boolean;
+      taxFreeFlag: boolean;
+      amortizationFlag: boolean;
+      floatingCouponFlag: boolean;
+      perpetualFlag: boolean;
+      maturityDate: string; // ISO
+      returnCondition: string;
+      stateRegDate: string; // ISO
+      placementDate: string; // ISO
+      placementPrice: {
+        units: string;
+        nano: number;
+      };
+      issueSizePlan: {
+        units: string;
+        nano: number;
+      };
+    };
+  };
+  gosRegCode: string;
+  cfi: string;
+  codeNsd: string;
+  status: string; // "ready"
+  brand: {
+    uid: string;
+    name: string; // "Селигдар"
+    description: string;
+    info: string;
+    company: string;
+    sector: string; // "materials"
+    countryOfRisk: string; // "RU"
+    countryOfRiskName: string; // "Россия"
+  };
+
+  updatedAt: string; // ISO
+  brCode: string;
+  brCodeName: string;
+
+  instruments: {
+    uid: string;
+    figi: string;
+    instrumentType: string; // "bond"
+    ticker: string;
+    classCode: string;
+    links: string[];
+    instrumentKind: string; // "INSTRUMENT_TYPE_BOND"
+    positionUid: string;
+  }[];
+};
+export interface TAssetResponse {
+  asset: TAsset;
 }

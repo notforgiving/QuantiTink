@@ -34,6 +34,6 @@ export async function fetchWithCache<T>(
             data,
         })
     );
-
+    console.log('Данные из api', key);
     return data;
 }

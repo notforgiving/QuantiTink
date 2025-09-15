@@ -1,5 +1,5 @@
 import { TAccount } from "api/features/accounts/accountsSlice";
-import { TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "api/features/accounts/accountsTypes";
+import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "api/features/accounts/accountsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
 import moment from "moment";
 
@@ -208,4 +208,42 @@ export async function fetchGetPositionShareAPI({
     { ttl: 30 * 60 * 1000 } // кэш 10 минут
   );
 }
+
+export async function fetchGetAssetByAPI({
+  token,
+  assetUid,
+}: {
+  token: TTokenState["data"];
+  assetUid: string;
+}): Promise<TAssetResponse> {
+  return fetchWithCache(
+    `asset:${assetUid}`, // ключ в localStorage
+    async () => {
+      const response = await fetch(
+        "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetBy",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: assetUid,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          data.error?.message || `Ошибка загрузки данных по эмитенту ${assetUid}`
+        );
+      }
+
+      return data as TAssetResponse;
+    },
+    { ttl: 30 * 60 * 1000 } // кэш 10 минут
+  );
+}
+
 

@@ -10,6 +10,8 @@ import { useAuth } from "api/features/user/useAuth";
 import { setupAuthListener } from "api/features/user/userSessionListener";
 import AccountPageWrapper from "Pages/AccountPage";
 import AccountPageMakeup from "Pages/AccountPage/makeup";
+import BondsPageWrapper from "Pages/BondsPage";
+import BondsPageMakeup from "Pages/BondsPage/makeup";
 import CalendarPage from "Pages/CalendarPage";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
@@ -54,6 +56,9 @@ function App() {
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="shares" element={<SharesPage />} />
               <Route path="shares/:figi" element={<ShareItem />} />
+              <Route path="bonds/:currency" element={<BondsPageWrapper />}>
+                <Route index element={<BondsPageMakeup />} />
+              </Route>
             </Route>
             <Route path="/profile" element={<ProfilePage />} />
           </Route>

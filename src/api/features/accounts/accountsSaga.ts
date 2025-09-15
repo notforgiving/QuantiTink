@@ -1,4 +1,4 @@
-import { fetchGetAccountsAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI, fetchGetPositionBondAPI, fetchGetPositionEtfAPI, fetchGetPositionShareAPI } from "api/requests/accountsApi";
+import { fetchGetAccountsAPI, fetchGetAssetByAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI, fetchGetPositionBondAPI, fetchGetPositionEtfAPI, fetchGetPositionShareAPI } from "api/requests/accountsApi";
 import { RootState } from "api/store";
 import { all, call, fork, put, select, take, takeEvery, takeLatest } from "redux-saga/effects";
 import { InstrumentType } from "types/common";
@@ -6,8 +6,8 @@ import { InstrumentType } from "types/common";
 import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
 
-import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
-import { TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
+import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
+import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 import { selectAccountById } from "./useAccounts";
 
 export function* fetchAccountsWorker() {
@@ -215,29 +215,109 @@ function* fetchAccountByIdSaga(action: ReturnType<typeof fetchPositionsRequest>)
     const uniqueSharesFigis = Array.from(new Set(sharesPositions.map((p) => p.figi)));
     yield all(
       uniqueBondsFigis.map((figi) =>
-        call(function* () {
-          yield* fetchBondForPositionWorker({ accountId, figi, token: token.data, });
-        })
+        call(fetchBondForPositionWorker, { accountId, figi, token: token.data })
       )
     );
     yield all(
       uniqueEtfsFigis.map((figi) =>
-        call(function* () {
-          yield* fetchEtfForPositionWorker({ accountId, figi, token: token.data, });
-        })
+        call(fetchEtfForPositionWorker, { accountId, figi, token: token.data })
       )
     );
     yield all(
       uniqueSharesFigis.map((figi) =>
-        call(function* () {
-          yield* fetchShareForPositionWorker({ accountId, figi, token: token.data, });
-        })
+        call(fetchShareForPositionWorker, { accountId, figi, token: token.data })
       )
     );
     // успех — выключаем лоадер
     yield put(fetchPositionsSuccess({ accountId }));
   } catch (e: any) {
     yield put(fetchPositionsFailure(e.message));
+  }
+}
+
+function* fetchAssetSaga(action: ReturnType<typeof fetchAssetRequest>) {
+  const { accountId, currency } = action.payload;
+
+  try {
+    const account: TAccount | undefined = yield select(selectAccountById, accountId);
+    if (!account) {
+      yield put(
+        fetchAssetFailure({ accountId, error: `Аккаунт ${accountId} не найден` })
+      );
+      return;
+    }
+
+    const token: TTokenState = yield select(selectTokenData);
+    if (!token?.data) {
+      yield put(
+        fetchAssetFailure({ accountId, error: "Токен отсутствует" })
+      );
+      return;
+    }
+
+    // берём только bond-позиции, устраняем дубликаты по FIGI
+    const targetBondPositions = (account.positions ?? []).filter(
+      (p) => p.instrumentType === "bond" && p.initialNominal.currency === currency
+    );
+    const uniqueBondsByAssetUid = Array.from(
+      new Map(
+        targetBondPositions.map((p) => [p.assetUid, p]) // ключ = assetUid, значение = позиция
+      ).values()
+    );
+
+    yield all(
+      uniqueBondsByAssetUid.map((bond) =>
+        call(fetchAssetForPositionWorker, {
+          accountId,
+          assetUid: bond.assetUid,
+          figi: bond.figi,
+          token: token.data,
+        })
+      )
+    );
+
+    yield put(fetchAssetSuccess({ accountId }));
+  } catch (e: any) {
+    yield put(fetchAssetFailure({ accountId, error: e.message }));
+  }
+}
+
+// воркер для одной облигации (с перехватом ошибки, чтобы не падала вся пачка)
+function* fetchAssetForPositionWorker({
+  accountId,
+  assetUid,
+  token,
+  figi,
+}: {
+  accountId: string;
+  assetUid: string;
+  figi: string;
+  token: TTokenState['data'];
+}) {
+  try {
+    const assetResp: TAssetResponse = yield call(fetchGetAssetByAPI, {
+      token,
+      assetUid,
+    });
+
+    // console.log(assetResp.asset.brand, 'assetResp');
+
+    // обновляем конкретную позицию
+    yield put(
+      setAssetForAccount({
+        accountId,
+        figi,
+        asset: assetResp.asset,
+      })
+    );
+  } catch (err: any) {
+    yield put(
+      fetchPositionsFailure({
+        accountId,
+        error: `${`Не удалось загрузить asset по ${assetUid}:` || err?.message || err}`,
+      })
+    );
+    return;
   }
 }
 
@@ -248,6 +328,7 @@ function* watchAccountsAndPositions() {
 
 export function* accountsSaga() {
   yield takeLatest(fetchAccountsRequest.type, fetchAccountsWorker);
+  yield takeLatest(fetchAssetRequest.type, fetchAssetSaga);
   yield fork(watchAccountsAndPositions);
 }
 
