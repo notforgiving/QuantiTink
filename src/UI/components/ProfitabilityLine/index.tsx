@@ -41,7 +41,9 @@ const ProfitabilityLine: FC<IProfitabilityLineProps> = ({
       {dateFormatted && (
         <div className={css.purchases__top}>
           <span>{dateFormatted}</span>
-          {time && <span>{pluralize(time, "месяц", "месяца", "месяцев")}</span>}
+          {time !== undefined && (
+            <span>{pluralize(time, "месяц", "месяца", "месяцев")}</span>
+          )}
         </div>
       )}
       <div className={css.purchases__bottom}>

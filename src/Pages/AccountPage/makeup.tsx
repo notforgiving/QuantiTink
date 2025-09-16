@@ -44,6 +44,7 @@ const AccountPageMakeup: FC = () => {
     totalYearlyYield,
     portfolioShare,
     portfolioBonds,
+    portfolioEtf,
   } = useAccount(id || "");
 
   return (
@@ -72,21 +73,25 @@ const AccountPageMakeup: FC = () => {
           <div className={css.portfolio_actions}>
             {accountAge && (
               <div className={css.portfolio_start}>
+                {accountAge.years() !== 0 &&
+                  pluralize(accountAge.years(), "год", "года", "лет")}{" "}
                 {pluralize(accountAge.months(), "месяц", "месяца", "месяцев")}
               </div>
             )}
-            <Button
-              text=""
-              icon={<CalendarSvg />}
-              buttonAttributes={{
-                type: "button",
-                onClick: () => navigate(`/${id}/calendar`),
-                // disabled:
-                //   shares.value === 0 &&
-                //   rubBonds.value === 0 &&
-                //   usdBonds.value === 0,
-              }}
-            />
+            {portfolioBonds && Object.entries(portfolioBonds).length !== 0 && (
+              <Button
+                text=""
+                icon={<CalendarSvg />}
+                buttonAttributes={{
+                  type: "button",
+                  onClick: () => navigate(`/${id}/calendar`),
+                  // disabled:
+                  //   shares.value === 0 &&
+                  //   rubBonds.value === 0 &&
+                  //   usdBonds.value === 0,
+                }}
+              />
+            )}
           </div>
         </div>
         <div className={css.portfolio_block}>
@@ -95,38 +100,46 @@ const AccountPageMakeup: FC = () => {
             <strong>Вложено:</strong>
             <span>{totalDeposits.formatted}</span>
           </div>
-          <div className={css.portfolio_blockItem}>
-            <TicketSvg />
-            <strong>Уплачено комиссий:</strong>
-            <span>{totalCommissions.formatted}</span>
-          </div>
-          <div className={css.portfolio_blockItem}>
-            <ReceiptSvg />
-            <strong>Уплачено налогов:</strong>
-            <span>{totalPaidTaxes.formatted}</span>
-          </div>
+          {totalCommissions.value !== 0 && (
+            <div className={css.portfolio_blockItem}>
+              <TicketSvg />
+              <strong>Уплачено комиссий:</strong>
+              <span>{totalCommissions.formatted}</span>
+            </div>
+          )}
+          {totalPaidTaxes.value !== 0 && (
+            <div className={css.portfolio_blockItem}>
+              <ReceiptSvg />
+              <strong>Уплачено налогов:</strong>
+              <span>{totalPaidTaxes.formatted}</span>
+            </div>
+          )}
         </div>
-        <div className={css.portfolio_block}>
-          <div className={css.portfolio_blockItem}>
-            <ServerSvg />
-            <strong>Получено всего выплат</strong>
-            <span>{totalPayouts.formatted}</span>
-          </div>
-          <div className={css.portfolio_blockItem}>
-            <CashSvg />
-            <strong>Получено купонов / дивидендов</strong>
-            <span>
-              {totalCoupons.formatted} / {totalDividends.formatted}
-            </span>
-          </div>
-          <div className={css.portfolio_blockItem}>
-            <PodiumSvg />
-            <strong>Доходность / в год</strong>
-            <span>
-              {`${currentYield}%`} / {`${yearlyYield}%`}
-            </span>
-          </div>
-        </div>
+        {totalPayouts.value !== 0 &&
+          totalCoupons.value !== 0 &&
+          totalDividends.value !== 0 && (
+            <div className={css.portfolio_block}>
+              <div className={css.portfolio_blockItem}>
+                <ServerSvg />
+                <strong>Получено всего выплат</strong>
+                <span>{totalPayouts.formatted}</span>
+              </div>
+              <div className={css.portfolio_blockItem}>
+                <CashSvg />
+                <strong>Получено купонов / дивидендов</strong>
+                <span>
+                  {totalCoupons.formatted} / {totalDividends.formatted}
+                </span>
+              </div>
+              <div className={css.portfolio_blockItem}>
+                <PodiumSvg />
+                <strong>Доходность / в год</strong>
+                <span>
+                  {`${currentYield}%`} / {`${yearlyYield}%`}
+                </span>
+              </div>
+            </div>
+          )}
         <div className={css.portfolio_block}>
           <div className={css.portfolio_blockItem}>
             <PodiumSvg />
@@ -137,22 +150,39 @@ const AccountPageMakeup: FC = () => {
           </div>
         </div>
         <div className={cn(css.portfolio_block, "isActive")}>
-          <div
-            className={cn(css.portfolio_blockItem, "isShare")}
-            onClick={() => navigate(`/${account?.id}/shares`)}
-          >
-            <SharesSvg />
-            <strong>Акции:</strong>
-            <span>
-              <span>{portfolioShare.value.formatted}</span>{" "}
-              <span>({portfolioShare.percent}%)</span>
-            </span>
-          </div>
+          {portfolioShare.percent !== 0 && (
+            <div
+              className={cn(css.portfolio_blockItem, "isShare")}
+              onClick={() => navigate(`/${account?.id}/shares`)}
+            >
+              <SharesSvg />
+              <strong>Акции:</strong>
+              <span>
+                <span>{portfolioShare.value.formatted}</span>{" "}
+                <span>({portfolioShare.percent}%)</span>
+              </span>
+            </div>
+          )}
           {portfolioBonds &&
             Object.entries(portfolioBonds).map(([key, bond]) => (
               <div
                 className={cn(css.portfolio_blockItem, "isBond")}
                 onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
+                key={key}
+              >
+                {bond.icon}
+                <strong>{bond.name}</strong>
+                <span>
+                  <span>{bond.value.formatted}</span>
+                  <span>({bond.percent}%)</span>
+                </span>
+              </div>
+            ))}
+          {portfolioEtf &&
+            Object.entries(portfolioEtf).map(([key, bond]) => (
+              <div
+                className={cn(css.portfolio_blockItem, "isBond")}
+                onClick={() => navigate(`/${account?.id}/etf/${key}`)}
                 key={key}
               >
                 {bond.icon}

@@ -7,12 +7,14 @@ import { TBondCurrency } from "types/common";
 import { formatMoney, TFormatMoney } from "utils/formatMoneyAmount";
 import { getBondName } from "utils/getBondName";
 
+import { groupPortfolio } from "./groupPortfolio";
+
 type TPortfolioGrowth = {
     amount: TFormatMoney;  // сумма прироста (рубли, может быть + или -)
     percent: number; // процент прироста (может быть + или -)
 };
 
-type TPortfolioBondsItem = {
+export type TPortfolioItem = {
     value: TFormatMoney;
     percent: number;
     name: string;
@@ -49,8 +51,11 @@ type TUseAccount = (props: string) => {
         value: TFormatMoney;
         percent: number;
     };
+
     /** Массив облигаций */
-    portfolioBonds: Record<string, TPortfolioBondsItem> | null;
+    portfolioBonds: Record<string, TPortfolioItem> | null;
+    /** Массив фондов */
+    portfolioEtf: Record<string, TPortfolioItem> | null;
     /** Общая доходность по всей прибыли */
     totalYield: number;
     /** Общая годовая доходность по всей прибыли */
@@ -192,42 +197,25 @@ export const useAccount: TUseAccount = (accountId) => {
 
     const portfolioBonds = useMemo(() => {
         if (!account || !account.positions) return null;
-        const result: Record<string, TPortfolioBondsItem> = {};
-        account.positions
-            .filter((pos) => pos.instrumentType === "bond")
-            .forEach((pos) => {
-                if (!pos.initialNominal) return;
-                const currency = pos.initialNominal.currency as TBondCurrency;
-                if (!currency) return;
-
-                const price = formatMoney(pos.currentPrice);
-                const lots = Number(pos.quantity.units);
-                const value = price.value * lots;
-
-                if (!result[currency]) {
-                    const currencyData = getBondName(currency);
-                    result[currency] = {
-                        value: formatMoney(0),
-                        percent: 0,
-                        name: currencyData.name,
-                        icon: currencyData.icon,
-                    };
-                }
-
-                result[currency].value = formatMoney(result[currency].value.value + value);
-            });
-
-        // посчитаем проценты после суммы
-        Object.keys(result).forEach((currency) => {
-            result[currency].percent =
-                portfolioValue.value > 0
-                    ? Number(((result[currency].value.value / portfolioValue.value) * 100).toFixed(2))
-                    : 0;
-        });
-
-        return result;
+        return groupPortfolio(
+            account.positions,
+            "bond",
+            (pos) => pos.initialNominal?.currency as TBondCurrency | undefined,
+            (pos) => getBondName(pos.initialNominal!.currency as TBondCurrency),
+            portfolioValue.value
+        );
     }, [account, portfolioValue.value]);
 
+    const portfolioEtf = useMemo(() => {
+        if (!account || !account.positions) return null;
+        return groupPortfolio(
+            account.positions,
+            "etf",
+            (pos) => pos.ticker,
+            (pos) => ({ name: pos.name, icon: "" }),
+            portfolioValue.value
+        );
+    }, [account, portfolioValue.value]);
 
     return {
         account,
@@ -246,5 +234,6 @@ export const useAccount: TUseAccount = (accountId) => {
         totalYearlyYield,
         portfolioShare,
         portfolioBonds,
+        portfolioEtf,
     }
 }
