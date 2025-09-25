@@ -21,6 +21,8 @@ import SharesPage from "Pages/SharesPage";
 import ShareItem from "Pages/SharesPage/components/SharesItem";
 import ProtectedLayout from "UI/components/ProtectedLayout";
 
+import { ScrollToTop } from "utils/ScrollToTop";
+
 function App() {
   const ProtectedRoute = () => {
     const { isAuth } = useAuth();
@@ -40,35 +42,37 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Публичный маршрут авторизации */}
-        <Route element={<AuthRoute />}>
-          <Route path="/login" element={<LoginPage />} />
-        </Route>
-
-        {/* Защищённые маршруты + layout с меню */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<ProtectedLayout />}>
-            <Route path="/" element={<HomePage />} />
-
-            {/* Страницы брокерского счёта */}
-            <Route path="/:id" element={<AccountPageWrapper />}>
-              <Route index element={<AccountPageMakeup />} />
-              <Route path="calendar" element={<CalendarPage />} />
-              <Route path="shares" element={<SharesPage />} />
-              <Route path="shares/:figi" element={<ShareItem />} />
-              <Route path="bonds/:currency" element={<BondsPageWrapper />}>
-                <Route index element={<BondsPageMakeup />} />
-              </Route>
-              <Route path="etf/:ticker" element={<EtfPage />} />
-            </Route>
-            <Route path="/profile" element={<ProfilePage />} />
+      <ScrollToTop>
+        <Routes>
+          {/* Публичный маршрут авторизации */}
+          <Route element={<AuthRoute />}>
+            <Route path="/login" element={<LoginPage />} />
           </Route>
-        </Route>
 
-        {/* Фолбэк на авторизацию */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+          {/* Защищённые маршруты + layout с меню */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedLayout />}>
+              <Route path="/" element={<HomePage />} />
+
+              {/* Страницы брокерского счёта */}
+              <Route path="/:id" element={<AccountPageWrapper />}>
+                <Route index element={<AccountPageMakeup />} />
+                <Route path="calendar" element={<CalendarPage />} />
+                <Route path="shares" element={<SharesPage />} />
+                <Route path="shares/:figi" element={<ShareItem />} />
+                <Route path="bonds/:currency" element={<BondsPageWrapper />}>
+                  <Route index element={<BondsPageMakeup />} />
+                </Route>
+                <Route path="etf/:ticker" element={<EtfPage />} />
+              </Route>
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+          </Route>
+
+          {/* Фолбэк на авторизацию */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </ScrollToTop>
     </BrowserRouter>
   );
 }
