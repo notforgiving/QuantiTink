@@ -75,7 +75,7 @@ export async function fetchGetOperationsAPI({
           },
           body: JSON.stringify({
             accountId,
-            from: moment().add(-5, "y").utc().toISOString(),
+            from: moment().add(-1, "y").utc().toISOString(),
             to: moment().utc().toISOString(),
             state: "OPERATION_STATE_EXECUTED",
           }),

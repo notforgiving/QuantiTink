@@ -76,6 +76,13 @@
         align-items: flex-start;
         padding: 12px 20px;
 
+        .blockItem__value {
+          display: grid;
+          grid-template-columns: 1fr 80px;
+          gap: 5px;
+          justify-items: flex-end;
+        }
+
         span {
           display: flex;
           gap: 5px;

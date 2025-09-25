@@ -1,7 +1,7 @@
 @use "src/UI/styles/variables" as *;
 @use "src/UI/styles/mixines" as *;
 
-.share {
+.etf {
   display: grid;
   gap: 10px;
   &:global(._isGreen) {
@@ -12,6 +12,9 @@
         }
       }
     }
+    .etf__profitability {
+      color: $green-90;
+    }
   }
   &__info {
     @include flex-center;
@@ -21,14 +24,13 @@
       justify-content: space-between;
     }
     &:global(.isColor) {
-      span {
+      span,
+      strong {
         color: $orange-20;
       }
     }
     strong {
       font-weight: 700;
-    }
-    span {
     }
 
     &.color {
@@ -45,8 +47,47 @@
     }
   }
 
-  &__purchases {
+  &__header {
+    @include flex-center;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  &__current {
+    display: grid;
+    gap: 10px;
+    font-weight: 700;
+  }
+  &__price {
+    font-size: 28px;
+  }
+  &__toggle {
     margin-top: 30px;
+  }
+  &__profitability {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 16px;
+    color: $orange-20;
+    strong {
+      position: relative;
+
+      &::after {
+        position: absolute;
+        right: -5px;
+        transform: translate(50%, -50%);
+        top: 50%;
+        content: "/";
+      }
+    }
+  }
+  &__life {
+    font-size: 16px;
+  }
+
+  &__purchases {
+    margin-top: 10px;
     display: grid;
     gap: 16px;
 

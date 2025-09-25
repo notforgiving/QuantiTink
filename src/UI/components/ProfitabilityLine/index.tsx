@@ -9,7 +9,7 @@ import LineBlock from "../LineBlock";
 
 import css from "./styles.module.scss";
 
-interface IProfitabilityLineProps {
+export interface IProfitabilityLineProps {
   profitability?: {
     amount: TFormatMoney;
     percent: string;

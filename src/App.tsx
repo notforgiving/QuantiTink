@@ -13,6 +13,7 @@ import AccountPageMakeup from "Pages/AccountPage/makeup";
 import BondsPageWrapper from "Pages/BondsPage";
 import BondsPageMakeup from "Pages/BondsPage/makeup";
 import CalendarPage from "Pages/CalendarPage";
+import EtfPage from "Pages/EtfPage";
 import HomePage from "Pages/HomePage";
 import LoginPage from "Pages/LoginPage";
 import ProfilePage from "Pages/ProfilePage";
@@ -59,6 +60,7 @@ function App() {
               <Route path="bonds/:currency" element={<BondsPageWrapper />}>
                 <Route index element={<BondsPageMakeup />} />
               </Route>
+              <Route path="etf/:ticker" element={<EtfPage />} />
             </Route>
             <Route path="/profile" element={<ProfilePage />} />
           </Route>

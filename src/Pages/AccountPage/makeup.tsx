@@ -1,18 +1,14 @@
 import React, { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { ReactComponent as BigemitentSvg } from "assets/bigemitent.svg";
 import { ReactComponent as CalendarSvg } from "assets/calendar.svg";
 import { ReactComponent as CashSvg } from "assets/cash.svg";
-// import { ReactComponent as CubeSvg } from "assets/cube.svg";
-// import { ReactComponent as GoldetfSvg } from "assets/goldetf.svg";
+import { ReactComponent as CubeSvg } from "assets/cube.svg";
 import { ReactComponent as WalletSvg } from "assets/ionicons/icon2.svg";
 import { ReactComponent as PodiumSvg } from "assets/podium.svg";
 import { ReactComponent as ReceiptSvg } from "assets/receipt.svg";
-// import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
 import { ReactComponent as ServerSvg } from "assets/server.svg";
 import { ReactComponent as SharesSvg } from "assets/shares.svg";
 import { ReactComponent as TicketSvg } from "assets/ticket.svg";
-// import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import Button from "UI/components/Button";
@@ -157,7 +153,7 @@ const AccountPageMakeup: FC = () => {
             >
               <SharesSvg />
               <strong>Акции:</strong>
-              <span>
+              <span className={css.blockItem__value}>
                 <span>{portfolioShare.value.formatted}</span>{" "}
                 <span>({portfolioShare.percent}%)</span>
               </span>
@@ -172,7 +168,7 @@ const AccountPageMakeup: FC = () => {
               >
                 {bond.icon}
                 <strong>{bond.name}</strong>
-                <span>
+                <span className={css.blockItem__value}>
                   <span>{bond.value.formatted}</span>
                   <span>({bond.percent}%)</span>
                 </span>
@@ -185,33 +181,14 @@ const AccountPageMakeup: FC = () => {
                 onClick={() => navigate(`/${account?.id}/etf/${key}`)}
                 key={key}
               >
-                {bond.icon}
+                <CubeSvg />
                 <strong>{bond.name}</strong>
-                <span>
+                <span className={css.blockItem__value}>
                   <span>{bond.value.formatted}</span>
                   <span>({bond.percent}%)</span>
                 </span>
               </div>
             ))}
-          {/* {etfArray &&
-            !!etfArray.length &&
-            etfArray.map((etf) => (
-              <div
-                className={cn(css.portfolio_blockItem, "isEtf")}
-                onClick={() =>
-                  navigate(`/${accountId}/etf/${etf.ticker}`)
-                }
-              >
-                {etf.ticker === "TGLD" && <GoldetfSvg />}
-                {etf.ticker === "TMOS" && <BigemitentSvg />}
-                {etf.ticker !== "TGLD" && etf.ticker !== "TMOS" && <CubeSvg />}
-
-                <strong>{etf.name}</strong>
-                <span>
-                  <span>{etf.formatt}</span> <span>({etf.percent}%)</span>
-                </span>
-              </div>
-            ))} */}
         </div>
       </div>
     </div>
