@@ -1,0 +1,129 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.bond {
+  display: grid;
+  gap: 10px;
+  &:global(._isGreen) {
+    .bond__info {
+      &:global(.isColor) {
+        span {
+          color: $green-90;
+        }
+      }
+    }
+  }
+  &__info {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 10px;
+    @include phone {
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    &:global(.isColor) {
+      span {
+        color: $orange-20;
+      }
+    }
+    strong {
+      font-weight: 700;
+    }
+    span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      @include phone {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      svg {
+        width: 12px;
+        height: auto;
+        flex: none;
+        @include phone {
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    &.color {
+      color: $orange-20;
+      &:global(._isGreen) {
+        color: $green-90;
+      }
+      span {
+        @include phone {
+          text-align: right;
+          flex: none;
+        }
+      }
+    }
+  }
+  &__purchases {
+    margin-top: 30px;
+    display: grid;
+    gap: 16px;
+
+    @include phone {
+      margin-top: 20px;
+    }
+  }
+  &__item {
+    display: grid;
+    gap: 15px;
+
+    &:global(._isGreen) {
+      .bond__coupons {
+        strong {
+          color: $green-90;
+        }
+      }
+      .bond__yield {
+        strong {
+          color: $green-90;
+        }
+      }
+    }
+  }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0.6;
+    span {
+      font-size: 12px;
+    }
+  }
+  &__body {
+    display: grid;
+    gap: 5px;
+  }
+  &__quantity {
+    span {
+      font-size: 16px;
+    }
+  }
+  &__yield {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    span {
+      font-size: 16px;
+    }
+    strong {
+      font-weight: 600;
+      font-size: 22px;
+      color: $orange-20;
+
+       @include phone {
+        text-align: right;
+       }
+    }
+  }
+}
+
+.small {
+  font-size: 14px;
+}

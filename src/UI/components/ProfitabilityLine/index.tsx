@@ -53,7 +53,7 @@ const ProfitabilityLine: FC<IProfitabilityLineProps> = ({
               <strong>Цена за лот -</strong>
               <span>
                 {pricePerPurchaseLot.formatted} <ArrowSvg />
-                {pricePerLotNow?.formatted} ( {quantity} шт.)
+                {pricePerLotNow?.formatted} ( {quantity} шт. )
               </span>
             </div>
           )}

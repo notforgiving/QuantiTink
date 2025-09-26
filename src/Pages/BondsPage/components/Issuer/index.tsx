@@ -1,4 +1,5 @@
 import React, { FC, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import cn from "classnames";
 import { TIssuerGroup } from "Pages/BondsPage/hooks/useBonds";
 import { TBrand } from "types/common";
@@ -14,6 +15,8 @@ const Issuer: FC<IIssuerProps> = ({
   data: { name, positions, percent },
   logoName,
 }) => {
+  const { id, currency } = useParams();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   return (
@@ -44,7 +47,11 @@ const Issuer: FC<IIssuerProps> = ({
       >
         {positions &&
           positions.map((item) => (
-            <div className={css.bonds__list_item} key={item.figi}>
+            <div
+              className={css.bonds__list_item}
+              key={item.figi}
+              onClick={() => navigate(`/${id}/bonds/${currency}/${item.figi}`)}
+            >
               <strong>{item.name}</strong>
               <span>{item.quantity} шт</span>
             </div>

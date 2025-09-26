@@ -10,6 +10,7 @@ import { useAuth } from "api/features/user/useAuth";
 import { setupAuthListener } from "api/features/user/userSessionListener";
 import AccountPageWrapper from "Pages/AccountPage";
 import AccountPageMakeup from "Pages/AccountPage/makeup";
+import BondPage from "Pages/BondPage";
 import BondsPageWrapper from "Pages/BondsPage";
 import BondsPageMakeup from "Pages/BondsPage/makeup";
 import CalendarPage from "Pages/CalendarPage";
@@ -62,6 +63,7 @@ function App() {
                 <Route path="shares/:figi" element={<ShareItem />} />
                 <Route path="bonds/:currency" element={<BondsPageWrapper />}>
                   <Route index element={<BondsPageMakeup />} />
+                  <Route path=":figi" element={<BondPage />} />
                 </Route>
                 <Route path="etf/:ticker" element={<EtfPage />} />
               </Route>

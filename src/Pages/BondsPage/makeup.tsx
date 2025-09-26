@@ -26,7 +26,7 @@ const BondsPageMakeup: FC = () => {
         title={
           currency === "rub" ? "Российские облигации" : "Валютные облигации"
         }
-        backCallback={() => navigate(`/${id}`)}
+    backCallback={() => navigate(-1)}
       />
       <div className={css.bonds}>
         {issuer &&

@@ -35,7 +35,7 @@ const ShareItem: FC = () => {
     <div>
       <BackHeader
         title={share?.name ?? "Акция"}
-        backCallback={() => navigate(`/${id}/shares`)}
+       backCallback={() => navigate(-1)}
       />
       <LineBlock greenLine={expectedYield.value > 0}>
         <div

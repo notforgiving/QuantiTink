@@ -28,6 +28,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
     const accounts = useAccounts();
     // находим аккаунт (тут обычно 2–5 штук, useMemo не нужен)
     const account = accounts?.data?.find((el) => el.id === accountId) ?? null;
+    
     // находим сам ETF (может быть 10–20 позиций, лучше мемоизировать)
     const etf = useMemo(
         () =>
@@ -36,6 +37,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
             ) ?? null,
         [account?.positions, ticker]
     );
+
     // текущая стоимость позиции
     const currentPrice = useMemo(() => {
         if (!etf?.currentPrice || !etf?.quantity?.units) return null;
@@ -43,10 +45,12 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
         const qty = Number(etf.quantity.units);
         return formatMoney(priceNum * qty);
     }, [etf?.currentPrice, etf?.quantity?.units]);
+
     // ожидаемая доходность (легкая операция — мемо не нужен)
     const expectedYield = etf?.expectedYield
         ? formatMoney(etf.expectedYield, "rub")
         : null;
+
     // операции по этому фонду (500+ => обязательно мемоизируем)
     const etfOperations = useMemo(() => {
         if (!etf?.assetUid) return [];

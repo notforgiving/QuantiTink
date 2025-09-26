@@ -13,7 +13,7 @@ const SharesPage: FC = () => {
 
   return (
     <div>
-      <BackHeader title={"Акции"} backCallback={() => navigate(`/${id}`)} />
+      <BackHeader title={"Акции"} backCallback={() => navigate(-1)} />
       <div className={css.shares}>
         {shares &&
           shares.map((el, index) => (
