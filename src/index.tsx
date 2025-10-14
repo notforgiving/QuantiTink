@@ -5,8 +5,11 @@ import { persistor, store } from "api/store";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import moment from "moment";
 import { PersistGate } from "redux-persist/integration/react";
 import ThemeProvider from "UI/components/ThemeProvider";
+
+import 'moment/locale/ru'; // импортируем русскую локаль
 
 import App from "./App";
 
@@ -31,6 +34,8 @@ export const auth = getAuth(app);
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+moment.locale('ru');
 
 root.render(
   <Provider store={store}>

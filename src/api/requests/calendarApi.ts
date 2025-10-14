@@ -24,11 +24,12 @@ export async function fetchGetDividendsAPI({
                     },
                     body: JSON.stringify({
                         figi,
-                        from: moment().add(-3, "day").toISOString(),
+                        from: moment().add(-6, "month").toISOString(),
                         to: moment().add(1, "year").toISOString(),
                     }),
                 }
             );
+
 
             const data = (await response.json()) as TDividendsResponse;
             if (!response.ok) {
@@ -40,7 +41,7 @@ export async function fetchGetDividendsAPI({
 
             return data;
         },
-        { ttl: 12 * 60 * 60 * 1000 } // 30 минут
+        { ttl: 12 * 60 * 60 * 1000 } // 12 часов
     );
 }
 
@@ -74,12 +75,12 @@ export async function fetchGetBondCouponsAPI({
             if (!response.ok) {
                 throw new Error(
                     (data as any).error?.message ||
-                    `Ошибка загрузки данных по дивидендам акции ${figi}`
+                    `Ошибка загрузки данных по выплатам купонов ${figi}`
                 );
             }
 
             return data;
         },
-        { ttl: 12 * 60 * 60 * 1000 } // 30 минут
+        { ttl: 12 * 60 * 60 * 1000 } // 12 часов
     );
 }

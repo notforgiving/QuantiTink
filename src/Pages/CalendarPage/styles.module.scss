@@ -1,0 +1,65 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  &__payout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 20px;
+    &_name {
+    }
+    &_value {
+      font-weight: 700;
+      color: $green-90;
+    }
+    &_type {
+      margin-bottom: 5px;
+      color: $gray-10;
+      font-size: 12px;
+    }
+  }
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &_info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &_date {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    &_total {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 16px;
+      font-weight: 500;
+      padding-right: 20px;
+      span {
+        color: $gray-10;
+      }
+      strong {
+        color: $orange-20;
+      }
+    }
+  }
+}

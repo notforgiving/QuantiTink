@@ -12,7 +12,7 @@ interface ILineBlockProps {
 const LineBlock: FC<ILineBlockProps> = ({ greenLine, children, className }) => {
   return (
     <div
-      className={cn(css.lineBlock, className, {
+      className={cn(css.lineBlock, "LineBlock", className, {
         _isGreen: greenLine,
       })}
     >

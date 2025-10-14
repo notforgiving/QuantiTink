@@ -300,8 +300,6 @@ function* fetchAssetForPositionWorker({
       assetUid,
     });
 
-    // console.log(assetResp.asset.brand, 'assetResp');
-
     // обновляем конкретную позицию
     yield put(
       setAssetForAccount({

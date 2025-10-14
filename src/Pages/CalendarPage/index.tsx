@@ -3,6 +3,14 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCalendarRequest } from "api/features/calendar/calendarSlice";
 import BackHeader from "UI/components/BackHeader";
+import Input from "UI/components/Input";
+import LineBlock from "UI/components/LineBlock";
+
+import { formatMoney } from "utils/formatMoneyAmount";
+
+import { useCalendarUI } from "./hooks/useCalendar";
+
+import css from "./styles.module.scss";
 
 const CalendarPage: FC = () => {
   const { id } = useParams();
@@ -13,10 +21,10 @@ const CalendarPage: FC = () => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
 
-  // const { loading, error, grouped, total, byMonth } = useCalendarUI(
-  //   id || "0",
-  //   "year"
-  // );
+  const { result } = useCalendarUI(
+    id || "0",
+    "year"
+  );
   // console.log(grouped, "grouped");
   // console.log(total, "total");
   // console.log(byMonth, "byMonth");
@@ -27,28 +35,60 @@ const CalendarPage: FC = () => {
         title={"Календарь выплат"}
         backCallback={() => navigate(`/${id}`)}
       />
+      <div className={css.calendar}>
+        <div className={css.calendar__actions}>
+          <Input
+            label=""
+            inputAttributes={{
+              placeholder: "Поиск...",
+            }}
+          />
+        </div>
+        <div className={css.calendar__grid}>
+          {!!result.length &&
+            result.map((group, groupIndex) => {
+              const total = formatMoney(
+                group.reduce((acc, el) => {
+                  return acc + el.moneyAmount.value;
+                }, 0)
+              );
+              const groupDate = group[0].textCorrectDate;
 
-      {/* <div>
-        <h3>Сумма: {total.toFixed(2)} ₽</h3>
-        {Object.entries(grouped).map(([date, events]) => (
-          <div key={date}>
-            <h4>{date}</h4>
-            <ul>
-              {events.map((e, i) => (
-                <li key={i}>
-                  {e.eventType} {e.figi} → {JSON.stringify(e.raw)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <h3>По месяцам</h3>
-        {Object.entries(byMonth).map(([month, value]) => (
-          <div key={month}>
-            {month}: {value.toFixed(2)} ₽
-          </div>
-        ))}
-      </div> */}
+              return (
+                <div
+                  className={css.calendar__group}
+                  key={`${total.value}${groupDate}`}
+                >
+                  <div className={css.calendar__group_info}>
+                    <div className={css.calendar__group_date}>{groupDate}</div>
+                    <div className={css.calendar__group_total}>
+                      <span>Итого:</span>
+                      <strong>{total.formatted}</strong>
+                    </div>
+                  </div>
+                  {!!group.length &&
+                    group.map((event) => (
+                      <LineBlock key={`${event.figi}${event.name}`} greenLine={event.eventType !== "dividend"}>
+                        <div className={css.calendar__payout_type}>
+                          {event.eventType === "dividend"
+                            ? "Дивиденды"
+                            : "Купоны"}
+                        </div>
+                        <div className={css.calendar__payout}>
+                          <div className={css.calendar__payout_name}>
+                            {event.name}
+                          </div>
+                          <div className={css.calendar__payout_value}>
+                            {event.moneyAmount.formatted}
+                          </div>
+                        </div>
+                      </LineBlock>
+                    ))}
+                </div>
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 };
