@@ -108,29 +108,55 @@ export function groupByDay(events: TCalendarEvent[]) {
 }
 
 // Готовим итоговый массив для вывода в UI
-export function formatteEventsForUi(event: TCalendarEventWithCalc[], positions: TPortfolioPositionFull[], USD: number): TCalendarEventUi[] {
-  return event.map(event => {
-    const name = positions.find(el => el.figi === event.figi)?.name || 'Актив';
-    let moneyAmount = formatMoney(0);
-    if (event.eventType === 'coupon' && event.raw.payOneBond.currency === 'usd') {
-      moneyAmount = formatMoney(event.quantity * formatMoney(event.raw.payOneBond).value * USD)
-    }
-    if (event.eventType === 'dividend') {
-      moneyAmount = formatMoney(event.quantity * formatMoney(event.raw.dividendNet).value * 0.87)
-    }
-    if (event.eventType === 'coupon' && event.raw.payOneBond.currency !== 'usd') {
-      moneyAmount = formatMoney(event.quantity * formatMoney(event.raw.payOneBond).value)
-    }
-    const correctDate = moment(getAdjustedDate(event.eventType === 'dividend' ? event.raw.paymentDate : event.raw.couponDate))
-    const textCorrectDate = formatPaymentStatus(correctDate, event.received)
-    return {
-      ...event,
-      correctDate: correctDate.format('DD MMMM YYYY'),
-      textCorrectDate,
-      name: name,
-      moneyAmount
-    }
-  })
+export function formatteEventsForUi(
+  events: TCalendarEventWithCalc[],
+  positions: TPortfolioPositionFull[],
+  USD: number
+): TCalendarEventUi[] {
+  return events
+    .map(event => {
+      const name = positions.find(el => el.figi === event.figi)?.name || 'Актив';
+      let moneyAmount = formatMoney(0);
+
+      // 💰 Расчёт суммы выплаты
+      if (event.eventType === 'coupon' && event.raw.payOneBond.currency === 'usd') {
+        moneyAmount = formatMoney(
+          event.quantity * formatMoney(event.raw.payOneBond).value * USD
+        );
+      } else if (event.eventType === 'dividend') {
+        moneyAmount = formatMoney(
+          event.quantity * formatMoney(event.raw.dividendNet).value * 0.87
+        );
+      } else if (event.eventType === 'coupon' && event.raw.payOneBond.currency !== 'usd') {
+        moneyAmount = formatMoney(
+          event.quantity * formatMoney(event.raw.payOneBond).value
+        );
+      }
+
+      // 📅 Дата с учётом выходных
+      const rawDate =
+        event.eventType === 'dividend'
+          ? event.raw.paymentDate
+          : event.raw.couponDate;
+
+      const correctDate = moment(getAdjustedDate(rawDate));
+      const textCorrectDate = formatPaymentStatus(correctDate, event.received);
+
+      return {
+        ...event,
+        correctDate: correctDate.format('DD.MM.YYYY'),
+        textCorrectDate,
+        name,
+        moneyAmount,
+      };
+    })
+    // 🧹 Фильтрация купонов со вчерашней датой
+    .filter(event => {
+      if (event.eventType !== 'coupon') return true;
+      const correct = moment(event.correctDate, 'DD.MM.YYYY').startOf('day');
+      const yesterday = moment().subtract(1, 'day').startOf('day');
+      return !correct.isSame(yesterday, 'day'); // убираем если вчера
+    });
 }
 
 // Группируем по дате платежа для финала

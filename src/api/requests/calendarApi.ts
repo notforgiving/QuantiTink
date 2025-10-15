@@ -41,7 +41,7 @@ export async function fetchGetDividendsAPI({
 
             return data;
         },
-        { ttl: 12 * 60 * 60 * 1000 } // 12 часов
+        { ttl: 3 * 60 * 60 * 1000 } // 3 часа
     );
 }
 
@@ -81,6 +81,6 @@ export async function fetchGetBondCouponsAPI({
 
             return data;
         },
-        { ttl: 12 * 60 * 60 * 1000 } // 12 часов
+        { ttl: 3 * 60 * 60 * 1000 } // 3 часа
     );
 }
