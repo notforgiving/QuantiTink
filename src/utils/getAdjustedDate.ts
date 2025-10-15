@@ -27,6 +27,8 @@ export function getAdjustedDate(dateStr: string): string {
 export function formatPaymentStatus(dateStr: moment.Moment, received: boolean): string {
     const today = moment().startOf('day');
     const tomorrow = moment().add(1, 'day').startOf('day');
+    const currentYear = moment().year();
+    const dateYear = dateStr.year();
 
     if (!received && dateStr.isBefore(today, 'day')) {
         return "Ожидается";
@@ -35,6 +37,8 @@ export function formatPaymentStatus(dateStr: moment.Moment, received: boolean): 
     } else if (dateStr.isSame(tomorrow, 'day')) {
         return "Завтра";
     } else {
-        return dateStr.format('DD MMMM'); // Например: 13 октября
+        // Формат даты в зависимости от года
+        const format = dateYear === currentYear ? 'DD MMMM' : 'DD MMMM YYYY';
+        return dateStr.format(format);
     }
 }
