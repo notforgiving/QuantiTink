@@ -20,6 +20,8 @@ export type TQuotation = {
   nano: number;
 }
 
+export type TEventType = "EVENT_TYPE_CPN" | "EVENT_TYPE_MTY"
+
 export enum InstrumentType {
   Bond = "bond",
   Share = "share",

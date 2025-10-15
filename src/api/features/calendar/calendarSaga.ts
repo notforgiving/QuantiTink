@@ -39,7 +39,6 @@ function* fetchCalendarSaga(action: ReturnType<typeof fetchCalendarRequest>) {
         // 6) нормализуем → массив событий календаря
         const events: TCalendarEvent[] = responses.flatMap<TCalendarEvent>((resp, idx): TCalendarEvent[] => {
             const pos = filtered[idx];
-
             if ("dividends" in resp) {
                 // дивиденды по акции
                 return resp.dividends.map<TCalendarEvent>((d: TDividend) => ({
@@ -62,6 +61,7 @@ function* fetchCalendarSaga(action: ReturnType<typeof fetchCalendarRequest>) {
 
             return [];
         });
+
         yield put(fetchCalendarSuccess({ accountId, events }));
     } catch (err: any) {
         yield put(

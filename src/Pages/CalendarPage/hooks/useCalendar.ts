@@ -22,6 +22,7 @@ export type TCalendarEventUi = TCalendarEventWithCalc & {
 export function useCalendarUI(accountId: string, filter: "week" | "month" | "year" | "2025" | "dividends") {
   const accounts = useAccounts();
   const { events, loading, error } = useCalendar(accountId);
+
   const account = accounts?.data?.find((el) => el.id === accountId) ?? null;
   const { rates: { USD } } = useCurrency();
   const operations = useMemo(() => {
@@ -29,8 +30,7 @@ export function useCalendarUI(accountId: string, filter: "week" | "month" | "yea
       (op) => (op.instrumentType === 'share') && (op.type === 'Покупка ценных бумаг' || op.type === 'Покупка ценных бумаг с карты' || op.type === 'Продажа ценных бумаг' || op.type === 'Выплата дивидендов' || op.type === 'Выплата дивидендов на карту')
     ) ?? [];
   }, [account?.operations]);
-
-
+  
   // Массив без дивидендов
   const notResivedDividends = resivedDividends(events.filter(el => el.eventType === 'dividend'), operations)
 
@@ -40,11 +40,13 @@ export function useCalendarUI(accountId: string, filter: "week" | "month" | "yea
   // ЕДИНЫЙ МАССИВ ВЫПЛАТ С КОЛИЧЕСТВОМ
   const unionEventsWithQantity = [...notResivedDividends, ...notResivedCoupons]
 
+
   const eventsForUi = formatteEventsForUi(unionEventsWithQantity, account?.positions || [], USD);
 
   // сортировка
   const sorted = sortEvents(eventsForUi);
 
+  // const result:any[] = [];
   const result = groupByCorrectDate(sorted);
 
   // фильтрация

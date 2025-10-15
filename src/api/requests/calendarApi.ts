@@ -51,12 +51,12 @@ export async function fetchGetBondCouponsAPI({
 }: {
     token: TTokenState["data"];
     figi: string;
-}): Promise<TBondCouponsResponse> {
+}): Promise<TBondCouponsResponse & { figi: string }> {
     return fetchWithCache(
         `calendarBond:${figi}`,
         async () => {
             const response = await fetch(
-                "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons",
+                "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondEvents",
                 {
                     method: "POST",
                     headers: {
@@ -64,7 +64,8 @@ export async function fetchGetBondCouponsAPI({
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        figi,
+                        instrumentId: figi,
+                        type: "EVENT_TYPE_CPN,EVENT_TYPE_MTY",
                         from: moment().add(-3, "day").toISOString(),
                         to: moment().add(1, "year").toISOString(),
                     }),
@@ -78,8 +79,10 @@ export async function fetchGetBondCouponsAPI({
                     `Ошибка загрузки данных по выплатам купонов ${figi}`
                 );
             }
-
-            return data;
+            return {
+                figi: figi,
+                ...data
+            };
         },
         { ttl: 3 * 60 * 60 * 1000 } // 3 часа
     );

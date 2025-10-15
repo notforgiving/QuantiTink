@@ -9,8 +9,8 @@ import { formatPaymentStatus, getAdjustedDate } from "./getAdjustedDate";
 // Сортировка по дате
 export function sortEvents(events: TCalendarEventUi[]): TCalendarEventUi[] {
   return [...events].sort((a, b) => {
-    const dateA = a.raw.couponDate || a.raw.paymentDate;
-    const dateB = b.raw.couponDate || b.raw.paymentDate;
+    const dateA = a.raw.payDate || a.raw.paymentDate;
+    const dateB = b.raw.payDate || b.raw.paymentDate;
     return moment(dateA).valueOf() - moment(dateB).valueOf();
   });
 }
@@ -137,7 +137,7 @@ export function formatteEventsForUi(
       const rawDate =
         event.eventType === 'dividend'
           ? event.raw.paymentDate
-          : event.raw.couponDate;
+          : event.raw.payDate;
 
       const correctDate = moment(getAdjustedDate(rawDate));
       const textCorrectDate = formatPaymentStatus(correctDate, event.received);

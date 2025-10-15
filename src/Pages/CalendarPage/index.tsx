@@ -21,10 +21,8 @@ const CalendarPage: FC = () => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
 
-  const { result } = useCalendarUI(
-    id || "0",
-    "year"
-  );
+  const { result } = useCalendarUI(id || "0", "year");
+  
   // console.log(grouped, "grouped");
   // console.log(total, "total");
   // console.log(byMonth, "byMonth");
@@ -67,12 +65,26 @@ const CalendarPage: FC = () => {
                     </div>
                   </div>
                   {!!group.length &&
-                    group.map((event) => (
-                      <LineBlock key={`${event.figi}${event.name}`} greenLine={event.eventType !== "dividend"}>
+                    group.map((event,eventIndex) => (
+                      <LineBlock
+                        key={`${event.raw.eventNumber}${eventIndex}`}
+                        greenLine={event.eventType !== "dividend"}
+                      >
                         <div className={css.calendar__payout_type}>
-                          {event.eventType === "dividend"
-                            ? "Дивиденды"
-                            : "Купоны"}
+                          {event.eventType === "dividend" && "Дивиденды"}
+                          {event.eventType === "coupon" &&
+                            event.raw.eventType === "EVENT_TYPE_CPN" &&
+                            (event.raw.operationType !== "OA" ||
+                              event.raw.operationType !== "OM") &&
+                            "Купон"}
+                          {event.eventType === "coupon" &&
+                            event.raw.eventType === "EVENT_TYPE_MTY" &&
+                            event.raw.operationType === "OA" &&
+                            "Амортизация"}
+                          {event.eventType === "coupon" &&
+                            event.raw.eventType === "EVENT_TYPE_MTY" &&
+                            event.raw.operationType === "OM" &&
+                            "Погашение"}
                         </div>
                         <div className={css.calendar__payout}>
                           <div className={css.calendar__payout_name}>
