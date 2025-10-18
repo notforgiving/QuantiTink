@@ -4,7 +4,7 @@ import { TCalendarEvent } from "api/features/calendar/calendarType";
 import { useCalendar } from "api/features/calendar/useCalendar";
 import { useCurrency } from "api/features/currency/useCurrency";
 
-import { aggregateByMonth, calcTotal, filterEvents, formatteEventsForUi, groupByCorrectDate, groupByDay, resivedCoupons, resivedDividends, sortEvents } from "utils/calendar";
+import { formatteEventsForUi, groupByCorrectDate, resivedCoupons, resivedDividends, sortEvents } from "utils/calendar";
 import { TFormatMoney } from "utils/formatMoneyAmount";
 
 export type TCalendarEventWithCalc = TCalendarEvent & {
@@ -30,7 +30,7 @@ export function useCalendarUI(accountId: string, filter: "week" | "month" | "yea
       (op) => (op.instrumentType === 'share') && (op.type === 'Покупка ценных бумаг' || op.type === 'Покупка ценных бумаг с карты' || op.type === 'Продажа ценных бумаг' || op.type === 'Выплата дивидендов' || op.type === 'Выплата дивидендов на карту')
     ) ?? [];
   }, [account?.operations]);
-  
+
   // Массив без дивидендов
   const notResivedDividends = resivedDividends(events.filter(el => el.eventType === 'dividend'), operations)
 
@@ -49,17 +49,17 @@ export function useCalendarUI(accountId: string, filter: "week" | "month" | "yea
   // const result:any[] = [];
   const result = groupByCorrectDate(sorted);
 
-  // фильтрация
-  const filtered = filterEvents(events, filter);
+  // // фильтрация
+  // const filtered = filterEvents(events, filter);
 
-  // группировка
-  const grouped = groupByDay(filtered);
+  // // группировка
+  // const grouped = groupByDay(filtered);
 
-  // сумма
-  const total = calcTotal(filtered);
+  // // сумма
+  // const total = calcTotal(filtered);
 
-  // по месяцам
-  const byMonth = aggregateByMonth(filtered);
+  // // по месяцам
+  // const byMonth = aggregateByMonth(filtered);
 
-  return { loading, error, grouped, total, byMonth, result };
+  return { loading, error, result };
 }
