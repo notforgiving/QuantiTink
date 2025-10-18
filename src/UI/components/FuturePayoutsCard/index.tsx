@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { useTheme } from "api/features/user/useUser";
 import moment from "moment";
 import { TCalendarEventUi } from "Pages/CalendarPage/hooks/useCalendar";
@@ -13,90 +13,17 @@ import {
 
 import { formatMoney } from "utils/formatMoneyAmount";
 
+import { useFuturePayoutsCard } from "./hooks/useFuturePayoutsCard";
+
 import css from "./styles.module.scss";
 
-type Props = {
-  result: TCalendarEventUi[][];
+type TFuturePayoutsCardProps = {
+  eventData: TCalendarEventUi[][];
 };
 
-const FuturePayoutsCard: FC<Props> = ({ result }) => {
-  // --- 1️⃣ Плоский список положительных выплат ---
-  const flatEvents = useMemo(
-    () => result.flat().filter((ev) => ev.moneyAmount?.value > 0),
-    [result]
-  );
-
-  // --- 2️⃣ Агрегируем выплаты по месяцам и по типам ---
-  const monthlyAggregated = useMemo(() => {
-    const map = new Map<string, { coupons: number; dividends: number }>();
-
-    flatEvents.forEach((ev) => {
-      const date =
-        ev.raw.payDate ||
-        ev.raw.paymentDate ||
-        ev.raw.couponEndDate ||
-        ev.raw.eventDate;
-      if (!date) return;
-
-      const key = moment(date).startOf("month").format("YYYY-MM");
-      const prev = map.get(key) || { coupons: 0, dividends: 0 };
-
-      const value = ev.moneyAmount.value || 0;
-
-      // Определяем тип выплаты напрямую по eventType
-      if (ev.eventType === "coupon") {
-        prev.coupons += value;
-      } else if (ev.eventType === "dividend") {
-        prev.dividends += value;
-      }
-
-      map.set(key, prev);
-    });
-
-    return Array.from(map.entries())
-      .map(([month, { coupons, dividends }]) => ({
-        month,
-        coupons,
-        dividends,
-        total: coupons + dividends,
-      }))
-      .sort((a, b) => (a.month > b.month ? 1 : -1));
-  }, [flatEvents]);
-
-  // --- 3️⃣ Собираем 12 месяцев вперёд ---
-  const now = moment().startOf("month");
-  const next12Months = Array.from({ length: 12 }).map((_, i) =>
-    now.clone().add(i, "months")
-  );
-
-  const monthlyData = next12Months.map((m) => {
-    const key = m.format("YYYY-MM");
-    const found = monthlyAggregated.find((x) => x.month === key);
-
-    const value = (found?.dividends ?? 0) + (found?.coupons ?? 0);
-
-    return {
-      month: m.format("MMM"), // короткое имя для оси
-      fullMonth: m.toDate(),
-      dividends: found?.dividends ?? 0,
-      coupons: found?.coupons ?? 0,
-      value,
-      formatted: formatMoney(value).formatted.replace(/\s/g, ""),
-    };
-  });
-
-  // --- первые 6 месяцев для графика ---
-  const chartData = monthlyData.slice(0, 6);
-
-  // --- 4️⃣ Суммарные значения за 6 месяцев ---
-  const total6mCoupons = chartData.reduce((acc, el) => acc + el.coupons, 0);
-  const total6mDividends = chartData.reduce((acc, el) => acc + el.dividends, 0);
-  const total6mValue = total6mCoupons + total6mDividends;
-
-  const totalYear = formatMoney(total6mValue); // 👈 теперь за 6 мес
-  const avgMonth = formatMoney(total6mValue / 6); // 👈 среднее тоже по 6 мес
-
+const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
   const theme = useTheme();
+  const { chartData, avgMonth, totalYear } = useFuturePayoutsCard(eventData);
 
   // --- 5️⃣ JSX ---
   return (
@@ -112,7 +39,6 @@ const FuturePayoutsCard: FC<Props> = ({ result }) => {
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={chartData} margin={{ top: 10, bottom: 0 }}>
             <defs>
-              {/* Монотонная заливка для дивидендов */}
               <pattern
                 id="dividendsPattern"
                 width="6"
@@ -153,11 +79,14 @@ const FuturePayoutsCard: FC<Props> = ({ result }) => {
               dataKey="month"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: `${theme === 'light' ? "#001c18" : "#ffffffb3"}`, fontSize: 12 }}
+              tick={{
+                fill: `${theme === "light" ? "#001c18" : "#ffffffb3"}`,
+                fontSize: 12,
+              }}
             />
             <Tooltip
               cursor={{ fill: "rgba(255,255,255,0.05)" }}
-              content={({ active, payload, label }) => {
+              content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
 
                 const item = payload[0].payload;
@@ -168,7 +97,9 @@ const FuturePayoutsCard: FC<Props> = ({ result }) => {
                 return (
                   <div
                     style={{
-                      background: `${theme === 'light' ? "#1a1a1a" : "#001c18ff"}`,
+                      background: `${
+                        theme === "light" ? "#1a1a1a" : "#001c18ff"
+                      }`,
                       border: "none",
                       borderRadius: 8,
                       color: "#fff",
@@ -207,14 +138,14 @@ const FuturePayoutsCard: FC<Props> = ({ result }) => {
               dataKey="dividends"
               stackId="a"
               radius={[0, 0, 0, 0]}
-              maxBarSize={36}
+              maxBarSize={window.innerWidth <= 768 ? 26 : 36}
               fill="url(#dividendsPattern)"
             />
             <Bar
               dataKey="coupons"
               stackId="a"
               radius={[6, 6, 0, 0]}
-              maxBarSize={36}
+              maxBarSize={window.innerWidth <= 768 ? 26 : 36}
               fill="url(#couponsPattern)"
             >
               <LabelList
@@ -222,8 +153,8 @@ const FuturePayoutsCard: FC<Props> = ({ result }) => {
                 position="top"
                 dy={-6}
                 style={{
-                  fill: `${theme === 'light' ? "#001c18" : "#ffffffb3"}`,
-                  fontSize: 12,
+                  fill: `${theme === "light" ? "#001c18" : "#ffffffb3"}`,
+                  fontSize: window.innerWidth <= 768 ? 10 : 12,
                   fontWeight: 500,
                 }}
               />

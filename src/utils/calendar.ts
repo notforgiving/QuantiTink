@@ -6,28 +6,6 @@ import { TCalendarEventUi, TCalendarEventWithCalc } from "Pages/CalendarPage/hoo
 import { formatMoney } from "./formatMoneyAmount";
 import { formatPaymentStatus, getAdjustedDate } from "./getAdjustedDate";
 
-// Сортировка по дате
-export function sortEvents(events: TCalendarEventUi[]): TCalendarEventUi[] {
-  return [...events].sort((a, b) => {
-    const dateA = a.raw.payDate || a.raw.paymentDate;
-    const dateB = b.raw.payDate || b.raw.paymentDate;
-    return moment(dateA).valueOf() - moment(dateB).valueOf();
-  });
-}
-
-export function uniqueFigis(events: TCalendarEvent[]): string[] {
-  return Array.from(new Set(events.map(e => e.figi)));
-}
-
-function mapOperationsByFigi<T extends { figi: string; opeartions: any[] }>(
-  items: T[]
-): Record<string, any[]> {
-  return items.reduce((acc, item) => {
-    acc[item.figi] = item.opeartions;
-    return acc;
-  }, {} as Record<string, any[]>);
-}
-
 // отсекаем ненужные выплаты по дивидендам, которые нам не полагаются
 export function resivedDividends(events: TCalendarEvent[], operations: TOperation[]): TCalendarEventWithCalc[] {
   // 1. Получаем уникальные figi
@@ -82,7 +60,6 @@ export function resivedDividends(events: TCalendarEvent[], operations: TOperatio
     // 8. Исключаем уже полученные
     .filter(ev => !ev.received);
 }
-
 export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPositionFull[]): TCalendarEventWithCalc[] {
   return events.filter(event => formatMoney(event?.raw.payOneBond).value !== 0).map(event => {
     const position = positions.find(pos => pos.figi === event.figi);
@@ -95,18 +72,6 @@ export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPo
     };
   });
 }
-
-// Группировка по дню
-export function groupByDay(events: TCalendarEvent[]) {
-  return events.reduce<Record<string, TCalendarEvent[]>>((acc, ev) => {
-    const date = ev.raw.couponDate || ev.raw.paymentDate;
-    const key = moment(date).format("YYYY-MM-DD");
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(ev);
-    return acc;
-  }, {});
-}
-
 // Готовим итоговый массив для вывода в UI
 export function formatteEventsForUi(
   events: TCalendarEventWithCalc[],
@@ -158,7 +123,14 @@ export function formatteEventsForUi(
       return !correct.isSame(yesterday, 'day'); // убираем если вчера
     });
 }
-
+// Сортировка по дате
+export function sortEvents(events: TCalendarEventUi[]): TCalendarEventUi[] {
+  return [...events].sort((a, b) => {
+    const dateA = a.raw.payDate || a.raw.paymentDate;
+    const dateB = b.raw.payDate || b.raw.paymentDate;
+    return moment(dateA).valueOf() - moment(dateB).valueOf();
+  });
+}
 // Группируем по дате платежа для финала
 export function groupByCorrectDate(
   events: TCalendarEventUi[]
@@ -175,65 +147,14 @@ export function groupByCorrectDate(
 
   return Array.from(map.values());
 }
-
-// Фильтрация по периоду
-export function filterEvents(
-  events: TCalendarEvent[],
-  filter: "week" | "month" | "year" | "2025" | "dividends"
-) {
-  const now = moment();
-
-  if (filter === "dividends") {
-    return events.filter((ev) => ev.eventType === "dividend");
-  }
-
-  // периоды
-  const endDates: Record<"week" | "month" | "year" | "2025", moment.Moment> = {
-    week: now.clone().add(7, "days"),
-    month: now.clone().add(1, "month"),
-    year: now.clone().add(1, "year"),
-    "2025": moment("2026-01-01"),
-  };
-
-  const end = endDates[filter as keyof typeof endDates];
-
-  return events.filter((ev) => {
-    const date = moment(ev.raw.couponDate || ev.raw.paymentDate);
-    if (filter === "2025") return date.year() === 2025;
-    return date.isSameOrBefore(end, "day");
-  });
+export function uniqueFigis(events: TCalendarEvent[]): string[] {
+  return Array.from(new Set(events.map(e => e.figi)));
 }
-
-// Подсчёт суммы
-export function calcTotal(events: TCalendarEvent[]): number {
-  return events.reduce((sum, ev) => {
-    if (ev.eventType === "dividend") {
-      // дивиденды с налогом 13%
-      const amount = parseFloat(ev.raw.dividendNet?.units || "0");
-      return sum + amount * 0.87;
-    }
-    if (ev.eventType === "coupon") {
-      const units = parseFloat(ev.raw.payOneBond?.units || "0");
-      const nano = ev.raw.payOneBond?.nano || 0;
-      const amount = units + nano / 1e9;
-      return sum + amount;
-    }
-    return sum;
-  }, 0);
-}
-
-// Агрегация по месяцам
-export function aggregateByMonth(events: TCalendarEvent[]) {
-  return events.reduce<Record<string, number>>((acc, ev) => {
-    const date = ev.raw.couponDate || ev.raw.paymentDate;
-    const key = moment(date).format("YYYY-MM");
-    const value =
-      ev.eventType === "dividend"
-        ? parseFloat(ev.raw.dividendNet?.units || "0") * 0.87
-        : parseFloat(ev.raw.payOneBond?.units || "0") +
-        (ev.raw.payOneBond?.nano || 0) / 1e9;
-
-    acc[key] = (acc[key] || 0) + value;
+export function mapOperationsByFigi<T extends { figi: string; opeartions: any[] }>(
+  items: T[]
+): Record<string, any[]> {
+  return items.reduce((acc, item) => {
+    acc[item.figi] = item.opeartions;
     return acc;
-  }, {});
+  }, {} as Record<string, any[]>);
 }

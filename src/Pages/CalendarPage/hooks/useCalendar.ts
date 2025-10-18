@@ -19,7 +19,14 @@ export type TCalendarEventUi = TCalendarEventWithCalc & {
   moneyAmount: TFormatMoney;
 }
 
-export function useCalendarUI(accountId: string, filter: "week" | "month" | "year" | "2025" | "dividends") {
+
+export type TUseCalendarUI = (props: string) => {
+  loading: boolean;
+  error: string | null;
+  result: TCalendarEventUi[][]
+}
+
+export const useCalendarUI: TUseCalendarUI = (accountId) => {
   const accounts = useAccounts();
   const { events, loading, error } = useCalendar(accountId);
 
@@ -37,29 +44,17 @@ export function useCalendarUI(accountId: string, filter: "week" | "month" | "yea
   // Нужен массив купонов с указанием количества бондов для получения выплаты
   const notResivedCoupons = resivedCoupons(events.filter(el => el.eventType === 'coupon'), account?.positions || [])
 
-  // ЕДИНЫЙ МАССИВ ВЫПЛАТ С КОЛИЧЕСТВОМ
+  // Единый массив
   const unionEventsWithQantity = [...notResivedDividends, ...notResivedCoupons]
 
-
+  // Добавляет корректные даты, названия и суммы
   const eventsForUi = formatteEventsForUi(unionEventsWithQantity, account?.positions || [], USD);
 
-  // сортировка
+  // сортируем по возрастанию даты
   const sorted = sortEvents(eventsForUi);
-
-  // const result:any[] = [];
+  
+  // группировка по дате платежа для вывода в UI
   const result = groupByCorrectDate(sorted);
-
-  // // фильтрация
-  // const filtered = filterEvents(events, filter);
-
-  // // группировка
-  // const grouped = groupByDay(filtered);
-
-  // // сумма
-  // const total = calcTotal(filtered);
-
-  // // по месяцам
-  // const byMonth = aggregateByMonth(filtered);
 
   return { loading, error, result };
 }

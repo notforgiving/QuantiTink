@@ -80,7 +80,7 @@ const CalendarPage: FC = () => {
     "ALL"
   );
 
-  const { result } = useCalendarUI(id || "0", "year");
+  const { result } = useCalendarUI(id || "0");
 
   useEffect(() => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
@@ -147,7 +147,7 @@ const CalendarPage: FC = () => {
           />
         </div>
         <div className={css.chart}>
-          <FuturePayoutsCard result={result} />
+          <FuturePayoutsCard eventData={result} />
         </div>
         <div className={css.calendar__grid}>
           {filteredResult.length ? (
