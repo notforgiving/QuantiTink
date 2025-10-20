@@ -1,0 +1,40 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.goal__progress {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  height: 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+
+  &:global(._isMore) {
+    span {
+      &.active {
+        background: $orange-20;
+      }
+    }
+  }
+  &:global(._isLow) {
+    span {
+      &.active {
+        background: $red-10;
+      }
+    }
+  }
+
+  span {
+    width: 4px;
+    height: 8px;
+    border-radius: 2px;
+    background: $green-20;
+
+    &.active {
+      background: $green-80;
+    }
+  }
+}

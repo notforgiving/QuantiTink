@@ -16,6 +16,7 @@ export type TAccount = {
   closedDate: string;
   accessLevel: string;
   operations?: TFlattenedOperations['operations'];
+  goals?: Record<string, number>; // ✅ добавлено
 } & TFlattenedPortfolio;
 
 // Стейт слайса
@@ -192,6 +193,59 @@ const accountsSlice = createSlice({
         ),
       };
     },
+    // --- Fetch goals from Firebase ---
+    fetchGoalsRequest(state, action: PayloadAction<{ accountId: string }>) {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchGoalsSuccess(
+      state,
+      action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
+    ) {
+      const { accountId, goals } = action.payload;
+      state.data = state.data.map((acc) =>
+        acc.id === accountId ? { ...acc, goals } : acc
+      );
+      state.loading = false;
+    },
+    fetchGoalsFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    // --- Update (set) goals manually ---
+    setGoalsForAccount(
+      state,
+      action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
+    ) {
+      const { accountId, goals } = action.payload;
+      state.data = state.data.map((acc) =>
+        acc.id === accountId ? { ...acc, goals } : acc
+      );
+    },
+
+    // --- Save goals to Firebase ---
+    saveGoalsRequest(
+      state,
+      action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
+    ) {
+      state.loading = true;
+      state.error = null;
+    },
+    saveGoalsSuccess(
+      state,
+      action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
+    ) {
+      const { accountId, goals } = action.payload;
+      state.data = state.data.map((acc) =>
+        acc.id === accountId ? { ...acc, goals } : acc
+      );
+      state.loading = false;
+    },
+    saveGoalsFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -210,6 +264,13 @@ export const {
   fetchAssetSuccess,
   fetchAssetFailure,
   setAssetForAccount,
+  fetchGoalsRequest,
+  fetchGoalsSuccess,
+  fetchGoalsFailure,
+  setGoalsForAccount,
+  saveGoalsRequest,
+  saveGoalsSuccess,
+  saveGoalsFailure,
 } = accountsSlice.actions;
 
 

@@ -1,12 +1,14 @@
 import { fetchGetAccountsAPI, fetchGetAssetByAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI, fetchGetPositionBondAPI, fetchGetPositionEtfAPI, fetchGetPositionShareAPI } from "api/requests/accountsApi";
+import { getUserGoals, saveUserGoals } from "api/requests/goalsApi";
 import { RootState } from "api/store";
 import { all, call, fork, put, select, take, takeEvery, takeLatest } from "redux-saga/effects";
 import { InstrumentType } from "types/common";
 
 import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
+import { User } from "../user/userTypes";
 
-import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
+import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchGoalsFailure, fetchGoalsRequest, fetchGoalsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, saveGoalsFailure, saveGoalsRequest, saveGoalsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
 import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 import { selectAccountById } from "./useAccounts";
 
@@ -319,6 +321,36 @@ function* fetchAssetForPositionWorker({
   }
 }
 
+// --- Получение целей из Firebase ---
+function* fetchGoalsSaga(action: ReturnType<typeof fetchGoalsRequest>) {
+  const user: User = yield select((state: RootState) => state.user.currentUser);
+  try {
+    const { accountId } = action.payload; // accountId = userId
+    const goals: Record<string, number> = yield call(getUserGoals, user.id);
+    yield put(fetchGoalsSuccess({ accountId, goals }));
+  } catch (err: any) {
+    yield put(fetchGoalsFailure(err.message));
+  }
+}
+
+// --- Сохранение целей в Firebase ---
+function* saveGoalsSaga(action: ReturnType<typeof saveGoalsRequest>) {
+  try {
+    const { accountId, goals } = action.payload;
+    // вызываем API для записи целей в Firestore
+    yield call(saveUserGoals, accountId, goals);
+    // после успешной записи — обновляем состояние Redux
+    yield put(
+      saveGoalsSuccess({
+        accountId,
+        goals,
+      })
+    );
+  } catch (err: any) {
+    yield put(saveGoalsFailure(err.message));
+  }
+}
+
 function* watchAccountsAndPositions() {
   yield take(fetchAccountsSuccess.type); // ждём пока аккаунты загрузятся
   yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
@@ -333,4 +365,10 @@ export function* accountsSaga() {
 export function* watchAccountsLoaded() {
   yield takeEvery(fetchAccountsSuccess.type, fetchPortfoliosSaga);
   yield takeEvery(fetchAccountsSuccess.type, fetchOperationsSaga);
+}
+
+// --- watcher ---
+export function* wztchGoalsSaga() {
+  yield takeLatest(fetchGoalsRequest.type, fetchGoalsSaga);
+  yield takeLatest(saveGoalsRequest.type, saveGoalsSaga);
 }

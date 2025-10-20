@@ -83,10 +83,12 @@
         }
 
         .blockItem__value {
-          display: grid;
-          grid-template-columns: 1fr 80px;
-          gap: 5px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
           justify-items: flex-end;
+          position: relative;
+          margin-top: 6px;
 
           @include phone {
             grid-template-columns: 1fr 70px;
@@ -95,10 +97,10 @@
         }
 
         span {
-          display: flex;
-          gap: 5px;
+          // display: flex;
+          // gap: 5px;
           font-weight: normal;
-          font-size: 16px;
+          // font-size: 16px;
           text-wrap-mode: nowrap;
           &:last-child {
             font-weight: 600;
@@ -130,7 +132,7 @@
     &:first-child {
       span {
         font-weight: 700;
-        font-size: 18px;
+        // font-size: 18px;
       }
     }
 

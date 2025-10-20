@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReactComponent as CalendarSvg } from "assets/calendar.svg";
 import { ReactComponent as CashSvg } from "assets/cash.svg";
@@ -12,6 +12,9 @@ import { ReactComponent as TicketSvg } from "assets/ticket.svg";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import Button from "UI/components/Button";
+import GoalProgress from "UI/components/GoalProgress";
+import Goals from "UI/components/Goals";
+import { useGoals } from "UI/components/Goals/hooks/useGoals";
 
 import { pluralize } from "utils/usePluralize";
 
@@ -42,6 +45,18 @@ const AccountPageMakeup: FC = () => {
     portfolioBonds,
     portfolioEtf,
   } = useAccount(id || "");
+
+  const goalsProps = useMemo(() => {
+    if (!portfolioShare || !portfolioBonds || !portfolioEtf) return null;
+
+    return {
+      shares: portfolioShare.percent,
+      bonds: Object.entries(portfolioBonds),
+      etfs: Object.entries(portfolioEtf),
+    };
+  }, [portfolioShare, portfolioBonds, portfolioEtf]);
+
+  const goalsUi = useGoals(goalsProps);
 
   return (
     <div>
@@ -81,10 +96,6 @@ const AccountPageMakeup: FC = () => {
                 buttonAttributes={{
                   type: "button",
                   onClick: () => navigate(`/${id}/calendar`),
-                  // disabled:
-                  //   shares.value === 0 &&
-                  //   rubBonds.value === 0 &&
-                  //   usdBonds.value === 0,
                 }}
               />
             )}
@@ -154,42 +165,55 @@ const AccountPageMakeup: FC = () => {
               <SharesSvg />
               <strong>Акции:</strong>
               <span className={css.blockItem__value}>
+                <GoalProgress size={goalsUi["shares"]} />
                 <span>{portfolioShare.value.formatted}</span>{" "}
-                <span>({portfolioShare.percent}%)</span>
+                <span>({portfolioShare.percent}%) </span>
               </span>
             </div>
           )}
           {portfolioBonds &&
-            Object.entries(portfolioBonds).map(([key, bond]) => (
-              <div
-                className={cn(css.portfolio_blockItem, "isBond")}
-                onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
-                key={key}
-              >
-                {bond.icon}
-                <strong>{bond.name}</strong>
-                <span className={css.blockItem__value}>
-                  <span>{bond.value.formatted}</span>
-                  <span>({bond.percent}%)</span>
-                </span>
-              </div>
-            ))}
+            Object.entries(portfolioBonds).map(([key, bond]) => {
+              return (
+                <div
+                  className={cn(css.portfolio_blockItem, "isBond")}
+                  onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
+                  key={key}
+                >
+                  {bond.icon}
+                  <strong>{bond.name}</strong>
+                  <span className={css.blockItem__value}>
+                    <GoalProgress size={goalsUi[key]} />
+                    <span>{bond.value.formatted}</span>
+                    <span>({bond.percent}%)</span>
+                  </span>
+                </div>
+              );
+            })}
           {portfolioEtf &&
-            Object.entries(portfolioEtf).map(([key, bond]) => (
-              <div
-                className={cn(css.portfolio_blockItem, "isBond")}
-                onClick={() => navigate(`/${account?.id}/etf/${key}`)}
-                key={key}
-              >
-                <CubeSvg />
-                <strong>{bond.name}</strong>
-                <span className={css.blockItem__value}>
-                  <span>{bond.value.formatted}</span>
-                  <span>({bond.percent}%)</span>
-                </span>
-              </div>
-            ))}
+            Object.entries(portfolioEtf).map(([key, etf]) => {
+              return (
+                <div
+                  className={cn(css.portfolio_blockItem, "isBond")}
+                  onClick={() => navigate(`/${account?.id}/etf/${key}`)}
+                  key={key}
+                >
+                  <CubeSvg />
+                  <strong>{etf.name}</strong>
+                  <span className={css.blockItem__value}>
+                    <GoalProgress size={goalsUi[key]} />
+                    <span>{etf.value.formatted}</span>
+                    <span>({etf.percent}%)</span>
+                  </span>
+                </div>
+              );
+            })}
         </div>
+        <Goals
+          shares={portfolioShare.percent !== 0}
+          bond={portfolioBonds && Object.entries(portfolioBonds)}
+          etfs={portfolioEtf && Object.entries(portfolioEtf)}
+          account={account}
+        />
       </div>
     </div>
   );
