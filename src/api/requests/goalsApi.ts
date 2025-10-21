@@ -15,16 +15,21 @@ const GOALS_COLLECTION = "goals";
 /**
  * 🔍 Найти документ с целями по userId
  */
-const findGoalsDocByUserId = async (userId: string) => {
+const findGoalsDocByUserId = async (userId: string, accountId: string) => {
     const goalsRef = collection(db, GOALS_COLLECTION);
-    const q = query(goalsRef, where("userid", "==", userId), limit(1));
+    const q = query(
+        goalsRef,
+        where("userid", "==", userId),
+        where("accountId", "==", accountId),
+        limit(1)
+    );
     const snapshot = await getDocs(q);
 
     if (!snapshot.empty) {
         const docSnap = snapshot.docs[0];
         return {
             id: docSnap.id,
-            data: docSnap.data() as { userid: string; goals: Record<string, number> },
+            data: docSnap.data() as { userid: string; accountid: string; goals: Record<string, number> },
         };
     }
 
@@ -35,9 +40,9 @@ const findGoalsDocByUserId = async (userId: string) => {
  * 📥 Получить цели пользователя
  */
 export const getUserGoals = async (
-    userId: string
+    userId: string, accountId: string
 ): Promise<Record<string, number>> => {
-    const found = await findGoalsDocByUserId(userId);
+    const found = await findGoalsDocByUserId(userId, accountId);
     return found?.data?.goals || {};
 };
 
@@ -46,10 +51,11 @@ export const getUserGoals = async (
  */
 export const saveUserGoals = async (
     userId: string,
-    goals: Record<string, number>
+    goals: Record<string, number>,
+    accountId: string
 ): Promise<void> => {
-    const found = await findGoalsDocByUserId(userId);
-    const payload = { userid: userId, goals };
+    const found = await findGoalsDocByUserId(userId, accountId);
+    const payload = { userid: userId, goals, accountId };
 
     if (found) {
         const docRef = doc(db, GOALS_COLLECTION, found.id);

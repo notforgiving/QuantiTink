@@ -52,7 +52,6 @@ export const useCalendarUI: TUseCalendarUI = (accountId) => {
 
   // сортируем по возрастанию даты
   const sorted = sortEvents(eventsForUi);
-  
   // группировка по дате платежа для вывода в UI
   const result = groupByCorrectDate(sorted);
 

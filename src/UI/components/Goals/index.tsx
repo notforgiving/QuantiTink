@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { saveGoalsRequest, TAccount } from "api/features/accounts/accountsSlice";
-import { useUser } from "api/features/user/useUser";
+import {
+  saveGoalsRequest,
+  TAccount,
+} from "api/features/accounts/accountsSlice";
 import cn from "classnames";
 import { TPortfolioItem } from "Pages/AccountPage/hook/useAccount";
 
@@ -14,13 +16,11 @@ interface IGoalsProps {
   shares?: boolean;
   bond: [string, TPortfolioItem][] | null;
   etfs: [string, TPortfolioItem][] | null;
-  account: TAccount | null
+  account: TAccount | null;
 }
 
-const Goals: FC<IGoalsProps> = ({ shares, bond, etfs,account }) => {
+const Goals: FC<IGoalsProps> = ({ shares, bond, etfs, account }) => {
   const dispatch = useDispatch();
-  const { currentUser } = useUser();
-
   const [open, setOpen] = useState<boolean>(false);
   const [values, setValues] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -91,8 +91,8 @@ const Goals: FC<IGoalsProps> = ({ shares, bond, etfs,account }) => {
       return;
     }
 
-    if (!currentUser?.id) {
-      console.warn("❌ Нет userId — невозможно сохранить цели");
+    if (!account?.id) {
+      console.warn("❌ Нет accountId — невозможно сохранить цели");
       return;
     }
 
@@ -101,8 +101,7 @@ const Goals: FC<IGoalsProps> = ({ shares, bond, etfs,account }) => {
       goalsData[key] = Number(val);
     }
 
-    dispatch(saveGoalsRequest({ accountId: currentUser.id, goals: goalsData }));
-    console.log("✅ Отправлено в Redux и Firebase:", goalsData);
+    dispatch(saveGoalsRequest({ accountId: account?.id || '0', goals: goalsData }));
     setOpen(false);
   };
 

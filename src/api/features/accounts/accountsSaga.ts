@@ -326,7 +326,7 @@ function* fetchGoalsSaga(action: ReturnType<typeof fetchGoalsRequest>) {
   const user: User = yield select((state: RootState) => state.user.currentUser);
   try {
     const { accountId } = action.payload; // accountId = userId
-    const goals: Record<string, number> = yield call(getUserGoals, user.id);
+    const goals: Record<string, number> = yield call(getUserGoals, user.id, accountId);
     yield put(fetchGoalsSuccess({ accountId, goals }));
   } catch (err: any) {
     yield put(fetchGoalsFailure(err.message));
@@ -336,9 +336,10 @@ function* fetchGoalsSaga(action: ReturnType<typeof fetchGoalsRequest>) {
 // --- Сохранение целей в Firebase ---
 function* saveGoalsSaga(action: ReturnType<typeof saveGoalsRequest>) {
   try {
+    const user: User = yield select((state: RootState) => state.user.currentUser);
     const { accountId, goals } = action.payload;
     // вызываем API для записи целей в Firestore
-    yield call(saveUserGoals, accountId, goals);
+    yield call(saveUserGoals, user.id, goals, accountId);
     // после успешной записи — обновляем состояние Redux
     yield put(
       saveGoalsSuccess({

@@ -66,7 +66,7 @@ export async function fetchGetBondCouponsAPI({
                     body: JSON.stringify({
                         instrumentId: figi,
                         type: "EVENT_TYPE_CPN,EVENT_TYPE_MTY",
-                        from: moment().add(-3, "day").toISOString(),
+                        from: moment().add(-7, "day").toISOString(),
                         to: moment().add(1, "year").toISOString(),
                     }),
                 }

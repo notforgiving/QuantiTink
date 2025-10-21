@@ -64,7 +64,6 @@ export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPo
   return events.filter(event => formatMoney(event?.raw.payOneBond).value !== 0).map(event => {
     const position = positions.find(pos => pos.figi === event.figi);
     const quantity = Number(position?.quantity?.units || 0);
-
     return {
       ...event,
       quantity,
@@ -118,9 +117,11 @@ export function formatteEventsForUi(
     // 🧹 Фильтрация купонов со вчерашней датой
     .filter(event => {
       if (event.eventType !== 'coupon') return true;
+
       const correct = moment(event.correctDate, 'DD.MM.YYYY').startOf('day');
-      const yesterday = moment().subtract(1, 'day').startOf('day');
-      return !correct.isSame(yesterday, 'day'); // убираем если вчера
+      const today = moment().startOf('day');
+
+      return !correct.isBefore(today, 'day'); // убираем все купоны до сегодняшнего дня
     });
 }
 // Сортировка по дате

@@ -50,11 +50,12 @@ const AccountPageMakeup: FC = () => {
     if (!portfolioShare || !portfolioBonds || !portfolioEtf) return null;
 
     return {
+      account, // 👈 добавляем
       shares: portfolioShare.percent,
       bonds: Object.entries(portfolioBonds),
       etfs: Object.entries(portfolioEtf),
     };
-  }, [portfolioShare, portfolioBonds, portfolioEtf]);
+  }, [portfolioShare, portfolioBonds, portfolioEtf, account]);
 
   const goalsUi = useGoals(goalsProps);
 
@@ -165,7 +166,7 @@ const AccountPageMakeup: FC = () => {
               <SharesSvg />
               <strong>Акции:</strong>
               <span className={css.blockItem__value}>
-                <GoalProgress size={goalsUi["shares"]} />
+                {goalsUi["shares"] && <GoalProgress size={goalsUi["shares"]} />}
                 <span>{portfolioShare.value.formatted}</span>{" "}
                 <span>({portfolioShare.percent}%) </span>
               </span>
@@ -182,7 +183,8 @@ const AccountPageMakeup: FC = () => {
                   {bond.icon}
                   <strong>{bond.name}</strong>
                   <span className={css.blockItem__value}>
-                    <GoalProgress size={goalsUi[key]} />
+                    {goalsUi[key] && <GoalProgress size={goalsUi[key]} />}
+
                     <span>{bond.value.formatted}</span>
                     <span>({bond.percent}%)</span>
                   </span>
@@ -200,7 +202,7 @@ const AccountPageMakeup: FC = () => {
                   <CubeSvg />
                   <strong>{etf.name}</strong>
                   <span className={css.blockItem__value}>
-                    <GoalProgress size={goalsUi[key]} />
+                    {goalsUi[key] && <GoalProgress size={goalsUi[key]} />}
                     <span>{etf.value.formatted}</span>
                     <span>({etf.percent}%)</span>
                   </span>

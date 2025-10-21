@@ -105,7 +105,6 @@ export const useAccount: TUseAccount = (accountId) => {
                     commissions += absValue;
                     break;
                 }
-                case "Удержание налога по дивидендам":
                 case "Удержание налога": {
                     taxes += absValue;
                     break;

@@ -47,6 +47,9 @@
     transition: 0.3s;
     width: 50vw;
     z-index: 20;
+    @include phone {
+      width: 100vw;
+    }
   }
   &__form {
     display: flex;
