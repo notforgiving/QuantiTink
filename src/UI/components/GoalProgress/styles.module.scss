@@ -5,7 +5,7 @@
   position: absolute;
   right: 0;
   bottom: calc(100% + 6px);
-  height: 5px;
+  height: 8px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -26,15 +26,33 @@
       }
     }
   }
+  &:global(._isLoading) {
+    span {
+      background: opacity-color($gray-10, 0.5);
+      animation: loading 1.5s ease-in-out 0s infinite;
+    }
+  }
 
   span {
     width: 4px;
-    height: 8px;
+    height: 100%;
     border-radius: 2px;
     background: $green-20;
 
     &.active {
       background: $green-80;
     }
+  }
+}
+
+@keyframes loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
   }
 }

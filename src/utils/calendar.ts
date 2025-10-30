@@ -16,8 +16,8 @@ export function resivedDividends(events: TCalendarEvent[], operations: TOperatio
     figi,
     opeartions: operations.filter(op => op.figi === figi).reverse()
   }))
-  // 3. Превращаем в объект { [figi]: Operation[] }
 
+  // 3. Превращаем в объект { [figi]: Operation[] }
   const uniqueByFigiObject: Record<string, TOperation[]> = mapOperationsByFigi(figiOpearions)
 
   // 3. Обрабатываем дивидендные события
@@ -60,16 +60,34 @@ export function resivedDividends(events: TCalendarEvent[], operations: TOperatio
     // 8. Исключаем уже полученные
     .filter(ev => !ev.received);
 }
-export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPositionFull[]): TCalendarEventWithCalc[] {
+export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPositionFull[], operations: TOperation[]): TCalendarEventWithCalc[] {
+  // 1. Получаем уникальные figi
+  const uniqueByFigiArray = uniqueFigis(events);
+
+  // 2. Собираем операции по каждому figi
+  const figiOpearions = uniqueByFigiArray.map(figi => ({
+    figi,
+    opeartions: operations.filter(op => op.figi === figi).reverse()
+  }))
+
+  // 3. Превращаем в объект { [figi]: Operation[] }
+  const uniqueByFigiObject: Record<string, TOperation[]> = mapOperationsByFigi(figiOpearions)
+
+  // 4.  Проверяем в операциях по счету получен ли купон и убираем его из списка, если уже пришел
+  
   return events.filter(event => formatMoney(event?.raw.payOneBond).value !== 0).map(event => {
     const position = positions.find(pos => pos.figi === event.figi);
     const quantity = Number(position?.quantity?.units || 0);
+    const received = uniqueByFigiObject[event.figi].some(op =>
+      op.type === 'Выплата купонов' &&
+      moment(op.date).isSameOrAfter(moment(event?.raw.payDate))
+    );
     return {
       ...event,
       quantity,
-      received: false,
+      received,
     };
-  });
+  }).filter(ev => !ev.received);
 }
 // Готовим итоговый массив для вывода в UI
 export function formatteEventsForUi(

@@ -166,7 +166,10 @@ const AccountPageMakeup: FC = () => {
               <SharesSvg />
               <strong>Акции:</strong>
               <span className={css.blockItem__value}>
-                {goalsUi["shares"] && <GoalProgress size={goalsUi["shares"]} />}
+                <GoalProgress
+                  size={goalsUi["shares"]}
+                  loading={!goalsUi["shares"]}
+                />
                 <span>{portfolioShare.value.formatted}</span>{" "}
                 <span>({portfolioShare.percent}%) </span>
               </span>
@@ -183,8 +186,7 @@ const AccountPageMakeup: FC = () => {
                   {bond.icon}
                   <strong>{bond.name}</strong>
                   <span className={css.blockItem__value}>
-                    {goalsUi[key] && <GoalProgress size={goalsUi[key]} />}
-
+                    <GoalProgress size={goalsUi[key]} loading={!goalsUi[key]} />
                     <span>{bond.value.formatted}</span>
                     <span>({bond.percent}%)</span>
                   </span>
@@ -202,7 +204,7 @@ const AccountPageMakeup: FC = () => {
                   <CubeSvg />
                   <strong>{etf.name}</strong>
                   <span className={css.blockItem__value}>
-                    {goalsUi[key] && <GoalProgress size={goalsUi[key]} />}
+                    <GoalProgress size={goalsUi[key]} loading={!goalsUi[key]} />
                     <span>{etf.value.formatted}</span>
                     <span>({etf.percent}%)</span>
                   </span>

@@ -43,7 +43,6 @@ export const useFuturePayoutsCard: TUseFuturePayoutsCard = (eventData) => {
 
             const value = ev.moneyAmount.value || 0;
 
-            // Определяем тип выплаты напрямую по eventType
             if (ev.eventType === "coupon") {
                 prev.coupons += value;
             } else if (ev.eventType === "dividend") {
@@ -69,37 +68,57 @@ export const useFuturePayoutsCard: TUseFuturePayoutsCard = (eventData) => {
         now.clone().add(i, "months")
     );
 
-    const monthlyData = next12Months.map((m) => {
-        const key = m.format("YYYY-MM");
-        const found = monthlyAggregated.find((x) => x.month === key);
+    const monthlyData = useMemo(() => {
+        return next12Months.map((m) => {
+            const key = m.format("YYYY-MM");
+            const found = monthlyAggregated.find((x) => x.month === key);
 
-        const value = (found?.dividends ?? 0) + (found?.coupons ?? 0);
+            const value = (found?.dividends ?? 0) + (found?.coupons ?? 0);
 
-        return {
-            month: m.format("MMM"), // короткое имя для оси
-            fullMonth: m.toDate(),
-            dividends: found?.dividends ?? 0,
-            coupons: found?.coupons ?? 0,
-            value,
-            formatted: formatMoney(value).formatted.replace(/\s/g, ""),
-        };
-    });
+            return {
+                month: m.format("MMM"), // короткое имя для оси
+                fullMonth: m.toDate(),
+                dividends: found?.dividends ?? 0,
+                coupons: found?.coupons ?? 0,
+                value,
+                formatted: formatMoney(value).formatted.replace(/\s/g, ""),
+            };
+        });
+    }, [next12Months, monthlyAggregated]);
 
-    // --- первые 6 месяцев для графика ---
-    const chartData: TChartData[] = monthlyData.slice(0, 6);
+    // --- 4️⃣ Определяем окно из 6 месяцев ---
+    // индекс первого месяца с выплатой (в пределах этих 12)
+    const firstIndexWithPayout = monthlyData.findIndex((m) => m.value > 0);
 
-    // --- 4️⃣ Суммарные значения за 6 месяцев ---
+    // старт по умолчанию
+    let startIndex = 0;
+
+    if (firstIndexWithPayout === -1) {
+        // выплат нет — показываем первые 6 месяцев (startIndex = 0)
+        startIndex = 0;
+    } else {
+        // хотим начать с первого месяца с выплатой
+        startIndex = firstIndexWithPayout;
+        // если начиная с firstIndexWithPayout не хватает до конца 12 месяцев взять 6 элементов,
+        // то сдвинем окно влево так, чтобы взять ровно 6 месяцев
+        const maxStart = Math.max(0, monthlyData.length - 6); // обычно 6
+        if (startIndex > maxStart) startIndex = maxStart;
+    }
+
+    // финальные 6 месяцев для графика
+    const chartData: TChartData[] = monthlyData.slice(startIndex, startIndex + 6);
+
+    // --- 5️⃣ Суммарные значения за 6 месяцев ---
     const total6mCoupons = chartData.reduce((acc, el) => acc + el.coupons, 0);
     const total6mDividends = chartData.reduce((acc, el) => acc + el.dividends, 0);
     const total6mValue = total6mCoupons + total6mDividends;
 
-    const totalYear = formatMoney(total6mValue); // 👈 теперь за 6 мес
-    const avgMonth = formatMoney(total6mValue / 6); // 👈 среднее тоже по 6 мес
-
+    const totalYear = formatMoney(total6mValue); // оставляем название, как было
+    const avgMonth = formatMoney(total6mValue / 6); // среднее по 6 мес (фиксированное)
 
     return {
         chartData,
         avgMonth,
         totalYear,
-    }
-}
+    };
+};

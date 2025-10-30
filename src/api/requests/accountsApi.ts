@@ -89,7 +89,7 @@ export async function fetchGetOperationsAPI({
 
       return data as TOperationsResponse;
     },
-    { ttl: 30 * 60 * 1000 } // 10 минут
+    { ttl: 30 * 60 * 1000 } // кэш 10 минут
   );
 }
 

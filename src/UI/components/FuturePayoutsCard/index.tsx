@@ -24,7 +24,7 @@ type TFuturePayoutsCardProps = {
 const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
   const theme = useTheme();
   const { chartData, avgMonth, totalYear } = useFuturePayoutsCard(eventData);
-
+  
   // --- 5️⃣ JSX ---
   return (
     <div className={css.card}>
@@ -36,8 +36,8 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
       </div>
 
       <div className={css.card__chart}>
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={chartData} margin={{ top: 10, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={chartData} margin={{ top: 40, bottom: 0 }}>
             <defs>
               <pattern
                 id="dividendsPattern"
@@ -133,7 +133,6 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
               }}
             />
             {/* --- stacked bar: дивиденды + купоны --- */}
-
             <Bar
               dataKey="dividends"
               stackId="a"

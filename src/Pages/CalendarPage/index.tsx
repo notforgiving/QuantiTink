@@ -81,7 +81,7 @@ const CalendarPage: FC = () => {
   );
 
   const { result } = useCalendarUI(id || "0");
-
+  
   useEffect(() => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
