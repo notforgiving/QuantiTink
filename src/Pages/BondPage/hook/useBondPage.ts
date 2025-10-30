@@ -12,6 +12,7 @@ type TResultOperation = {
     quantity: number;
     time: string;
     yield: string;
+    oneLote: TFormatMoney;
 };
 
 type TUseBond = (accountId: string, currency: string, figi: string) => {
@@ -22,6 +23,8 @@ type TUseBond = (accountId: string, currency: string, figi: string) => {
     currentNkd: TFormatMoney;
     paidCommissions: TFormatMoney;
     couponsReceived: TFormatMoney;
+    currentPriceOneLot: TFormatMoney;
+    averagePrice: TFormatMoney;
     averagePositionPrice: TFormatMoney;
     priceIncreasePercent: string;
     currentPercentageYield: string;
@@ -45,7 +48,7 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
         [account?.positions, figi]
     );
     const quantity = Number(bond?.quantity.units) || 0;
-
+    const currentPriceOneLot = bond ? formatMoney(bond.currentPrice) : formatMoney(0)
     const currentPriceValue = bond?.currentPrice ? formatMoney(bond.currentPrice).value * quantity : 0;
     const currentPrice = formatMoney(currentPriceValue);
 
@@ -89,9 +92,9 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
         };
     }, [bondOperations]);
 
-    const averagePositionPrice = bond?.averagePositionPrice
-        ? formatMoney(formatMoney(bond.averagePositionPrice, "rub").value * quantity)
-        : formatMoney(0);
+    const averagePrice = bond ? formatMoney(bond?.averagePositionPrice, "rub") : formatMoney(0);
+
+    const averagePositionPrice = formatMoney(averagePrice.value * quantity);
 
     const priceIncreaseAmount = formatMoney(currentPrice.value - averagePositionPrice.value);
 
@@ -125,6 +128,8 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
             const executedQty = op.trades
                 ? op.trades.reduce((sum, t) => sum + Number(t.quantity), 0)
                 : Number(op.quantity);
+            console.log(op);
+
             purchases.push({
                 date: moment(op.date).format("DD.MM.YYYY"),
                 time: moment.duration(moment().diff(op.date)).asMonths().toFixed(0),
@@ -133,6 +138,7 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
                 payment: formatMoney(-formatMoney(op.payment).value),
                 commissions: formatMoney(0),
                 yield: '0',
+                oneLote: formatMoney(op.price),
             });
         }
 
@@ -164,6 +170,7 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
 
     // разворачиваем, чтобы порядок был как в твоём примере
     const result = [...purchases].reverse();
+    console.log(result, 'result');
 
     return {
         name: bond?.name || 'Облигация',
@@ -173,6 +180,8 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
         currentNkd,
         paidCommissions,
         couponsReceived,
+        currentPriceOneLot,
+        averagePrice,
         averagePositionPrice,
         priceIncreasePercent,
         currentPercentageYield,

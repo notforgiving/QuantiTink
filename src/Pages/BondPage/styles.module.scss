@@ -117,13 +117,25 @@
       font-size: 22px;
       color: $orange-20;
 
-       @include phone {
+      @include phone {
         text-align: right;
-       }
+      }
     }
+  }
+  &__oneLot {
+    @include flex-center;
+    justify-content: space-between;
   }
 }
 
 .small {
   font-size: 14px;
+}
+
+.color {
+  color: $orange-20;
+
+  &:global(._isColor) {
+    color: $green-90;
+  }
 }

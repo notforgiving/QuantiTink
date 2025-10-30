@@ -1,0 +1,22 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.price {
+  @include flex-center;
+  display: inline-flex;
+  justify-content: flex-start;
+  gap: 6px;
+  &:global(._isGreen) {
+    color: $green-90;
+  }
+  &:global(._isYellow) {
+    color: $orange-20;
+  }
+  svg {
+    width: 12px;
+    height: auto;
+  }
+  span {
+    font-size: 16px;
+  }
+}

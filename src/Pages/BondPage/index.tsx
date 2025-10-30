@@ -4,6 +4,7 @@ import { ReactComponent as ArrowSvg } from "assets/arrow-forward.svg";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import LineBlock from "UI/components/LineBlock";
+import PriceLine from "UI/components/PriceLine";
 
 import { pluralize } from "utils/usePluralize";
 
@@ -22,6 +23,8 @@ const BondPage: FC = () => {
     currentNkd,
     paidCommissions,
     couponsReceived,
+    averagePrice,
+    currentPriceOneLot,
     averagePositionPrice,
     priceIncreasePercent,
     currentPercentageYield,
@@ -43,6 +46,10 @@ const BondPage: FC = () => {
               {averagePositionPrice.formatted}
               <ArrowSvg /> {currentPrice.formatted} / ({priceIncreasePercent}%)
             </span>
+          </div>
+          <div className={cn(css.bond__info)}>
+            <strong>Средняя цена:</strong>
+            <span>{averagePrice.formatted}</span>
           </div>
           <div className={cn(css.bond__info)}>
             <strong>Накопленный НКД:</strong>
@@ -96,13 +103,30 @@ const BondPage: FC = () => {
                     <span>Количество: </span>
                     <span>{item.quantity} шт</span>
                   </div>
+                  <div className={css.bond__oneLot}>
+                    <span>Цена покупки / Текущая цена: </span>
+                    <span>
+                      <PriceLine
+                        leftPrice={item.oneLote}
+                        rightPrice={currentPriceOneLot}
+                        color={
+                          item.oneLote.value < currentPriceOneLot.value
+                            ? "GREEN"
+                            : "YELLOW"
+                        }
+                      />
+                    </span>
+                  </div>
                   <div
                     className={css.bond__yield}
                     title="С учетом потраченных комиссий на покупку"
                   >
                     <span>Ткущая доходность</span>
                     <strong>
-                      <span className={css.small}>( {item.coupons.formatted} )</span> {item.yield}%
+                      <span className={css.small}>
+                        ({item.coupons.formatted})
+                      </span>{" "}
+                      {item.yield}%
                     </strong>
                   </div>
                 </div>
