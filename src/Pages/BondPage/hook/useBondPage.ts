@@ -128,7 +128,6 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
             const executedQty = op.trades
                 ? op.trades.reduce((sum, t) => sum + Number(t.quantity), 0)
                 : Number(op.quantity);
-            console.log(op);
 
             purchases.push({
                 date: moment(op.date).format("DD.MM.YYYY"),
@@ -170,7 +169,6 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
 
     // разворачиваем, чтобы порядок был как в твоём примере
     const result = [...purchases].reverse();
-    console.log(result, 'result');
 
     return {
         name: bond?.name || 'Облигация',
