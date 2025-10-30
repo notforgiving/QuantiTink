@@ -19,12 +19,18 @@ import css from "./styles.module.scss";
 
 type TFuturePayoutsCardProps = {
   eventData: TCalendarEventUi[][];
+  onMonthSelect?: (month: string | null) => void; // ← добавляем
+  selectedMonth?: string | null;
 };
 
-const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
+const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
+  eventData,
+  onMonthSelect,
+  selectedMonth,
+}) => {
   const theme = useTheme();
   const { chartData, avgMonth, totalYear } = useFuturePayoutsCard(eventData);
-  
+
   // --- 5️⃣ JSX ---
   return (
     <div className={css.card}>
@@ -36,7 +42,7 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
       </div>
 
       <div className={css.card__chart}>
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width="100%" height={170}>
           <BarChart data={chartData} margin={{ top: 40, bottom: 0 }}>
             <defs>
               <pattern
@@ -139,6 +145,21 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
               radius={[0, 0, 0, 0]}
               maxBarSize={window.innerWidth <= 768 ? 26 : 36}
               fill="url(#dividendsPattern)"
+              onClick={(data) => {
+                const monthKey = moment(data.payload.fullMonth).format(
+                  "MM-YYYY"
+                );
+
+                if (selectedMonth && monthKey === selectedMonth) {
+                  onMonthSelect?.(null);
+                  return;
+                }
+
+                onMonthSelect?.(monthKey);
+              }}
+              style={{
+                cursor: "pointer",
+              }}
             />
             <Bar
               dataKey="coupons"
@@ -146,6 +167,21 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({ eventData }) => {
               radius={[6, 6, 0, 0]}
               maxBarSize={window.innerWidth <= 768 ? 26 : 36}
               fill="url(#couponsPattern)"
+              onClick={(data) => {
+                const monthKey = moment(data.payload.fullMonth).format(
+                  "MM-YYYY"
+                );
+
+                if (selectedMonth && monthKey === selectedMonth) {
+                  onMonthSelect?.(null);
+                  return;
+                }
+
+                onMonthSelect?.(monthKey);
+              }}
+              style={{
+                cursor: "pointer",
+              }}
             >
               <LabelList
                 dataKey="formatted"

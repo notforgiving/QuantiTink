@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCalendarRequest } from "api/features/calendar/calendarSlice";
 import cn from "classnames";
+import moment from "moment";
 import BackHeader from "UI/components/BackHeader";
 import FuturePayoutsCard from "UI/components/FuturePayoutsCard";
 import Input from "UI/components/Input";
@@ -79,9 +80,10 @@ const CalendarPage: FC = () => {
   const [currentTab, setCurrentTab] = useState<"ALL" | "DIV" | "OA" | "OM">(
     "ALL"
   );
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null); // 👈 добавили
 
   const { result } = useCalendarUI(id || "0");
-  
+
   useEffect(() => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
@@ -99,15 +101,24 @@ const CalendarPage: FC = () => {
 
   const filteredResult = useMemo(() => {
     if (!result.length) return [];
+
     return result
       .map((group) =>
-        group.filter(
-          (event) =>
-            filterByTab(event, currentTab) && filterBySearch(event, searchQuery)
-        )
+        group.filter((event) => {
+          // Фильтрация по табам Дивиденды, Амортизация, Погашение
+          // Фильтрация при нажатии на месяц графика
+          const matchTab = filterByTab(event, currentTab);
+          const matchSearch = filterBySearch(event, searchQuery);
+          const correctDate = event.correctDate;
+          const monthKey = moment(correctDate, "DD.MM.YYYY", true).format(
+            "MM-YYYY"
+          );
+          const matchMonth = !selectedMonth || monthKey === selectedMonth;
+          return matchTab && matchSearch && matchMonth;
+        })
       )
       .filter((group) => group.length > 0);
-  }, [result, searchQuery, currentTab]);
+  }, [result, searchQuery, currentTab, selectedMonth]);
 
   return (
     <div>
@@ -126,17 +137,14 @@ const CalendarPage: FC = () => {
                   _isActive: currentTab === tab.key,
                 })}
                 onClick={() =>
-                  setCurrentTab(
-                    currentTab === tab.key
-                      ? "ALL"
-                      : (tab.key as typeof currentTab)
-                  )
+                  setCurrentTab(currentTab === tab.key ? "ALL" : tab.key)
                 }
               >
                 {tab.label}
               </div>
             ))}
           </div>
+
           <Input
             label=""
             inputAttributes={{
@@ -146,9 +154,15 @@ const CalendarPage: FC = () => {
             }}
           />
         </div>
+
         <div className={css.chart}>
-          <FuturePayoutsCard eventData={result} />
+          <FuturePayoutsCard
+            eventData={result}
+            onMonthSelect={setSelectedMonth}
+            selectedMonth={selectedMonth}
+          />
         </div>
+
         <div className={css.calendar__grid}>
           {filteredResult.length ? (
             filteredResult.map((group) => {
