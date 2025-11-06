@@ -368,7 +368,6 @@ export function* watchAccountsLoaded() {
   yield takeEvery(fetchAccountsSuccess.type, fetchOperationsSaga);
 }
 
-// --- watcher ---
 export function* wztchGoalsSaga() {
   yield takeLatest(fetchGoalsRequest.type, fetchGoalsSaga);
   yield takeLatest(saveGoalsRequest.type, saveGoalsSaga);

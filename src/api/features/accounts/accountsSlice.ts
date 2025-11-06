@@ -20,7 +20,7 @@ export type TAccount = {
 } & TFlattenedPortfolio;
 
 // Стейт слайса
-interface AccountsState {
+export interface AccountsState {
   data: TAccount[];
   loading: boolean;
   error: string | null;

@@ -1,0 +1,63 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+@keyframes loading {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+.calc_page {
+  @include flex-column;
+  gap: 10px;
+  &_input {
+    display: flex;
+    align-items: center;
+    :global {
+      .input_component {
+        flex: 1;
+      }
+      .input_body {
+        border-radius: 15px 0 0 15px;
+      }
+      .Button_component {
+        border-radius: 0 15px 15px 0;
+      }
+    }
+  }
+  &_status {
+    color: #ccc;
+    &:global(.isLoading) {
+      width: fit-content;
+      color: #000000;
+      animation: loading 2s ease-in-out 0s infinite;
+    }
+  }
+  &_error {
+    color: $red-10;
+    font-weight: 600;
+    font-size: 18px;
+  }
+  &_grid {
+    @include flex-column;
+    gap: 10px;
+  }
+  &_list {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: 1fr 1fr;
+
+    @include phone {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -2,15 +2,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TRiskLevel, TTariff, TWorkInstrument } from "types/common";
 
 export type TInfo = {
-  premStatus: boolean;
-  qualStatus: boolean;
-  qualifiedForWorkWith: TWorkInstrument[];
-  tariff: TTariff;
-  userId: string;
-  riskLevelCode: TRiskLevel;
+    premStatus: boolean;
+    qualStatus: boolean;
+    qualifiedForWorkWith: TWorkInstrument[];
+    tariff: TTariff;
+    userId: string;
+    riskLevelCode: TRiskLevel;
+    comission?: number;
 };
 
-// Стейт слайса
 interface InfoState {
     data: TInfo | null;
     loading: boolean;
@@ -39,10 +39,17 @@ const infoSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
-        clearInfo(state) {
-            state.data = null;
+        getComissionRequest(state) {
+            state.loading = true;
             state.error = null;
+        },
+        getComissionSuccess(state, action: PayloadAction<number>) {
+            state.data!.comission = action.payload;
             state.loading = false;
+        },
+        getComissionFailed(state, action: PayloadAction<string>) {
+            state.loading = false;
+            state.error = action.payload;
         },
     },
 });
@@ -51,8 +58,10 @@ export const {
     fetchInfoRequest,
     fetchInfoSuccess,
     fetchInfoFailure,
-    clearInfo,
+    getComissionRequest,
+    getComissionSuccess,
+    getComissionFailed,
 } = infoSlice.actions;
 
-// Оборачиваем с redux-persist
+
 export default infoSlice.reducer;

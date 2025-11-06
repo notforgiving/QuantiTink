@@ -12,7 +12,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["accounts"], // 👈 важно исключить accounts, он уже persist-нутый отдельно
+  blacklist: ["accounts", "bonds", 'favoritesBonds'], // 👈 важно исключить accounts, он уже persist-нутый отдельно
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

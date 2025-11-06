@@ -13,6 +13,8 @@ import AccountPageMakeup from "Pages/AccountPage/makeup";
 import BondPage from "Pages/BondPage";
 import BondsPageWrapper from "Pages/BondsPage";
 import BondsPageMakeup from "Pages/BondsPage/makeup";
+import CalcPageWrapper from "Pages/CalcPage";
+import CalcPageMakup from "Pages/CalcPage/makeup";
 import CalendarPage from "Pages/CalendarPage";
 import EtfPage from "Pages/EtfPage";
 import HomePage from "Pages/HomePage";
@@ -33,7 +35,6 @@ function App() {
 
   const AuthRoute = () => {
     const { isAuth } = useAuth();
-
     return isAuth ? <Navigate to="/" replace /> : <Outlet />;
   };
 
@@ -54,7 +55,6 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<ProtectedLayout />}>
               <Route path="/" element={<HomePage />} />
-
               {/* Страницы брокерского счёта */}
               <Route path="/:id" element={<AccountPageWrapper />}>
                 <Route index element={<AccountPageMakeup />} />
@@ -66,6 +66,9 @@ function App() {
                   <Route path=":figi" element={<BondPage />} />
                 </Route>
                 <Route path="etf/:ticker" element={<EtfPage />} />
+              </Route>
+              <Route path="/calcBonds" element={<CalcPageWrapper />}>
+                <Route index element={<CalcPageMakup />} />
               </Route>
               <Route path="/profile" element={<ProfilePage />} />
             </Route>

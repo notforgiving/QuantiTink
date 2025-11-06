@@ -60,6 +60,11 @@
   justify-content: center;
 }
 
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 @mixin border($color: $green-40) {
   border: 1px solid $color;
 }

@@ -1,0 +1,117 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+$borderRadius: 20px;
+
+.card {
+  border-radius: $borderRadius;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  height: fit-content;
+
+  &:hover {
+    .card__actions {
+      transform: translate(0);
+    }
+  }
+
+  &__body {
+    background: #fff;
+    border-radius: $borderRadius;
+    box-shadow: 0 0 10px #001c181a;
+    @include flex-column;
+    font-size: 14px;
+    overflow: hidden;
+    padding: 20px;
+    position: relative;
+    width: 100%;
+  }
+  &__name {
+    color: $orange-20;
+    cursor: pointer;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: 0.3s;
+    margin-bottom: 10px;
+  }
+
+  &__actions {
+    @include abs;
+    @include flex-column;
+    justify-content: space-between;
+    left: auto;
+    right: 0;
+    background: $white-10;
+    box-shadow: 0 0 10px #001c181a;
+    height: 100%;
+    padding: 10px 15px;
+    transform: translate(100%);
+    transition: transform 0.5s;
+    width: 60px;
+
+    svg {
+      cursor: pointer;
+      color: $green-90;
+    }
+
+    &_top {
+      @include flex-column;
+      gap: 20px;
+    }
+  }
+  &__tax {
+    &:global(.isOpacity) {
+      opacity: 0.5;
+    }
+  }
+  &__line {
+    border-bottom: 1px solid #f2f2f2;
+    padding-block: 6px;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 70% auto;
+
+    &:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    &:global(.hiddble) {
+      display: none;
+      &:global(.isShow) {
+        display: grid;
+      }
+    }
+    &:global(.isBold) {
+      font-weight: 800;
+    }
+  }
+  &__result {
+    background: opacity-color($green-30, 0.1);
+    border-radius: $borderRadius;
+    @include flex-column;
+    gap: 10px;
+    padding: 10px;
+    width: 100%;
+    &_item {
+      @include flex-column;
+      align-items: center;
+      gap: 5px;
+      strong {
+        color: $green-90;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        line-height: 140%;
+      }
+      span {
+        color: $gray-10;
+      }
+    }
+  }
+}
