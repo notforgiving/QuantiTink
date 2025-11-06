@@ -52,6 +52,18 @@ export const favoritesBondsSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    removeFavoriteBondRequest(state, action: PayloadAction<string>) {
+      state.loading = true;
+      state.error = null;
+    },
+    removeFavoriteBondSuccess(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.data = state.data.filter((bond) => bond.isin !== action.payload);
+    },
+    removeFavoriteBondFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -65,6 +77,9 @@ export const {
   loadFavorites,
   loadFavoritesSuccess,
   loadFavoritesFailure,
+  removeFavoriteBondRequest,
+  removeFavoriteBondSuccess,
+  removeFavoriteBondFailure,
 } = favoritesBondsSlice.actions;
 
 export default favoritesBondsSlice.reducer;

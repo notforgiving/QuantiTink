@@ -24,7 +24,7 @@ const CalcPageMakup: FC = () => {
   const navigate = useNavigate();
   const [isinInput, setIsinInput] = useState<string>("");
 
-  const { loading: loadingAllBonds } = useBonds();
+  const { data: bondsData, loading: loadingAllBonds } = useBonds();
   const { data: info, loading: loadingInfo } = useInfo();
   const {
     data: favoritesBonds,
@@ -34,8 +34,10 @@ const CalcPageMakup: FC = () => {
 
   // 🔹 При монтировании загружаем избранные облигации из Firebase
   useEffect(() => {
-    dispatch(loadFavorites());
-  }, [dispatch]);
+    if (!loadingAllBonds && !!bondsData?.length) {
+      dispatch(loadFavorites());
+    }
+  }, [bondsData?.length, dispatch, loadingAllBonds]);
 
   const loadingPreData =
     loadingFavoritesBonds || loadingAllBonds || loadingInfo;

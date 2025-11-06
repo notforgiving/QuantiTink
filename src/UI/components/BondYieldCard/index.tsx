@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { IoCashOutline, IoContract, IoExpand } from "react-icons/io5";
 import { useDispatch } from "react-redux";
-import { removeFavoriteBond } from "api/features/favoritesBonds/favoritesBondsSlice";
+import { removeFavoriteBondRequest } from "api/features/favoritesBonds/favoritesBondsSlice";
 import cn from "classnames";
 import { TCalculatedBond } from "Pages/CalcPage/hooks/useCalcBonds";
 
@@ -18,7 +18,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
   const toggleTax = () => setIncomeTax((prev) => (prev === 0 ? 13 : 0));
   const dispatch = useDispatch();
   const handleRemove = (isin: string) => {
-    dispatch(removeFavoriteBond(isin));
+    dispatch(removeFavoriteBondRequest(isin));
   };
 
   const netCouponTax = formatMoney(

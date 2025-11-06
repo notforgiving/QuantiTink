@@ -1,11 +1,11 @@
-import { fetchGetBondCouponsAPI, fetchGetLastPriceAPI, getUserFavoritesIsin, saveFavoriteIsin } from "api/requests/favoritesBondsApi";
+import { fetchGetBondCouponsAPI, fetchGetLastPriceAPI, getUserFavoritesIsin, removeFavoriteIsin, saveFavoriteIsin } from "api/requests/favoritesBondsApi";
 import { RootState } from "api/store";
 import { all, call, put, select, takeLatest } from "redux-saga/effects";
 
 import { selectTokenData } from "../token/useToken";
 import { User } from "../user/userTypes";
 
-import { addFavoriteBondFailure, addFavoriteBondRequest, addFavoriteBondSuccess, loadFavorites, setFavorites } from "./favoritesBondsSlice";
+import { addFavoriteBondFailure, addFavoriteBondRequest, addFavoriteBondSuccess, loadFavorites, removeFavoriteBondFailure, removeFavoriteBondRequest, removeFavoriteBondSuccess, setFavorites } from "./favoritesBondsSlice";
 import { TFavoriteBond } from "./favoritesBondsTypes";
 
 /**
@@ -89,12 +89,30 @@ function* addFavoriteBondWorker(action: { type: string; payload: string }) {
     }
 }
 
+function* removeFavoriteBondWorker(action: { type: string; payload: string }) {
+  try {
+    const user: User = yield select((state: RootState) => state.user.currentUser);
+    const isin = action.payload;
+
+    const success: boolean = yield call(removeFavoriteIsin, user.id, isin);
+
+    if (success) {
+      // Успешное удаление
+      yield put(removeFavoriteBondSuccess(isin));
+    } else {
+      // Не удалось удалить
+      yield put(removeFavoriteBondFailure("Не удалось удалить облигацию из Firebase"));
+    }
+  } catch (error: any) {
+    yield put(removeFavoriteBondFailure(error.message || "Ошибка при удалении"));
+  }
+}
+
 /**
  * Watcher — слушает addFavoriteBondRequest
  */
 export function* favoritesBondsSaga() {
-    yield all([
-        takeLatest(addFavoriteBondRequest.type, addFavoriteBondWorker),
-        takeLatest(loadFavorites.type, loadFavoritesWorker),
-    ]);
+  yield takeLatest(addFavoriteBondRequest.type, addFavoriteBondWorker);
+  yield takeLatest(loadFavorites.type, loadFavoritesWorker);
+  yield takeLatest(removeFavoriteBondRequest.type, removeFavoriteBondWorker);
 }

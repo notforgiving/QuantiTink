@@ -1,6 +1,6 @@
 import { IGetBondCouponsEvents } from "api/features/favoritesBonds/favoritesBondsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
-import { collection, doc, getDocs, limit, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, query, setDoc, where } from "firebase/firestore";
 import { db } from "index";
 import moment from "moment";
 
@@ -119,5 +119,30 @@ export const saveFavoriteIsin = async (userId: string, isin: string): Promise<vo
     } else {
         const newDocRef = doc(collection(db, FAVORITES_BONDS_COLLECTION));
         await setDoc(newDocRef, { userId, isin: [isin] });
+    }
+};
+/**
+ * Удалить ISIN из favoritesBonds для пользователя
+ * @param userId - ID пользователя
+ * @param isin - ISIN облигации для удаления
+ * @returns boolean - true, если удаление прошло успешно, false иначе
+ */
+export const removeFavoriteIsin = async (userId: string, isin: string): Promise<boolean> => {
+    try {
+        const found = await findFavoritesDocByUserId(userId);
+
+        if (!found) return false; // документ не найден, удалять нечего
+
+        const { id, data } = found;
+        const updatedIsin = data.isin.filter((i) => i !== isin);
+
+        // Если массив остался пустым, можно оставить пустой массив
+        const docRef = doc(db, FAVORITES_BONDS_COLLECTION, id);
+        await setDoc(docRef, { userId, isin: updatedIsin }, { merge: true });
+
+        return true; // удаление прошло успешно
+    } catch (error) {
+        console.error("Ошибка удаления ISIN из Firebase:", error);
+        return false; // ошибка при удалении
     }
 };
