@@ -24,12 +24,28 @@ function* loadFavoritesWorker() {
         // Берем все облигации из bondsSlice
         const bonds: TFavoriteBond[] = yield select((state: RootState) => state.bonds.data);
 
-        // Фильтруем только те, что в Firebase
-        const favorites: TFavoriteBond[] = bonds.filter((b) => favoritesIsin.includes(b.ticker));
+        const tokenState: { data: string } = yield select(selectTokenData);
+        const token = tokenState.data;
+
+        const favorites: TFavoriteBond[] = [];
+
+        for (const isin of favoritesIsin) {
+            const bond = bonds.find((b) => b.ticker === isin);
+            if (!bond) continue;
+
+            try {
+                const lastPrice: number = yield call(fetchGetLastPriceAPI, { token, instrumentId: bond.figi });
+                const { events } = yield call(fetchGetBondCouponsAPI, { token, figi: bond.figi, to: bond.maturityDate });
+                favorites.push({ ...bond, lastPrice, events });
+            } catch (e) {
+                console.warn(`Не удалось получить данные для ${isin}:`, e);
+            }
+        }
 
         yield put(setFavorites(favorites));
     } catch (error: any) {
         console.error("Ошибка загрузки избранных облигаций:", error);
+        yield put(setFavorites([]));
     }
 }
 
