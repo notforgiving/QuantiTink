@@ -10,6 +10,7 @@ import {
 import { useFavoritesBonds } from "api/features/favoritesBonds/useFavoritesBonds";
 import { useInfo } from "api/features/info/useInfo";
 import cn from "classnames";
+import Atom from "UI/components/Atom";
 import BackHeader from "UI/components/BackHeader";
 import BondYieldCard from "UI/components/BondYieldCard";
 import Button from "UI/components/Button";
@@ -75,7 +76,7 @@ const CalcPageMakup: FC = () => {
           <Input
             inputAttributes={{
               placeholder: "Введите ISIN облигации...",
-              disabled: loadingFavoritesBonds,
+              disabled: loadingPreData,
               value: isinInput,
               onChange: (e) => setIsinInput(e.target.value),
             }}
@@ -83,19 +84,23 @@ const CalcPageMakup: FC = () => {
           <Button
             text="Добавить"
             buttonAttributes={{
-              disabled: !isinInput.trim() || loadingFavoritesBonds,
+              disabled: !isinInput.trim() || loadingPreData,
               onClick: handleAdd,
             }}
           />
         </div>
-        <div className={css.calc_page_grid}>
+        <div
+          className={cn(css.calc_page_grid, {
+            isLoading: loadingPreData,
+          })}
+        >
           {loadingPreData && (
             <div
               className={cn(css.calc_page_status, {
                 isLoading: loadingPreData,
               })}
             >
-              Загрузка...
+              <Atom />
             </div>
           )}
           {!loadingPreData && !favoritesBonds.length && (
