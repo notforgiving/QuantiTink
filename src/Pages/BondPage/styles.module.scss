@@ -67,7 +67,8 @@
     gap: 16px;
 
     @include phone {
-      margin-top: 20px;
+      margin-top: 14px;
+      gap: 10px;
     }
   }
   &__item {
@@ -103,6 +104,9 @@
   &__quantity {
     span {
       font-size: 16px;
+      @include phone {
+        font-size: 12px;
+      }
     }
   }
   &__yield {
@@ -111,6 +115,9 @@
     justify-content: space-between;
     span {
       font-size: 16px;
+      @include phone {
+        font-size: 12px;
+      }
     }
     strong {
       font-weight: 600;
@@ -119,12 +126,17 @@
 
       @include phone {
         text-align: right;
+        font-size: 16px;
       }
     }
   }
   &__oneLot {
     @include flex-center;
     justify-content: space-between;
+    gap: 20px;
+    @include phone {
+      font-size: 12px;
+    }
   }
 }
 

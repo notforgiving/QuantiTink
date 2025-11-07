@@ -18,5 +18,9 @@
   }
   span {
     font-size: 16px;
+    white-space: pre;
+    @include phone {
+      font-size: 12px;
+    }
   }
 }

@@ -32,7 +32,7 @@ const EtfPage: FC = () => {
 
   return (
     <div>
-      <BackHeader title={name} backCallback={() => navigate(-1)}/>
+      <BackHeader title={name} backCallback={() => navigate(-1)} />
       <LineBlock greenLine={expectedYield !== null && expectedYield.value > 0}>
         <div
           className={cn(css.etf, {
@@ -75,16 +75,6 @@ const EtfPage: FC = () => {
             <strong>Годовая доходность:</strong>
             <span>{annualPercentageYield}%</span>
           </div>
-          {/* {expectedYield && (
-            <div
-              className={cn(css.etf__info, css.color, {
-                _isGreen: expectedYield && expectedYield.value > 0,
-              })}
-            >
-              <strong>Фин результат:</strong>
-              <span>{expectedYield.formatted}</span>
-            </div>
-          )} */}
           {recommendation && (
             <div className={cn(css.share__info)}>
               <span>{recommendation.message}</span>
@@ -94,7 +84,7 @@ const EtfPage: FC = () => {
       </LineBlock>
       <div className={css.etf__toggle}>
         <Input
-          label="Учитывать налог на прибыль"
+          label="Учитывать налог"
           leftLabel
           inputAttributes={{
             type: "checkbox",

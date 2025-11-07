@@ -5,6 +5,7 @@ import { TCalendarEventUi } from "Pages/CalendarPage/hooks/useCalendar";
 import {
   Bar,
   BarChart,
+  Cell,
   LabelList,
   ResponsiveContainer,
   Tooltip,
@@ -31,7 +32,25 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
   const theme = useTheme();
   const { chartData, avgMonth, totalYear } = useFuturePayoutsCard(eventData);
 
-  // --- 5️⃣ JSX ---
+  // --- функция клика по столбцу ---
+  const handleBarClick = (data: any) => {
+    const fullMonthDate: Date = new Date(data.payload.fullMonth);
+    const monthKey = moment(fullMonthDate).format("MM-YYYY");
+
+    if (selectedMonth && monthKey === selectedMonth) {
+      onMonthSelect?.(null);
+      return;
+    }
+    onMonthSelect?.(monthKey);
+  };
+
+  // --- вычисляем opacity для каждой даты ---
+  const getOpacity = (fullMonth: string | Date) => {
+    if (!selectedMonth) return 1;
+    const monthKey = moment(fullMonth).format("MM-YYYY");
+    return monthKey === selectedMonth ? 1 : 0.5;
+  };
+
   return (
     <div className={css.card}>
       <div className={css.card__header}>
@@ -81,31 +100,32 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
                 />
               </pattern>
             </defs>
+
             <XAxis
               dataKey="month"
               axisLine={false}
               tickLine={false}
               tick={{
-                fill: `${theme === "light" ? "#001c18" : "#ffffffb3"}`,
+                fill: theme === "light" ? "#001c18" : "#ffffffb3",
                 fontSize: 12,
               }}
             />
+
             <Tooltip
               cursor={{ fill: "rgba(255,255,255,0.05)" }}
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
 
                 const item = payload[0].payload;
-                const fullMonth = moment(item.fullMonth).format("MMMM YYYY");
+                const fullMonthDate: Date = new Date(item.fullMonth);
+                const fullMonthStr = moment(fullMonthDate).format("MMMM YYYY");
                 const capitalizedMonth =
-                  fullMonth.charAt(0).toUpperCase() + fullMonth.slice(1);
+                  fullMonthStr.charAt(0).toUpperCase() + fullMonthStr.slice(1);
 
                 return (
                   <div
                     style={{
-                      background: `${
-                        theme === "light" ? "#1a1a1a" : "#001c18ff"
-                      }`,
+                      background: theme === "light" ? "#1a1a1a" : "#001c18ff",
                       border: "none",
                       borderRadius: 8,
                       color: "#fff",
@@ -118,19 +138,11 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
                     <div style={{ fontWeight: 600, marginBottom: 4 }}>
                       {capitalizedMonth}
                     </div>
-                    <div
-                      style={{
-                        color: "#3bc2a1",
-                      }}
-                    >
+                    <div style={{ color: "#3bc2a1" }}>
                       Купоны:{" "}
                       <strong>{formatMoney(item.coupons).formatted}</strong>
                     </div>
-                    <div
-                      style={{
-                        color: "#d88500",
-                      }}
-                    >
+                    <div style={{ color: "#d88500" }}>
                       Дивиденды:{" "}
                       <strong>{formatMoney(item.dividends).formatted}</strong>
                     </div>
@@ -138,57 +150,47 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
                 );
               }}
             />
-            {/* --- stacked bar: дивиденды + купоны --- */}
+
+            {/* --- дивиденды --- */}
             <Bar
               dataKey="dividends"
               stackId="a"
               radius={[0, 0, 0, 0]}
               maxBarSize={window.innerWidth <= 768 ? 26 : 36}
-              fill="url(#dividendsPattern)"
-              onClick={(data) => {
-                const monthKey = moment(data.payload.fullMonth).format(
-                  "MM-YYYY"
-                );
+              onClick={handleBarClick}
+              style={{ cursor: "pointer" }}
+            >
+              {chartData.map((entry) => (
+                <Cell
+                  key={entry.fullMonth.toString()}
+                  fill="url(#dividendsPattern)"
+                  fillOpacity={getOpacity(entry.fullMonth)}
+                />
+              ))}
+            </Bar>
 
-                if (selectedMonth && monthKey === selectedMonth) {
-                  onMonthSelect?.(null);
-                  return;
-                }
-
-                onMonthSelect?.(monthKey);
-              }}
-              style={{
-                cursor: "pointer",
-              }}
-            />
+            {/* --- купоны --- */}
             <Bar
               dataKey="coupons"
               stackId="a"
               radius={[6, 6, 0, 0]}
               maxBarSize={window.innerWidth <= 768 ? 26 : 36}
-              fill="url(#couponsPattern)"
-              onClick={(data) => {
-                const monthKey = moment(data.payload.fullMonth).format(
-                  "MM-YYYY"
-                );
-
-                if (selectedMonth && monthKey === selectedMonth) {
-                  onMonthSelect?.(null);
-                  return;
-                }
-
-                onMonthSelect?.(monthKey);
-              }}
-              style={{
-                cursor: "pointer",
-              }}
+              onClick={handleBarClick}
+              style={{ cursor: "pointer" }}
             >
+              {chartData.map((entry) => (
+                <Cell
+                  key={entry.fullMonth.toString()}
+                  fill="url(#couponsPattern)"
+                  fillOpacity={getOpacity(entry.fullMonth)}
+                />
+              ))}
               <LabelList
                 dataKey="formatted"
                 position="top"
                 dy={-6}
                 style={{
-                  fill: `${theme === "light" ? "#001c18" : "#ffffffb3"}`,
+                  fill: theme === "light" ? "#001c18" : "#ffffffb3",
                   fontSize: window.innerWidth <= 768 ? 10 : 12,
                   fontWeight: 500,
                 }}

@@ -61,6 +61,7 @@ const userSlice = createSlice({
     },
     logout() {
       // не нужно вручную обнулять, делаем сброс ниже
+      localStorage.clear()
     },
     setThemeRequest(state, _action: PayloadAction<TTheme>) {
       state.loading = true;

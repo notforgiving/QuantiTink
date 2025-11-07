@@ -28,7 +28,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
     const accounts = useAccounts();
     // находим аккаунт (тут обычно 2–5 штук, useMemo не нужен)
     const account = accounts?.data?.find((el) => el.id === accountId) ?? null;
-    
+
     // находим сам ETF (может быть 10–20 позиций, лучше мемоизировать)
     const etf = useMemo(
         () =>
@@ -38,19 +38,6 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
         [account?.positions, ticker]
     );
 
-    // текущая стоимость позиции
-    const currentPrice = useMemo(() => {
-        if (!etf?.currentPrice || !etf?.quantity?.units) return null;
-        const priceNum = formatMoney(etf.currentPrice).value;
-        const qty = Number(etf.quantity.units);
-        return formatMoney(priceNum * qty);
-    }, [etf?.currentPrice, etf?.quantity?.units]);
-
-    // ожидаемая доходность (легкая операция — мемо не нужен)
-    const expectedYield = etf?.expectedYield
-        ? formatMoney(etf.expectedYield, "rub")
-        : null;
-
     // операции по этому фонду (500+ => обязательно мемоизируем)
     const etfOperations = useMemo(() => {
         if (!etf?.assetUid) return [];
@@ -58,13 +45,6 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
             (op) => op.assetUid === etf.assetUid
         ) ?? [];
     }, [account?.operations, etf?.assetUid]);
-
-    const firstPurchaseAge = useMemo(() => {
-        if (etfOperations.length === 0) return null;
-
-        const now = moment();
-        return moment.duration(now.diff(etfOperations[etfOperations.length - 1].date));
-    }, [etfOperations]);
 
     // сколько всего денег вложено (reduce по операциям => мемо обязателен)
     const amountOfPurchases = useMemo(() => {
@@ -75,6 +55,39 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
         }, 0);
 
         return formatMoney(total);
+    }, [etfOperations]);
+
+    // текущая стоимость позиции
+    const currentPrice = useMemo(() => {
+        if (!etf?.currentPrice || !etf?.quantity?.units) return null;
+
+        const priceNum = formatMoney(etf.currentPrice).value;
+        const qty = Number(etf.quantity.units);
+        let total = priceNum * qty;
+        if (incomeTax) {
+            const offset = (total - amountOfPurchases.value) * 0.87
+            total = amountOfPurchases.value + offset; // вычитаем 13% налог
+        }
+        return formatMoney(total);
+    }, [amountOfPurchases.value, etf?.currentPrice, etf?.quantity.units, incomeTax]);
+
+    // ожидаемая доходность (легкая операция — мемо не нужен)
+    const expectedYield = useMemo(() => {
+        if (!etf?.expectedYield) return null;
+        // берем исходное значение
+        let value = formatMoney(etf.expectedYield, "rub").value;
+        // если налог включен — уменьшаем на 13%
+        if (incomeTax) {
+            value *= 0.87; // оставляем 87% после вычета 13%
+        }
+        return formatMoney(value, "rub");
+    }, [etf?.expectedYield, incomeTax]);
+
+    const firstPurchaseAge = useMemo(() => {
+        if (etfOperations.length === 0) return null;
+
+        const now = moment();
+        return moment.duration(now.diff(etfOperations[etfOperations.length - 1].date));
     }, [etfOperations]);
 
     // текущая доходность % (легкая арифметика — без мемо)
