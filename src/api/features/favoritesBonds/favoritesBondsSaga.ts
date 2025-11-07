@@ -1,6 +1,6 @@
 import { fetchGetBondCouponsAPI, fetchGetLastPriceAPI, getUserFavoritesIsin, removeFavoriteIsin, saveFavoriteIsin } from "api/requests/favoritesBondsApi";
 import { RootState } from "api/store";
-import { all, call, put, select, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 
 import { selectTokenData } from "../token/useToken";
 import { User } from "../user/userTypes";
@@ -30,7 +30,7 @@ function* loadFavoritesWorker() {
         const favorites: TFavoriteBond[] = [];
 
         for (const isin of favoritesIsin) {
-            const bond = bonds.find((b) => b.ticker === isin);
+            const bond = bonds.find((b) => b.ticker === isin || b.isin === isin);
             if (!bond) continue;
 
             try {
@@ -59,7 +59,7 @@ function* addFavoriteBondWorker(action: { type: string; payload: string }) {
         const favorites: TFavoriteBond[] = yield select((state: RootState) => state.favoritesBonds.data);
 
         // Проверяем наличие
-        if (favorites.some((b) => b.isin === isin)) {
+        if (favorites.some((b) => b.ticker === isin || b.isin === isin)) {
             yield put(addFavoriteBondFailure("Облигация уже добавлена"));
             return;
         }

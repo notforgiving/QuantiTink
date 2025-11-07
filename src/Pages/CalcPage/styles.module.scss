@@ -43,6 +43,11 @@
       animation: loading 2s ease-in-out 0s infinite;
     }
   }
+  &_sort {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 5px;
+  }
   &_error {
     color: $red-10;
     font-weight: 600;

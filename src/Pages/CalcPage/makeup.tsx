@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useBonds } from "api/features/bonds/useBonds";
@@ -16,6 +16,7 @@ import BackHeader from "UI/components/BackHeader";
 import BondYieldCard from "UI/components/BondYieldCard";
 import Button from "UI/components/Button";
 import Input from "UI/components/Input";
+import SortArrows, { SortOrder } from "UI/components/SortArrows";
 
 import { useCalcBonds } from "./hooks/useCalcBonds";
 
@@ -25,6 +26,7 @@ const CalcPageMakup: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isinInput, setIsinInput] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
 
   const { data: bondsData, loading: loadingAllBonds } = useBonds();
   const { data: info, loading: loadingInfo } = useInfo();
@@ -69,6 +71,19 @@ const CalcPageMakup: FC = () => {
     return () => clearTimeout(timer);
   }, [error, dispatch]);
 
+  // 🔹 Сортировка результата по annualProfitabilityWithTax
+  const sortedResult = useMemo(() => {
+    if (!sortOrder) return result;
+
+    return [...result].sort((a, b) => {
+      const aVal = Number(a.annualProfitability) ?? 0;
+      const bVal = Number(b.annualProfitability) ?? 0;
+
+      if (sortOrder === "asc") return aVal - bVal;
+      return bVal - aVal; // desc
+    });
+  }, [result, sortOrder]);
+
   return (
     <div>
       <BackHeader
@@ -91,6 +106,13 @@ const CalcPageMakup: FC = () => {
               disabled: !isinInput.trim() || loadingPreData,
               onClick: handleAdd,
             }}
+          />
+        </div>
+        <div className={css.calc_page_sort}>
+          <SortArrows
+            order={sortOrder}
+            label="Сортировать по доходности"
+            onChange={setSortOrder}
           />
         </div>
         <div
@@ -117,7 +139,7 @@ const CalcPageMakup: FC = () => {
           )}
           {!loadingPreData && !!favoritesBonds.length && (
             <div className={css.calc_page_list}>
-              {result.map((bond) => (
+              {sortedResult.map((bond) => (
                 <BondYieldCard key={bond.isin} {...bond} />
               ))}
             </div>

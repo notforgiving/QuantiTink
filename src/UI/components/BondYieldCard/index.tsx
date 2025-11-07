@@ -75,7 +75,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             />
           </div>
           <FiTrash2
-            size={24}
+            size={20}
             title="Удалить"
             onClick={() => handleRemove(bond.isin)}
           />
@@ -84,7 +84,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
           className={css.card__name}
           target="_blank"
           rel="noreferrer"
-          href={`https://www.tbank.ru/invest/bonds/${bond.isin}/`}
+          href={`https://www.tbank.ru/invest/bonds/${bond.ticker}/`}
         >
           {bond.name} ({bond.floatingCouponFlag ? "Ф" : "ПК"})
         </a>

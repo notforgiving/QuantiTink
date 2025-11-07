@@ -3,33 +3,46 @@
 
 .sort {
   @include flex-center;
+  display: inline-flex;
+  gap: 5px;
+  cursor: pointer;
+
+  &:global(._isAsc) {
+    svg {
+      &:first-child {
+        path {
+          fill: $green-50;
+        }
+      }
+    }
+  }
+  &:global(._isDesc) {
+    svg {
+      &:last-child {
+        path {
+          fill: $green-50;
+        }
+      }
+    }
+  }
+}
+
+.sortArrow {
+  @include flex-center;
+  display: inline-flex;
   flex-direction: column;
+
   svg {
-    width: 8px;
+    width: 10px;
     height: auto;
     color: $green-20;
-  }
 
-  &:global(._isAsk) {
-    .sort__top {
-      path {
-        fill: #00c98d;
-      }
+    &:first-child {
+      transform: rotate(-90deg);
     }
-  }
 
-  &:global(._isDesk) {
-    .sort__bottom {
-      path {
-        fill: #00c98d;
-      }
+    &:last-child {
+      transform: rotate(90deg);
     }
-  }
-
-  &__top {
-    transform: rotate(-90deg);
-  }
-  &__bottom {
-    transform: rotate(90deg);
   }
 }

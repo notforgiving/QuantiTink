@@ -44,6 +44,7 @@ $borderRadius: 20px;
     @include abs;
     @include flex-column;
     justify-content: space-between;
+    align-items: center;
     left: auto;
     right: 0;
     background: $white-10;
@@ -57,6 +58,7 @@ $borderRadius: 20px;
     svg {
       cursor: pointer;
       color: $green-90;
+      width: 24px;
     }
 
     &_top {
