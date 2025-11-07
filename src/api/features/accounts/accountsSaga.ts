@@ -8,7 +8,7 @@ import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
 import { User } from "../user/userTypes";
 
-import { fetchAccountsFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchGoalsFailure, fetchGoalsRequest, fetchGoalsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, saveGoalsFailure, saveGoalsRequest, saveGoalsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
+import { accountsSliceFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchGoalsRequest, fetchGoalsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, saveGoalsRequest, saveGoalsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
 import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 import { selectAccountById } from "./useAccounts";
 
@@ -16,20 +16,34 @@ export function* fetchAccountsWorker() {
   try {
     const token: TTokenState = yield select(selectTokenData);
 
-    if (!token.data) {
+    if (!token?.data) {
       throw new Error("Токен не найден");
     }
 
     const accounts: TAccount[] = yield call(fetchGetAccountsAPI, token.data);
 
-    // 🔥 Фильтруем лишние типы
+    const firstAccount = accounts?.[0];
+
+    if (firstAccount?.accessLevel !== 'ACCOUNT_ACCESS_LEVEL_READ_ONLY') {
+      yield put(
+        accountsSliceFailure(
+          'Вы не можете использовать токен для торговли. Выпустите токен повторно, только для чтения'
+        )
+      );
+      return;
+    }
+
+    yield put(accountsSliceFailure(null));
+
     const filteredAccounts = accounts.filter(
       (account) => account.type !== 'ACCOUNT_TYPE_INVEST_BOX'
     );
 
     yield put(fetchAccountsSuccess(filteredAccounts));
-  } catch (error: any) {
-    yield put(fetchAccountsFailure(error.message || 'Ошибка загрузки аккаунтов'));
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Ошибка загрузки аккаунтов';
+    yield put(accountsSliceFailure(message));
   }
 }
 
@@ -329,11 +343,10 @@ function* fetchGoalsSaga(action: ReturnType<typeof fetchGoalsRequest>) {
     const goals: Record<string, number> = yield call(getUserGoals, user.id, accountId);
     yield put(fetchGoalsSuccess({ accountId, goals }));
   } catch (err: any) {
-    yield put(fetchGoalsFailure(err.message));
+    yield put(accountsSliceFailure(err.message));
   }
 }
 
-// --- Сохранение целей в Firebase ---
 function* saveGoalsSaga(action: ReturnType<typeof saveGoalsRequest>) {
   try {
     const user: User = yield select((state: RootState) => state.user.currentUser);
@@ -348,13 +361,8 @@ function* saveGoalsSaga(action: ReturnType<typeof saveGoalsRequest>) {
       })
     );
   } catch (err: any) {
-    yield put(saveGoalsFailure(err.message));
+    yield put(accountsSliceFailure(err.message));
   }
-}
-
-function* watchAccountsAndPositions() {
-  yield take(fetchAccountsSuccess.type); // ждём пока аккаунты загрузятся
-  yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
 }
 
 export function* accountsSaga() {
@@ -366,6 +374,11 @@ export function* accountsSaga() {
 export function* watchAccountsLoaded() {
   yield takeEvery(fetchAccountsSuccess.type, fetchPortfoliosSaga);
   yield takeEvery(fetchAccountsSuccess.type, fetchOperationsSaga);
+}
+
+function* watchAccountsAndPositions() {
+  yield take(fetchAccountsSuccess.type); // ждём пока аккаунты загрузятся
+  yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
 }
 
 export function* wztchGoalsSaga() {

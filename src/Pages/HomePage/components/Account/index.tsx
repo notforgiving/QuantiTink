@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { TAccount } from "api/features/accounts/accountsSlice";
 import cn from "classnames";
@@ -23,14 +23,19 @@ const Account: FC<IAccountProps> = ({
   formattedPortfolio,
   returnPercent,
 }) => {
-  const isPositive = invested.value < formattedPortfolio.value;
-  const IconComponent = getAccountIcon(name);
+  const isPositive = useMemo(
+    () => invested.value < formattedPortfolio.value,
+    [invested.value, formattedPortfolio.value]
+  );
+  const IconComponent = useMemo(() => getAccountIcon(name), [name]);
+  const isDisabled = formattedPortfolio.value === 0;
 
   return (
     <NavLink
       to={`/${id}`}
       className={cn(css.account, {
         _isGreen: isPositive,
+        _isDisabled: isDisabled,
       })}
       aria-label={`Счёт ${name}, доходность ${returnPercent}%`}
       title={`Счёт ${name}`}
@@ -44,7 +49,7 @@ const Account: FC<IAccountProps> = ({
           _isGreen: isPositive,
         })}
       >
-      <strong>{formattedPortfolio?.formatted ?? "0.00 ₽"}</strong>
+        <strong>{formattedPortfolio?.formatted ?? "0.00 ₽"}</strong>
         <span>{returnPercent ?? "0.00"}%</span>
       </div>
     </NavLink>

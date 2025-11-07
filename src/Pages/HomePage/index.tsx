@@ -28,7 +28,7 @@ const HomePage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentUser } = useUser();
   const { data: token, loading, error } = useToken(); // если error есть
-  const { data: accounts } = useAccounts();
+  const { data: accounts, error: errorAccounts } = useAccounts();
 
   const {
     totalPortfolio,
@@ -65,11 +65,13 @@ const HomePage = () => {
 
   if (error) {
     return (
-      <div className={css.error}>Ошибка загрузки данных. Попробуйте позже.</div>
+      <div className={css.error}>
+        {"Ошибка загрузки данных. Попробуйте позже."}
+      </div>
     );
   }
 
-  if (!token) {
+  if (!token || errorAccounts) {
     return (
       <div className={css.main}>
         <div className={css.token}>
@@ -108,6 +110,7 @@ const HomePage = () => {
               </Form>
             )}
           </Formik>
+          {errorAccounts && <div className={css.error}>{errorAccounts}</div>}
         </div>
       </div>
     );

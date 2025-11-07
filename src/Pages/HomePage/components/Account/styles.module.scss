@@ -55,6 +55,11 @@
     }
   }
 
+  &:global(._isDisabled) {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
   &_icon {
     svg {
       width: 24px;

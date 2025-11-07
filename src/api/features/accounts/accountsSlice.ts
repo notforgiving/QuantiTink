@@ -14,7 +14,7 @@ export type TAccount = {
   status: string;
   openedDate: string;
   closedDate: string;
-  accessLevel: string;
+  accessLevel: 'ACCOUNT_ACCESS_LEVEL_UNSPECIFIED' | 'ACCOUNT_ACCESS_LEVEL_FULL_ACCESS' | 'ACCOUNT_ACCESS_LEVEL_READ_ONLY' | 'ACCOUNT_ACCESS_LEVEL_NO_ACCESS';
   operations?: TFlattenedOperations['operations'];
   goals?: Record<string, number>; // ✅ добавлено
 } & TFlattenedPortfolio;
@@ -43,7 +43,7 @@ const accountsSlice = createSlice({
       state.data = action.payload;
       state.loading = false;
     },
-    fetchAccountsFailure(state, action: PayloadAction<string>) {
+    accountsSliceFailure(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
       state.loading = false;
     },
@@ -208,12 +208,6 @@ const accountsSlice = createSlice({
       );
       state.loading = false;
     },
-    fetchGoalsFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    // --- Update (set) goals manually ---
     setGoalsForAccount(
       state,
       action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
@@ -223,8 +217,6 @@ const accountsSlice = createSlice({
         acc.id === accountId ? { ...acc, goals } : acc
       );
     },
-
-    // --- Save goals to Firebase ---
     saveGoalsRequest(
       state,
       action: PayloadAction<{ accountId: string; goals: Record<string, number> }>
@@ -242,17 +234,13 @@ const accountsSlice = createSlice({
       );
       state.loading = false;
     },
-    saveGoalsFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
-      state.error = action.payload;
-    },
   },
 });
 
 export const {
   fetchAccountsRequest,
   fetchAccountsSuccess,
-  fetchAccountsFailure,
+  accountsSliceFailure,
   setPortfolioForAccount,
   setOperationsForAccount,
   fetchPositionsRequest,
@@ -266,11 +254,9 @@ export const {
   setAssetForAccount,
   fetchGoalsRequest,
   fetchGoalsSuccess,
-  fetchGoalsFailure,
   setGoalsForAccount,
   saveGoalsRequest,
   saveGoalsSuccess,
-  saveGoalsFailure,
 } = accountsSlice.actions;
 
 
