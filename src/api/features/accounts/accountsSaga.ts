@@ -73,7 +73,7 @@ function* fetchOperationsSaga() {
   for (const account of accounts) {
     try {
       const response: TOperationsResponse = yield call(
-        () => fetchGetOperationsAPI({ token: token.data, accountId: account.id })
+        () => fetchGetOperationsAPI({ token: token.data, accountId: account.id, from: account.openedDate })
       );
 
       yield put(

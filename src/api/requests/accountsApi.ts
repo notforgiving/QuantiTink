@@ -58,9 +58,13 @@ export async function fetchGetPortfolioAPI({ token, accountId }: {
 export async function fetchGetOperationsAPI({
   token,
   accountId,
+  from,
+  to,
 }: {
   token: TTokenState["data"];
   accountId: string;
+  from?: string;
+  to?: string;
 }): Promise<TOperationsResponse> {
   return fetchWithCache(
     `operations:${accountId}`, // уникальный ключ для кэша
@@ -75,8 +79,8 @@ export async function fetchGetOperationsAPI({
           },
           body: JSON.stringify({
             accountId,
-            from: moment().add(-1, "y").utc().toISOString(),
-            to: moment().utc().toISOString(),
+            from: moment(from).toISOString() ?? moment().add(-1, "y").utc().toISOString(),
+            to: moment(to).toISOString() ?? moment().utc().toISOString(),
             state: "OPERATION_STATE_EXECUTED",
           }),
         }
@@ -92,7 +96,6 @@ export async function fetchGetOperationsAPI({
     { ttl: 30 * 60 * 1000 } // кэш 10 минут
   );
 }
-
 
 export async function fetchGetPositionBondAPI({
   token,
