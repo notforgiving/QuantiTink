@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CurrencyRates } from "api/features/currency/currencySlice";
 import { TFavoriteBond } from "api/features/favoritesBonds/favoritesBondsTypes";
 import moment from "moment";
 
@@ -54,13 +55,14 @@ export interface TCalculatedBond extends TFavoriteBond {
 interface UseCalcBondsProps {
     favoritesBonds: TFavoriteBond[];
     comission: number;
+    rates: CurrencyRates;
 }
 
 type TUseCalcBonds = (props: UseCalcBondsProps) => {
     result: TCalculatedBond[]
 }
 
-export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission }) => {
+export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission, rates }) => {
     const INCOME_TAX = 0; // по умолчанию без налога
     const result = useMemo(() => {
         if (!favoritesBonds?.length) return [];
@@ -76,17 +78,19 @@ export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission }) => {
 
             // НКД
             const nkd = formatMoney(aciValue);
-            const nominalValue = formatMoney(initialNominal);
+            const key = initialNominal.currency.toUpperCase() as keyof CurrencyRates;
+            const correctByCurrency = rates[key] || 1;
+            const nominalValue = formatMoney(formatMoney(initialNominal).value * correctByCurrency);
             // Текущая цена
             const currentPercentPrice = lastPrice ? lastPrice : 100;
             // Цена облигаций в рублях
-            const currentFormatPrice = formatMoney(currentPercentPrice * 10)
+            const currentFormatPrice = rates[key] ? formatMoney(currentPercentPrice * correctByCurrency) : formatMoney(currentPercentPrice * 10)
             // Комиссия при покупке
             const comissionFullPrice = formatMoney(currentFormatPrice.value * comission / 100)
             // Полная цена покупки с учетом комиссии
             const currentPriceWithComission = formatMoney(comissionFullPrice.value + currentFormatPrice.value + nkd.value);
             // Размер одного купона
-            const payOneBond = events ? formatMoney(events[0].payOneBond) : formatMoney(0);
+            const payOneBond = events ? formatMoney(formatMoney(events[0].payOneBond).value * correctByCurrency) : formatMoney(0);
             // Купонная доходность
             const couponeYeild = ((payOneBond.value * couponQuantityPerYear) / currentPriceWithComission.value * 100).toFixed(1)
             // Колиечство выплат до погашения
@@ -142,7 +146,7 @@ export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission }) => {
                 annualProfitability,
             };
         });
-    }, [favoritesBonds, comission]);
+    }, [favoritesBonds, rates, comission]);
 
     return { result };
 };

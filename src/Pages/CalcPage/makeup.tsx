@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useBonds } from "api/features/bonds/useBonds";
+import { useCurrency } from "api/features/currency/useCurrency";
 import {
   addFavoriteBondFailure,
   addFavoriteBondRequest,
@@ -43,9 +44,12 @@ const CalcPageMakup: FC = () => {
   const loadingPreData =
     loadingFavoritesBonds || loadingAllBonds || loadingInfo;
 
+  const { rates } = useCurrency();
+
   const { result } = useCalcBonds({
     favoritesBonds: !loadingPreData ? favoritesBonds : [],
     comission: info?.comission || 0,
+    rates,
   });
 
   const handleAdd = () => {
