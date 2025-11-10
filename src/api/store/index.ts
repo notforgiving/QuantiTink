@@ -26,6 +26,7 @@ export const store = configureStore({
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
     }).concat(sagaMiddleware),
+  devTools: process.env.NODE_ENV !== "production", // 👈 только в dev
 });
 
 sagaMiddleware.run(rootSaga);
