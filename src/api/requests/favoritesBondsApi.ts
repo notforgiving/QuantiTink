@@ -1,6 +1,6 @@
 import { IGetBondCouponsEvents } from "api/features/favoritesBonds/favoritesBondsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
-import { collection, doc, getDoc, getDocs, limit, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, limit, query, setDoc, where } from "firebase/firestore";
 import { db } from "index";
 import moment from "moment";
 
