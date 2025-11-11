@@ -166,10 +166,12 @@ const AccountPageMakeup: FC = () => {
               <SharesSvg />
               <strong>Акции:</strong>
               <span className={css.blockItem__value}>
-                <GoalProgress
-                  size={goalsUi["shares"]}
-                  loading={!goalsUi["shares"]}
-                />
+                {goalsUi["shares"] !== undefined && (
+                  <GoalProgress
+                    size={goalsUi["shares"]}
+                    loading={!goalsUi["shares"]}
+                  />
+                )}
                 <span>{portfolioShare.value.formatted}</span>{" "}
                 <span>({portfolioShare.percent}%) </span>
               </span>
@@ -177,6 +179,7 @@ const AccountPageMakeup: FC = () => {
           )}
           {portfolioBonds &&
             Object.entries(portfolioBonds).map(([key, bond]) => {
+              const goal = goalsUi[key];
               return (
                 <div
                   className={cn(css.portfolio_blockItem, "isBond")}
@@ -186,7 +189,12 @@ const AccountPageMakeup: FC = () => {
                   {bond.icon}
                   <strong>{bond.name}</strong>
                   <span className={css.blockItem__value}>
-                    <GoalProgress size={goalsUi[key]} loading={!goalsUi[key]} />
+                    {goal !== undefined && (
+                      <GoalProgress
+                        size={goalsUi[key]}
+                        loading={!goalsUi[key]}
+                      />
+                    )}
                     <span>{bond.value.formatted}</span>
                     <span>({bond.percent}%)</span>
                   </span>
@@ -195,6 +203,7 @@ const AccountPageMakeup: FC = () => {
             })}
           {portfolioEtf &&
             Object.entries(portfolioEtf).map(([key, etf]) => {
+              const goal = goalsUi[key];
               return (
                 <div
                   className={cn(css.portfolio_blockItem, "isBond")}
@@ -204,7 +213,12 @@ const AccountPageMakeup: FC = () => {
                   <CubeSvg />
                   <strong>{etf.name}</strong>
                   <span className={css.blockItem__value}>
-                    <GoalProgress size={goalsUi[key]} loading={!goalsUi[key]} />
+                    {goal !== undefined && (
+                      <GoalProgress
+                        size={goalsUi[key]}
+                        loading={!goalsUi[key]}
+                      />
+                    )}
                     <span>{etf.value.formatted}</span>
                     <span>({etf.percent}%)</span>
                   </span>
