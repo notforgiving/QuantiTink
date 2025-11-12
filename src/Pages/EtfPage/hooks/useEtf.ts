@@ -40,11 +40,32 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
 
     // операции по этому фонду (500+ => обязательно мемоизируем)
     const etfOperations = useMemo(() => {
-        if (!etf?.assetUid) return [];
-        return account?.operations?.filter(
-            (op) => op.assetUid === etf.assetUid
-        ) ?? [];
-    }, [account?.operations, etf?.assetUid]);
+        if (!etf?.assetUid || !etf?.quantity) return [];
+
+        // 1️⃣ Берём все операции по конкретному ETF
+        const allEtfOps = (account?.operations ?? [])
+            .filter((op) => op.assetUid === etf.assetUid)
+
+        // 3️⃣ Отбираем операции, формирующие текущее количество
+        let remaining = Number(etf.quantity.units);
+        const result: typeof allEtfOps = [];
+
+        // 4️⃣ Проходим операции в обратном порядке (от новых к старым)
+        for (let i = 0; i < allEtfOps.length && remaining > 0; i++) {
+            const op = allEtfOps[i];
+            const qty = Number(op.quantity) ?? 0;
+            switch (op.operationType) {
+                case "OPERATION_TYPE_BUY":
+                    result.push(op);
+                    remaining -= qty;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return result;
+    }, [account?.operations, etf?.assetUid, etf?.quantity]);
 
     // сколько всего денег вложено (reduce по операциям => мемо обязателен)
     const amountOfPurchases = useMemo(() => {

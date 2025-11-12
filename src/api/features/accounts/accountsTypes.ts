@@ -42,7 +42,7 @@ export type TPortfolioResponse = {
   totalAmountSp: TMoneyValue;
   totalAmountPortfolio: TMoneyValue;
   expectedYield: TMoneyValue;
- positions: TPortfolioPositionFull[];
+  positions: TPortfolioPositionFull[];
   virtualPositions: unknown[];
   dailyYield: TMoneyValue;
   dailyYieldRelative: {
@@ -64,7 +64,16 @@ export type TOperation = {
   instrumentType: InstrumentType;
   date: string; // ISO строка
   type: "Выплата дивидендов" | "Выплата купонов" | "Продажа ценных бумаг" | "Удержание комиссии за операцию" | "Покупка ценных бумаг" | "Пополнение брокерского счёта" | 'Удержание налога' | "Удержание налога по дивидендам" | "Выплата дивидендов на карту" | "Вывод денежных средств" | "Покупка ценных бумаг с карты";
-  operationType: string; // например, "OPERATION_TYPE_SELL"
+  operationType: | "OPERATION_TYPE_BUY"   // покупка инструмента
+  | "OPERATION_TYPE_SELL"  // продажа инструмента
+  | "OPERATION_TYPE_DIVIDEND"  // получение дивидендов
+  | "OPERATION_TYPE_COUPON"    // получение купона (для облигаций)
+  | "OPERATION_TYPE_TAX"       // налог / удержание
+  | "OPERATION_TYPE_FEE"       // комиссия
+  | "OPERATION_TYPE_WITHDRAW"  // вывод средств
+  | "OPERATION_TYPE_DEPOSIT"   // пополнение
+  | "OPERATION_TYPE_TRANSFER"  // перевод/перемещение между счетами
+  | "OPERATION_TYPE_REBALANCE" // ребалансировка
   trades: TTrade[];
   assetUid: string;
   positionUid: string;
