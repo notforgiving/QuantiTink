@@ -53,7 +53,7 @@ export const BondCurrencyConfig = {
     icon: <RubbondsSvg />,
   },
   usd: {
-    name: "Долларовые облигации",
+    name: "Валютные облигации",
     icon: <UsdbondsSvg />,
   },
   cny: {
