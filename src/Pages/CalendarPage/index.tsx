@@ -25,7 +25,7 @@ import css from "./styles.module.scss";
 // ---------- Фильтры ----------
 const filterByTab = (
   event: TCalendarEventUi,
-  tab: "ALL" | "DIV" | "OA" | "OM"
+  tab: "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL"
 ) => {
   switch (tab) {
     case "DIV":
@@ -41,6 +41,12 @@ const filterByTab = (
         event.eventType === "coupon" &&
         event.raw.eventType === "EVENT_TYPE_MTY" &&
         event.raw.operationType === "OM"
+      );
+
+    case "NOT_CALL":
+      return (
+        event.eventType === "coupon" &&
+        event.raw.eventType !== "EVENT_TYPE_CALL"
       );
     default:
       return true;
@@ -77,9 +83,9 @@ const CalendarPage: FC = () => {
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentTab, setCurrentTab] = useState<"ALL" | "DIV" | "OA" | "OM">(
-    "ALL"
-  );
+  const [currentTab, setCurrentTab] = useState<
+    "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL"
+  >("NOT_CALL");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null); // 👈 добавили
 
   const { result } = useCalendarUI(id || "0");
@@ -97,6 +103,7 @@ const CalendarPage: FC = () => {
     { key: "DIV", label: "Дивиденды" },
     { key: "OA", label: "Амортизация" },
     { key: "OM", label: "Погашение" },
+    { key: "NOT_CALL", label: "Без досрочных погешений" },
   ] as const;
 
   const filteredResult = useMemo(() => {
@@ -157,7 +164,7 @@ const CalendarPage: FC = () => {
 
         <div className={css.chart}>
           <FuturePayoutsCard
-            eventData={result}
+            eventData={filteredResult}
             onMonthSelect={setSelectedMonth}
             selectedMonth={selectedMonth}
           />
@@ -207,8 +214,11 @@ const CalendarPage: FC = () => {
                           event.raw.eventType === "EVENT_TYPE_MTY" &&
                           event.raw.operationType === "OM" &&
                           "Погашение"}
+                        {event.eventType === "coupon" &&
+                          event.raw.eventType === "EVENT_TYPE_CALL" &&
+                          event.raw.operationType === "A" &&
+                          "Оъявлено досрочное погашение по запросу"}
                       </div>
-
                       <div className={css.calendar__payout}>
                         <div className={css.calendar__payout_name}>
                           {event.name}
