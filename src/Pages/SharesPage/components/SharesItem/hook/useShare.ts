@@ -31,6 +31,7 @@ type TUseShare = (props: TUseShareProps) => {
         message: string;
     } | null;
     lastBuyOperationsUI: {
+        id: number;
         profitability: {
             amount: TFormatMoney;
             percent: string;
@@ -261,6 +262,7 @@ export const useShare: TUseShare = ({ id, figi }) => {
                 percent: ((profitabilityValue.value / totalPurchasePrice.value) * 100).toFixed(2),
             }
             return {
+                id: Number(Number(Math.random().toString(36).substring(2, 9))),
                 profitability,
                 totalPriceNow,
                 pricePerLotNow: currentPrice,

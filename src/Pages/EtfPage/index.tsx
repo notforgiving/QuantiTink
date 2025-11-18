@@ -1,10 +1,11 @@
-import React, { FC } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import cn from "classnames";
 import BackHeader from "UI/components/BackHeader";
 import Input from "UI/components/Input";
 import LineBlock from "UI/components/LineBlock";
 import ProfitabilityLine from "UI/components/ProfitabilityLine";
+import SortArrows, { SortOrder } from "UI/components/SortArrows";
 
 import { pluralize } from "utils/usePluralize";
 
@@ -29,6 +30,23 @@ const EtfPage: FC = () => {
   } = useEtf(id || "0", ticker || "0");
 
   const recommendation = recommendBuyToReduceAvg(1); // снизить среднюю на 1 рубль
+
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
+
+  const sortedOperations = useMemo(() => {
+    if (!sortOrder) return operations;
+
+    return [...operations].sort((a, b) => {
+      const aVal = Number(a.profitability?.percent || 0);
+      const bVal = Number(b.profitability?.percent || 0);
+
+      // asc = from smaller to bigger
+      if (sortOrder === "asc") return aVal - bVal;
+
+      // desc = from bigger to smaller
+      return bVal - aVal;
+    });
+  }, [operations, sortOrder]);
 
   return (
     <div>
@@ -92,12 +110,17 @@ const EtfPage: FC = () => {
             onClick: () => setIncomeTax(!incomeTax),
           }}
         />
+        <SortArrows
+          order={sortOrder}
+          label="Сортировать по доходности"
+          onChange={setSortOrder}
+        />
       </div>
       <div className={css.etf__purchases}>
-        {operations &&
-          operations.map((item) => (
+        {sortedOperations &&
+          sortedOperations.map((item) => (
             <ProfitabilityLine
-              key={item.totalPurchasePrice?.value}
+              key={item.id}
               profitability={item.profitability}
               dateFormatted={item.dateFormatted}
               time={item.time}
@@ -106,6 +129,7 @@ const EtfPage: FC = () => {
               quantity={item.quantity}
               totalPurchasePrice={item.totalPurchasePrice}
               totalPriceNow={item.totalPriceNow}
+              id={item.id}
             />
           ))}
       </div>

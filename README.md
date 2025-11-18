@@ -1,24 +1,39 @@
-# Приложение для просмотра инвестиций в tinkoff investment
+# React 19 Project
 
-## Доступные скрипты
+## Требования
 
-### `npm start`
+-   **Node.js** версии **20** или выше\
+-   **React** версии **19**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Установка
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1.  Установите зависимости:
 
-### `npm run build`
+    ``` bash
+    npm install
+    ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2.  Создайте файл **.env** в корне проекта и заполните его ключами
+    Firebase:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+        REACT_APP_FIREBASE_API_KEY=REACT_APP_FIREBASE_API_KEY
+        REACT_APP_FIREBASE_AUTH_DOMAIN=REACT_APP_FIREBASE_AUTH_DOMAIN
+        REACT_APP_FIREBASE_URL=REACT_APP_FIREBASE_URL
+        REACT_APP_FIREBASE_PROJECT_ID=REACT_APP_FIREBASE_PROJECT_ID
+        REACT_APP_FIREBASE_STORAGE_BUCKET=REACT_APP_FIREBASE_STORAGE_BUCKET
+        REACT_APP_FIREBASE_SENDER_ID=REACT_APP_FIREBASE_SENDER_ID
+        REACT_APP_FIREBASE_APP_ID=REACT_APP_FIREBASE_APP_ID
+        REACT_APP_FIREBASE_MEASUREMENT_ID=REACT_APP_FIREBASE_MEASUREMENT_ID
+        REACT_APP_SECRET_KEY=REACT_APP_SECRET_KEY
+        NODE_ENV=development
 
-## Приложение построено на стеке:
-- React JS
-- Google Firebase
-- https://developer.tbank.ru/
+3.  Перезапустите проект:
+
+    ``` bash
+    npm start
+    ```
+
+## Описание
+
+Проект использует Firebase для авторизации и хранения данных. Все ключи
+подключаются через `.env` файл.

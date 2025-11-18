@@ -180,6 +180,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
                     : "0";
 
             return {
+                id: Number(Math.random().toString(36).substring(2, 9)),
                 dateFormatted: moment(item.date).format("DD.MM.YYYY"),
                 quantity,
                 time: monthsPassed,

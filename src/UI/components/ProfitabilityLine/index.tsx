@@ -10,6 +10,7 @@ import LineBlock from "../LineBlock";
 import css from "./styles.module.scss";
 
 export interface IProfitabilityLineProps {
+  id: number;
   profitability?: {
     amount: TFormatMoney;
     percent: string;
@@ -24,6 +25,7 @@ export interface IProfitabilityLineProps {
 }
 
 const ProfitabilityLine: FC<IProfitabilityLineProps> = ({
+  id: _,
   profitability,
   dateFormatted,
   time,

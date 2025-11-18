@@ -103,7 +103,7 @@ const CalendarPage: FC = () => {
     { key: "DIV", label: "Дивиденды" },
     { key: "OA", label: "Амортизация" },
     { key: "OM", label: "Погашение" },
-    { key: "NOT_CALL", label: "Без досрочных погешений" },
+    { key: "NOT_CALL", label: "Без досрочных погашений" },
   ] as const;
 
   const filteredResult = useMemo(() => {
@@ -164,7 +164,7 @@ const CalendarPage: FC = () => {
 
         <div className={css.chart}>
           <FuturePayoutsCard
-            eventData={filteredResult}
+            eventData={result}
             onMonthSelect={setSelectedMonth}
             selectedMonth={selectedMonth}
           />

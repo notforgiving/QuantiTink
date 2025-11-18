@@ -35,7 +35,7 @@ const ShareItem: FC = () => {
     <div>
       <BackHeader
         title={share?.name ?? "Акция"}
-       backCallback={() => navigate(-1)}
+        backCallback={() => navigate(-1)}
       />
       <LineBlock greenLine={expectedYield.value > 0}>
         <div
@@ -90,6 +90,7 @@ const ShareItem: FC = () => {
         {!!lastBuyOperationsUI.length &&
           lastBuyOperationsUI.map((item) => (
             <ProfitabilityLine
+              id={item.id}
               profitability={item.profitability}
               dateFormatted={item.dateFormatted}
               time={item.time}
@@ -98,7 +99,7 @@ const ShareItem: FC = () => {
               quantity={item.quantity}
               totalPurchasePrice={item.totalPurchasePrice}
               totalPriceNow={item.totalPriceNow}
-              key={item.totalPurchasePrice.value}
+              key={item.id}
             />
           ))}
       </div>
