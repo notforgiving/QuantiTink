@@ -57,6 +57,8 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
     return monthKey === selectedMonth ? 1 : 0.5;
   };
 
+  console.log(chartData, "chartData");
+
   return (
     <div className={css.card}>
       <div className={css.card__header}>
@@ -161,7 +163,6 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
             <Bar
               dataKey="dividends"
               stackId="a"
-              radius={[0, 0, 0, 0]}
               maxBarSize={window.innerWidth <= 768 ? 26 : 36}
               onClick={handleBarClick}
               style={{ cursor: "pointer" }}
@@ -171,6 +172,8 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
                   key={entry.fullMonth.toString()}
                   fill="url(#dividendsPattern)"
                   fillOpacity={getOpacity(entry.fullMonth)}
+                  // ✅ здесь динамический radius
+                  radius={entry.coupons === 0 ? 6 : 0}
                 />
               ))}
             </Bar>
