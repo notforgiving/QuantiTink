@@ -34,6 +34,10 @@
     align-items: center;
     gap: 10px;
 
+    @include phone {
+      gap: 6px;
+    }
+
     &:global(._isChecked) {
       .checkbox_square {
         background: #10b981;
@@ -51,6 +55,11 @@
       border-radius: 24px;
       position: relative;
 
+      @include phone {
+        width: 38px;
+        height: 18px;
+      }
+
       &::before {
         content: "";
         position: absolute;
@@ -61,11 +70,19 @@
         background: #fff;
         border-radius: 24px;
         transition: 0.3s;
+
+        @include phone {
+          @include square(10px);
+        }
       }
     }
     .input_label {
       cursor: pointer;
       font-size: 16px;
+
+      @include phone {
+        font-size: 12px;
+      }
     }
   }
   &_label {
@@ -79,13 +96,13 @@
     font-size: 14px;
     min-height: 40px;
     color: $green-70;
-    border: 1px solid #E0E1E0;
+    border: 1px solid #e0e1e0;
     &::placeholder {
       color: $green-70;
     }
   }
   &_error {
-    color:$orange-20;
+    color: $orange-20;
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.1em;

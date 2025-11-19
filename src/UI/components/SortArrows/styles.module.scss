@@ -25,6 +25,12 @@
       }
     }
   }
+
+  &__label {
+    @include phone {
+      font-size: 12px;
+    }
+  }
 }
 
 .sortArrow {

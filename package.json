@@ -1,6 +1,6 @@
 {
-  "name": "tbalance_19",
-  "version": "0.1.0",
+  "name": "quantitink",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",

@@ -65,7 +65,10 @@
     margin-top: 30px;
     @include flex-center;
     justify-content: space-between;
-    gap: 20px
+    gap: 20px;
+    @include phone {
+      justify-content: space-around;
+    }
   }
   &__profitability {
     @include flex-center;
