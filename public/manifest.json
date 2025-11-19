@@ -1,6 +1,7 @@
 {
   "short_name": "QuantiTink",
   "name": "Следи за деньгами, пока они растут",
+  "description": "Приложение для просмотра и контроля инвестиций в Тинькофф Банке. Отслеживайте портфель, облигации, акции и ETF.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +9,29 @@
       "type": "image/x-icon"
     },
     {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    },
+    {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#00d885",
+  "background_color": "#f5f8f7",
+  "categories": ["finance", "business", "productivity"],
+  "lang": "ru"
 }

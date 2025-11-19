@@ -1,4 +1,4 @@
-import { accountsSaga, watchAccountsLoaded, wztchGoalsSaga } from 'api/features/accounts/accountsSaga';
+import { accountsSaga, watchAccountsLoaded, watchGoalsSaga } from 'api/features/accounts/accountsSaga';
 import { bondsSaga } from 'api/features/bonds/bondsSaga';
 import { calendarSaga } from 'api/features/calendar/calendarSaga';
 import { currencySaga } from 'api/features/currency/currencySaga';
@@ -17,7 +17,7 @@ export default function* rootSaga() {
     watchAccountsLoaded(),
     infoSaga(),
     calendarSaga(),
-    wztchGoalsSaga(),
+    watchGoalsSaga(),
     bondsSaga(),
     favoritesBondsSaga(),
   ]);

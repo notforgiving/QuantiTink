@@ -381,7 +381,7 @@ function* watchAccountsAndPositions() {
   yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
 }
 
-export function* wztchGoalsSaga() {
+export function* watchGoalsSaga() {
   yield takeLatest(fetchGoalsRequest.type, fetchGoalsSaga);
   yield takeLatest(saveGoalsRequest.type, saveGoalsSaga);
 }

@@ -26,8 +26,8 @@ const getValidationSchema = (isLoginMode: boolean) =>
       confirmPassword: isLoginMode
         ? Yup.string().notRequired()
         : Yup.string()
-            .required("Подтвердите пароль")
-            .oneOf([Yup.ref("password")], "Пароли не совпадают"),
+          .required("Подтвердите пароль")
+          .oneOf([Yup.ref("password")], "Пароли не совпадают"),
     })
   );
 
@@ -56,7 +56,10 @@ const LoginPage: FC = () => {
         <span></span>
       </div>
       <div className={css.logo}>
-        <LogoSvg />
+        <div className={css.logo__icon}>
+          <LogoSvg />
+          <span>QuantiTink</span>
+        </div>
         <div className={css.logo__slogan}>
           «Следи за деньгами, пока они растут»
         </div>
@@ -124,8 +127,8 @@ const LoginPage: FC = () => {
               {loading
                 ? "Загрузка..."
                 : !isLoginMode
-                ? "Войти"
-                : "Зарегистрироваться"}
+                  ? "Войти"
+                  : "Зарегистрироваться"}
             </div>
 
             {/* DEMO ACCESS */}
