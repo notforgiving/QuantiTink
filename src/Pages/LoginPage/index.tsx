@@ -57,6 +57,9 @@ const LoginPage: FC = () => {
       </div>
       <div className={css.logo}>
         <LogoSvg />
+        <div className={css.logo__slogan}>
+          «Следи за деньгами, пока они растут»
+        </div>
       </div>
 
       <Formik<FormValues>

@@ -74,13 +74,22 @@ $opacity-green-40: rgb(from $green-40 r g b / 60%);
 
   .logo {
     @include flex-center;
-    @include abs-center;
-    top: 50px;
-    width: 200px;
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
+    top: 20px;
     height: auto;
     z-index: 2;
+    color: #001c18;
+
+    &__slogan {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
     svg {
-      width: 100%;
+      width: 200px;
       height: auto;
     }
   }
