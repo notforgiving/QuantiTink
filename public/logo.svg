@@ -1,23 +1,27 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Градиент фона - радиальный -->
-    <radialGradient id="bgGradient" cx="50%" cy="30%">
-      <stop offset="0%" style="stop-color:#001c18;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#1e8276;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#00d885;stop-opacity:1" />
-    </radialGradient>
-    
-    <!-- Золотой градиент -->
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#fcc769;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#d88500;stop-opacity:1" />
+    <!-- Градиент фона - темно-серый (Тинькофф) -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d2d2d;stop-opacity:1" />
     </linearGradient>
     
-    <!-- Зеленый градиент -->
-    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#43e3a7;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#00d885;stop-opacity:1" />
+    <!-- Желтый градиент - фирменный цвет Тинькофф -->
+    <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFDD00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Белый градиент -->
+    <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8f8f8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Серый градиент -->
+    <linearGradient id="grayGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#808080;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a0a0a0;stop-opacity:1" />
     </linearGradient>
     
     <!-- Свечение -->
@@ -57,7 +61,7 @@
   <g transform="translate(256, 256)">
     <!-- Внешний круг Q -->
     <circle cx="0" cy="0" r="100" 
-            stroke="url(#goldGradient)" 
+            stroke="url(#yellowGradient)" 
             stroke-width="14" 
             fill="none"
             stroke-linecap="round"
@@ -66,105 +70,107 @@
     
     <!-- Внутренний круг для объема -->
     <circle cx="0" cy="0" r="100" 
-            stroke="rgba(255,255,255,0.2)" 
+            stroke="url(#whiteGradient)" 
             stroke-width="4" 
             fill="none"
-            opacity="0.6"/>
+            opacity="0.3"/>
     
     <!-- Хвостик Q - изогнутый вверх -->
     <path d="M 70,70 Q 85,90 100,110" 
-          stroke="url(#goldGradient)" 
+          stroke="url(#yellowGradient)" 
           stroke-width="16" 
           stroke-linecap="round"
           fill="none"
           filter="url(#strongGlow)"/>
     
     <!-- Точка в конце хвостика -->
-    <circle cx="100" cy="110" r="14" fill="url(#goldGradient)" filter="url(#ultraGlow)"/>
+    <circle cx="100" cy="110" r="14" fill="url(#yellowGradient)" filter="url(#ultraGlow)"/>
   </g>
   
   <!-- НЕОЖИДАННЫЙ ОБРАЗ: Стрелки роста вокруг Q (как компас контроля) -->
   <g transform="translate(256, 256)">
-    <!-- Верхняя стрелка (рост вверх) -->
+    <!-- Верхняя стрелка (рост вверх) - желтая -->
     <path d="M 0,-120 L -15,-100 L 0,-140 L 15,-100 Z" 
-          fill="url(#goldGradient)" 
+          fill="url(#yellowGradient)" 
           filter="url(#strongGlow)"/>
     <line x1="0" y1="-120" x2="0" y2="-160" 
-          stroke="url(#goldGradient)" 
+          stroke="url(#yellowGradient)" 
           stroke-width="12" 
           stroke-linecap="round"
           filter="url(#glow)"/>
     
-    <!-- Правая верхняя стрелка -->
+    <!-- Правая верхняя стрелка - белая -->
     <path d="M 85,-85 L 70,-70 L 100,-70 L 85,-100 Z" 
-          fill="url(#greenGradient)" 
+          fill="url(#whiteGradient)" 
           filter="url(#glow)"
-          opacity="0.8"/>
+          opacity="0.9"/>
     
-    <!-- Левая верхняя стрелка -->
+    <!-- Левая верхняя стрелка - белая -->
     <path d="M -85,-85 L -100,-70 L -70,-70 L -85,-100 Z" 
-          fill="url(#greenGradient)" 
+          fill="url(#whiteGradient)" 
           filter="url(#glow)"
-          opacity="0.8"/>
+          opacity="0.9"/>
   </g>
   
   <!-- ДОПОЛНИТЕЛЬНЫЙ ОБРАЗ: Концентрические кольца контроля -->
   <g transform="translate(256, 256)">
-    <!-- Внешнее кольцо -->
+    <!-- Внешнее кольцо - серое -->
     <circle cx="0" cy="0" r="140" 
-            stroke="url(#greenGradient)" 
+            stroke="url(#grayGradient)" 
             stroke-width="4" 
             fill="none"
             opacity="0.5"
             filter="url(#glow)"/>
     
-    <!-- Среднее кольцо -->
+    <!-- Среднее кольцо - серое -->
     <circle cx="0" cy="0" r="160" 
-            stroke="url(#greenGradient)" 
+            stroke="url(#grayGradient)" 
             stroke-width="3" 
             fill="none"
             opacity="0.4"
             filter="url(#glow)"/>
     
     <!-- Внутренние секторы контроля (4 точки) -->
-    <circle cx="0" cy="-160" r="8" fill="url(#goldGradient)" filter="url(#glow)"/>
-    <circle cx="113" cy="-113" r="6" fill="url(#greenGradient)" filter="url(#glow)" opacity="0.8"/>
-    <circle cx="-113" cy="-113" r="6" fill="url(#greenGradient)" filter="url(#glow)" opacity="0.8"/>
-    <circle cx="0" cy="160" r="6" fill="url(#greenGradient)" filter="url(#glow)" opacity="0.8"/>
+    <circle cx="0" cy="-160" r="8" fill="url(#yellowGradient)" filter="url(#glow)"/>
+    <circle cx="113" cy="-113" r="6" fill="url(#whiteGradient)" filter="url(#glow)" opacity="0.8"/>
+    <circle cx="-113" cy="-113" r="6" fill="url(#whiteGradient)" filter="url(#glow)" opacity="0.8"/>
+    <circle cx="0" cy="160" r="6" fill="url(#grayGradient)" filter="url(#glow)" opacity="0.8"/>
   </g>
   
   <!-- АБСТРАКТНЫЕ ЭЛЕМЕНТЫ: Геометрические формы роста -->
   <g transform="translate(256, 150)">
-    <!-- Треугольник роста (направлен вверх) -->
+    <!-- Треугольник роста (направлен вверх) - желтый -->
     <path d="M 0,-40 L -35,20 L 35,20 Z" 
-          fill="url(#goldGradient)" 
+          fill="url(#yellowGradient)" 
           opacity="0.7"
           filter="url(#glow)"/>
     
-    <!-- Внутренний треугольник -->
+    <!-- Внутренний треугольник - белый -->
     <path d="M 0,-20 L -20,10 L 20,10 Z" 
-          fill="url(#greenGradient)" 
+          fill="url(#whiteGradient)" 
           opacity="0.8"
           filter="url(#glow)"/>
   </g>
   
   <!-- Декоративные элементы - летящие частицы -->
-  <circle cx="180" cy="120" r="6" fill="url(#goldGradient)" opacity="0.8" filter="url(#glow)"/>
-  <circle cx="340" cy="140" r="5" fill="url(#greenGradient)" opacity="0.7" filter="url(#glow)"/>
-  <circle cx="160" cy="200" r="4" fill="url(#goldGradient)" opacity="0.6" filter="url(#glow)"/>
-  <circle cx="360" cy="220" r="5" fill="url(#greenGradient)" opacity="0.7" filter="url(#glow)"/>
-  <circle cx="140" cy="300" r="5" fill="url(#goldGradient)" opacity="0.7" filter="url(#glow)"/>
-  <circle cx="380" cy="320" r="4" fill="url(#greenGradient)" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="180" cy="120" r="6" fill="url(#yellowGradient)" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="340" cy="140" r="5" fill="url(#whiteGradient)" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="160" cy="200" r="4" fill="url(#yellowGradient)" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="360" cy="220" r="5" fill="url(#whiteGradient)" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="140" cy="300" r="5" fill="url(#yellowGradient)" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="380" cy="320" r="4" fill="url(#grayGradient)" opacity="0.6" filter="url(#glow)"/>
   
-  <!-- Акцентные линии (направляющие) -->
+  <!-- Акцентные линии (направляющие) - серые -->
   <line x1="100" y1="100" x2="130" y2="130" 
-        stroke="rgba(252,199,105,0.4)" 
+        stroke="url(#grayGradient)" 
         stroke-width="3" 
         stroke-linecap="round"
+        opacity="0.4"
         filter="url(#glow)"/>
   <line x1="410" y1="100" x2="380" y2="130" 
-        stroke="rgba(252,199,105,0.4)" 
+        stroke="url(#grayGradient)" 
         stroke-width="3" 
         stroke-linecap="round"
+        opacity="0.4"
         filter="url(#glow)"/>
 </svg>
