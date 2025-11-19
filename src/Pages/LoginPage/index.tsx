@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setDemo } from "api/features/demo/demoSlice";
 import { useAuth } from "api/features/user/useAuth";
 import { loginRequest, registerRequest } from "api/features/user/userSlice";
 import { AppDispatch } from "api/store";
@@ -31,7 +32,7 @@ const getValidationSchema = (isLoginMode: boolean) =>
   );
 
 const LoginPage: FC = () => {
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
   const { isAuth, error, loading } = useAuth();
   const navigate = useNavigate();
@@ -76,51 +77,70 @@ const LoginPage: FC = () => {
         }}
         enableReinitialize
       >
-        <Form className={css.form}>
-          <div className={css.auth_title}>
-            {isLoginMode ? "Вход" : "Регистрация"}
-          </div>
+        {({ setFieldValue, submitForm }) => (
+          <Form className={css.form}>
+            <div className={css.auth_title}>
+              {isLoginMode ? "Вход" : "Регистрация"}
+            </div>
 
-          <FormikField<FormValues>
-            name="email"
-            label="Ваш email"
-            placeholder="Введите email..."
-            type="email"
-          />
-          <FormikField<FormValues>
-            name="password"
-            label="Пароль"
-            placeholder="Введите пароль"
-            type="password"
-          />
-          {!isLoginMode && (
             <FormikField<FormValues>
-              name="confirmPassword"
-              label="Подтверждение пароля"
-              placeholder="Повторите пароль"
+              name="email"
+              label="Ваш email"
+              placeholder="Введите email..."
+              type="email"
+            />
+
+            <FormikField<FormValues>
+              name="password"
+              label="Пароль"
+              placeholder="Введите пароль"
               type="password"
             />
-          )}
 
-          <Button
-            text={isLoginMode ? "Войти" : "Зарегистрироваться"}
-            borderStyle
-            buttonAttributes={{
-              type: "submit",
-              disabled: loading,
-            }}
-          />
+            {!isLoginMode && (
+              <FormikField<FormValues>
+                name="confirmPassword"
+                label="Подтверждение пароля"
+                placeholder="Повторите пароль"
+                type="password"
+              />
+            )}
 
-          {error && <div className={css.form_error}>{error}</div>}
+            <Button
+              text={isLoginMode ? "Войти" : "Зарегистрироваться"}
+              borderStyle
+              buttonAttributes={{
+                type: "submit",
+                disabled: loading,
+              }}
+            />
 
-          <div className={css.form_login} onClick={toggleMode}>
-            {loading
-              ? "Загрузка..."
-              : !isLoginMode
-              ? "Войти"
-              : "Зарегистрироваться"}
-          </div>
-        </Form>
+            {error && <div className={css.form_error}>{error}</div>}
+
+            <div className={css.form_login} onClick={toggleMode}>
+              {loading
+                ? "Загрузка..."
+                : !isLoginMode
+                ? "Войти"
+                : "Зарегистрироваться"}
+            </div>
+
+            {/* DEMO ACCESS */}
+            <div
+              className={css.form_login}
+              onClick={async () => {
+                // Подставляем значения
+                await setFieldValue("email", "test@mail.ru");
+                await setFieldValue("password", "123456789");
+                dispatch(setDemo(true))
+                // Автоматически отправляем форму
+                submitForm();
+              }}
+            >
+              Демо доступ
+            </div>
+          </Form>
+        )}
       </Formik>
     </div>
   );

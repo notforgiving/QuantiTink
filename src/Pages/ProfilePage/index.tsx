@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { useDispatch } from "react-redux";
+import { useDemo } from "api/features/demo/useDemo";
 import { deleteTokenRequest } from "api/features/token/tokenSlice";
 import { useToken } from "api/features/token/useToken";
 import { logout, setThemeRequest } from "api/features/user/userSlice";
@@ -12,6 +13,7 @@ import Input from "UI/components/Input";
 import css from "./styles.module.scss";
 
 const ProfilePage: FC = () => {
+  const isDemo = useDemo()
   const { currentUser, loading: loadingUser } = useUser();
   const { data: tokenData, loading } = useToken();
   const dispatch = useDispatch<AppDispatch>();
@@ -54,7 +56,7 @@ const ProfilePage: FC = () => {
             text={loading ? "Удаление" : "Удалить токен"}
             buttonAttributes={{
               onClick: handleDeleteToken,
-              disabled: loading,
+              disabled: loading || isDemo,
             }}
           />
         )}

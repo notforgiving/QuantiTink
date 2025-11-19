@@ -50,7 +50,7 @@ const EtfPage: FC = () => {
 
   return (
     <div>
-      <BackHeader title={name} backCallback={() => navigate(-1)} />
+      <BackHeader title={`Фонд ${name}`} backCallback={() => navigate(-1)} />
       <LineBlock greenLine={expectedYield !== null && expectedYield.value > 0}>
         <div
           className={cn(css.etf, {

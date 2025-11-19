@@ -211,7 +211,7 @@ const AccountPageMakeup: FC = () => {
                   key={key}
                 >
                   <CubeSvg />
-                  <strong>{etf.name}</strong>
+                  <strong>Фонд {etf.name}</strong>
                   <span className={css.blockItem__value}>
                     {goal !== undefined && (
                       <GoalProgress

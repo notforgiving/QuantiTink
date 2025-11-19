@@ -6,6 +6,7 @@ import accountsReducer from '../features/accounts/accountsSlice';
 import bondsReducer from '../features/bonds/bondsSlice';
 import calendarReducer from '../features/calendar/calendarSlice';
 import currencyReducer from '../features/currency/currencySlice';
+import demoReducer from '../features/demo/demoSlice';
 import favoritesBondsReducer from '../features/favoritesBonds/favoritesBondsSlice';
 import infoReducer from '../features/info/infoSlice';
 import tokenReducer from '../features/token/tokenSlice';
@@ -29,6 +30,7 @@ const appReducer = combineReducers({
   info: infoReducer,
   bonds: bondsReducer, // ❌ не persistим
   favoritesBonds: favoritesBondsReducer,
+  demo: demoReducer,
 });
 
 const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: any) => {
