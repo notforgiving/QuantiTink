@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import moment from "moment";
+import { filterByTab, TTabKey } from "Pages/CalendarPage";
 import { TCalendarEventUi } from "Pages/CalendarPage/hooks/useCalendar";
 
 import { formatMoney, TFormatMoney } from "utils/formatMoneyAmount";
@@ -13,17 +14,22 @@ type TChartData = {
     formatted: string;
 }
 
-type TUseFuturePayoutsCard = (props: TCalendarEventUi[][]) => {
+interface IUseFuturePayoutsCardProps {
+    eventData: TCalendarEventUi[][];
+    currentTab: TTabKey;
+}
+
+type TUseFuturePayoutsCard = (props: IUseFuturePayoutsCardProps) => {
     totalYear: TFormatMoney;
     avgMonth: TFormatMoney;
     chartData: TChartData[];
 }
 
-export const useFuturePayoutsCard: TUseFuturePayoutsCard = (eventData) => {
+export const useFuturePayoutsCard: TUseFuturePayoutsCard = ({ eventData, currentTab }) => {
     // --- 1️⃣ Плоский список положительных выплат ---
     const flatEvents = useMemo(
-        () => eventData.flat().filter((ev) => ev.moneyAmount?.value > 0),
-        [eventData]
+        () => eventData.flat().filter((ev) => filterByTab(ev, currentTab) && ev.moneyAmount?.value > 0),
+        [currentTab, eventData]
     );
 
     // --- 2️⃣ Агрегируем выплаты по месяцам и по типам ---

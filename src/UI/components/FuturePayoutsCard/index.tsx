@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { useTheme } from "api/features/user/useUser";
 import moment from "moment";
+import { TTabKey } from "Pages/CalendarPage";
 import { TCalendarEventUi } from "Pages/CalendarPage/hooks/useCalendar";
 import {
   Bar,
@@ -22,15 +23,20 @@ type TFuturePayoutsCardProps = {
   eventData: TCalendarEventUi[][];
   onMonthSelect?: (month: string | null) => void; // ← добавляем
   selectedMonth?: string | null;
+  currentTab: TTabKey;
 };
 
 const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
   eventData,
   onMonthSelect,
   selectedMonth,
+  currentTab,
 }) => {
   const theme = useTheme();
-  const { chartData, avgMonth, totalYear } = useFuturePayoutsCard(eventData);
+  const { chartData, avgMonth, totalYear } = useFuturePayoutsCard({
+    eventData,
+    currentTab,
+  });
 
   // --- функция клика по столбцу ---
   const handleBarClick = (data: any) => {

@@ -22,10 +22,13 @@ import { TCalendarEventUi, useCalendarUI } from "./hooks/useCalendar";
 
 import css from "./styles.module.scss";
 
+
+export type TTabKey= "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL";
+
 // ---------- Фильтры ----------
-const filterByTab = (
+export const filterByTab = (
   event: TCalendarEventUi,
-  tab: "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL"
+  tab: TTabKey
 ) => {
   switch (tab) {
     case "DIV":
@@ -44,10 +47,7 @@ const filterByTab = (
       );
 
     case "NOT_CALL":
-      return (
-        event.eventType === "coupon" &&
-        event.raw.eventType !== "EVENT_TYPE_CALL"
-      );
+      return event.raw.eventType !== "EVENT_TYPE_CALL";
     default:
       return true;
   }
@@ -83,9 +83,7 @@ const CalendarPage: FC = () => {
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentTab, setCurrentTab] = useState<
-    "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL"
-  >("NOT_CALL");
+  const [currentTab, setCurrentTab] = useState<TTabKey>("NOT_CALL");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null); // 👈 добавили
 
   const { result } = useCalendarUI(id || "0");
@@ -109,23 +107,41 @@ const CalendarPage: FC = () => {
   const filteredResult = useMemo(() => {
     if (!result.length) return [];
 
-    return result
+    // Все события по текущему фильтру (по табу и поиску)
+    const filtered = result.map((group) =>
+      group.filter(
+        (event) =>
+          filterByTab(event, currentTab) && filterBySearch(event, searchQuery)
+      )
+    );
+
+    // Сортируем по дате
+    const sorted = filtered
       .map((group) =>
-        group.filter((event) => {
-          // Фильтрация по табам Дивиденды, Амортизация, Погашение
-          // Фильтрация при нажатии на месяц графика
-          const matchTab = filterByTab(event, currentTab);
-          const matchSearch = filterBySearch(event, searchQuery);
-          const correctDate = event.correctDate;
-          const monthKey = moment(correctDate, "DD.MM.YYYY", true).format(
-            "MM-YYYY"
-          );
-          const matchMonth = !selectedMonth || monthKey === selectedMonth;
-          return matchTab && matchSearch && matchMonth;
-        })
+        group.sort(
+          (a, b) =>
+            moment(a.correctDate, "DD.MM.YYYY").unix() -
+            moment(b.correctDate, "DD.MM.YYYY").unix()
+        )
       )
       .filter((group) => group.length > 0);
-  }, [result, searchQuery, currentTab, selectedMonth]);
+
+    // Если выбран месяц, оставляем только его для детального списка
+    if (selectedMonth) {
+      return sorted
+        .map((group) =>
+          group.filter((event) => {
+            const monthKey = moment(event.correctDate, "DD.MM.YYYY").format(
+              "MM-YYYY"
+            );
+            return monthKey === selectedMonth;
+          })
+        )
+        .filter((group) => group.length > 0);
+    }
+
+    return sorted;
+  }, [result, currentTab, searchQuery, selectedMonth]);
 
   return (
     <div>
@@ -167,6 +183,7 @@ const CalendarPage: FC = () => {
             eventData={result}
             onMonthSelect={setSelectedMonth}
             selectedMonth={selectedMonth}
+            currentTab={currentTab}
           />
         </div>
 
