@@ -80,11 +80,14 @@ export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission, rates }
             const nkd = formatMoney(aciValue);
             const key = initialNominal.currency.toUpperCase() as keyof CurrencyRates;
             const correctByCurrency = rates[key] || 1;
+
             const nominalValue = formatMoney(formatMoney(initialNominal).value * correctByCurrency);
             // Текущая цена
             const currentPercentPrice = lastPrice ? lastPrice : 100;
             // Цена облигаций в рублях
-            const currentFormatPrice = rates[key] ? formatMoney(currentPercentPrice * correctByCurrency) : formatMoney(currentPercentPrice * 10)
+
+            const currentFormatPrice = rates[key] ? formatMoney(currentPercentPrice / 100 * nominalValue.value) : formatMoney(currentPercentPrice / 100 * nominalValue.value)
+
             // Комиссия при покупке
             const comissionFullPrice = formatMoney(currentFormatPrice.value * comission / 100)
             // Полная цена покупки с учетом комиссии
@@ -108,7 +111,7 @@ export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission, rates }
             // Получим купонами
             const totalCouponesValue = formatMoney(couponesFromMaturityDate * payOneBond.value);
             // Маржа от погашения
-            const marginFromRepayment = aboveNominal ? formatMoney(0) : formatMoney(nominalValue.value - currentPriceWithComission.value)
+            const marginFromRepayment = currentPercentPrice > 100 ? formatMoney(0) : formatMoney(nominalValue.value - currentPriceWithComission.value)
             // Налог на купоны
             const couponTax = formatMoney(INCOME_TAX * totalCouponesValue.value / 100)
             // Налог на погашение
