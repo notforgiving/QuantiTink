@@ -92,16 +92,43 @@ function* addFavoriteBondWorker(action: { type: string; payload: string }) {
 function* removeFavoriteBondWorker(action: { type: string; payload: string }) {
   try {
     const user: User = yield select((state: RootState) => state.user.currentUser);
-    const isin = action.payload;
+    const identifier = action.payload; // может быть isin или ticker
 
-    const success: boolean = yield call(removeFavoriteIsin, user.id, isin);
+    // Находим облигацию в избранном или в общем списке
+    const favorites: TFavoriteBond[] = yield select((state: RootState) => state.favoritesBonds.data);
+    let bond = favorites.find((b) => b.isin === identifier || b.ticker === identifier);
+    
+    // Если не нашли в избранном, ищем в общем списке облигаций
+    if (!bond) {
+      const bonds: TFavoriteBond[] = yield select((state: RootState) => state.bonds.data);
+      bond = bonds.find((b) => b.isin === identifier || b.ticker === identifier);
+    }
 
-    if (success) {
-      // Успешное удаление
-      yield put(removeFavoriteBondSuccess(isin));
+    if (bond) {
+      // При добавлении сохраняется ticker (см. addFavoriteBondWorker, строка 84)
+      // Поэтому удаляем по ticker
+      const success: boolean = yield call(removeFavoriteIsin, user.id, bond.ticker);
+      
+      if (success) {
+        yield put(removeFavoriteBondSuccess(identifier));
+      } else {
+        // Если не удалось по ticker, пробуем по isin (на случай, если данные были сохранены по-другому)
+        const successByIsin: boolean = yield call(removeFavoriteIsin, user.id, bond.isin);
+        if (successByIsin) {
+          yield put(removeFavoriteBondSuccess(identifier));
+        } else {
+          yield put(removeFavoriteBondFailure("Не удалось удалить облигацию из Firebase"));
+        }
+      }
     } else {
-      // Не удалось удалить
-      yield put(removeFavoriteBondFailure("Не удалось удалить облигацию из Firebase"));
+      // Облигация не найдена, пробуем удалить по переданному идентификатору
+      const success: boolean = yield call(removeFavoriteIsin, user.id, identifier);
+      
+      if (success) {
+        yield put(removeFavoriteBondSuccess(identifier));
+      } else {
+        yield put(removeFavoriteBondFailure("Облигация не найдена или не удалось удалить из Firebase"));
+      }
     }
   } catch (error: any) {
     yield put(removeFavoriteBondFailure(error.message || "Ошибка при удалении"));

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экспорт иконок QuantiTink</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f8f7;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #001c18;
+            margin-bottom: 20px;
+        }
+        .preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #e9f4ec;
+            border-radius: 10px;
+            margin: 10px;
+        }
+        button {
+            background: #00d885;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #02d787;
+        }
+        .instructions {
+            background: #e9f4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #001c18;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Экспорт иконок QuantiTink</h1>
+        <p>Используйте эту страницу для экспорта PNG иконок из SVG логотипа.</p>
+        
+        <div class="preview">
+            <img id="logo" src="logo.svg" alt="Logo" style="max-width: 200px;">
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="exportIcon(192)">Экспорт 192x192</button>
+            <button onclick="exportIcon(512)">Экспорт 512x512</button>
+            <button onclick="exportIcon(16)">Экспорт 16x16 (favicon)</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>Инструкция:</h3>
+            <ol>
+                <li>Нажмите на кнопку нужного размера</li>
+                <li>Изображение откроется в новой вкладке</li>
+                <li>Правой кнопкой мыши → "Сохранить изображение как..."</li>
+                <li>Сохраните в папку <code>public</code> с соответствующим именем</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function exportIcon(size) {
+            const img = document.getElementById('logo');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, size, size);
+                const dataURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `logo${size}.png`;
+                link.href = dataURL;
+                link.click();
+            };
+            
+            // Если изображение уже загружено
+            if (img.complete) {
+                ctx.drawImage(img, 0, 0, size, size);
+                const dataURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `logo${size}.png`;
+                link.href = dataURL;
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>
+

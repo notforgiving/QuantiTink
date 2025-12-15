@@ -124,22 +124,33 @@ export const saveFavoriteIsin = async (userId: string, isin: string): Promise<vo
 /**
  * Удалить ISIN из favoritesBonds для пользователя
  * @param userId - ID пользователя
- * @param isin - ISIN облигации для удаления
+ * @param identifier - ISIN или ticker облигации для удаления
  * @returns boolean - true, если удаление прошло успешно, false иначе
  */
-export const removeFavoriteIsin = async (userId: string, isin: string): Promise<boolean> => {
+export const removeFavoriteIsin = async (userId: string, identifier: string): Promise<boolean> => {
     try {
         const found = await findFavoritesDocByUserId(userId);
 
-        if (!found) return false; // документ не найден, удалять нечего
+        if (!found) {
+            console.warn(`Документ favoritesBonds не найден для userId: ${userId}`);
+            return false; // документ не найден, удалять нечего
+        }
 
         const { id, data } = found;
-        const updatedIsin = data.isin.filter((i) => i !== isin);
+        const originalLength = data.isin.length;
+        const updatedIsin = data.isin.filter((i) => i !== identifier);
+        
+        // Проверяем, был ли элемент действительно удален
+        if (updatedIsin.length === originalLength) {
+            console.warn(`Идентификатор "${identifier}" не найден в списке избранных для userId: ${userId}`);
+            return false; // элемент не был найден в массиве
+        }
 
-        // Если массив остался пустым, можно оставить пустой массив
+        // Сохраняем обновленный массив
         const docRef = doc(db, FAVORITES_BONDS_COLLECTION, id);
         await setDoc(docRef, { userId, isin: updatedIsin }, { merge: true });
 
+        console.log(`Успешно удален идентификатор "${identifier}" из избранных для userId: ${userId}`);
         return true; // удаление прошло успешно
     } catch (error) {
         console.error("Ошибка удаления ISIN из Firebase:", error);

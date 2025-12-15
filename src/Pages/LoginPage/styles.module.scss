@@ -40,23 +40,28 @@ $opacity-green-40: rgb(from $green-40 r g b / 60%);
       &:first-child {
         height: $heightBg;
         background: $green-10;
+
         &::before {
           @include firstPartSmoothness;
           background: $opacity-green-40;
         }
+
         &::after {
           @include firstPartSmoothness;
           background: $green-10;
           border-bottom-right-radius: $smoothness;
         }
       }
+
       &:last-child {
         height: calc(100% - #{$heightBg});
         background: $opacity-green-40;
+
         &::before {
           @include secondPartSmoothness;
           background: $green-10;
         }
+
         &::after {
           @include secondPartSmoothness;
           background: $opacity-green-40;
@@ -75,22 +80,30 @@ $opacity-green-40: rgb(from $green-40 r g b / 60%);
   .logo {
     @include flex-center;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     position: fixed;
     top: 20px;
     height: auto;
     z-index: 2;
     color: #001c18;
 
-    &__slogan {
-      text-align: center;
-      font-size: 16px;
+    &__icon {
+      @include flex-center;
+      gap: 8px;
+      font-size: 18px;
       font-weight: 600;
+      color: $green-70;
+
+      svg {
+        width: 60px;
+        height: auto;
+      }
     }
 
-    svg {
-      width: 200px;
-      height: auto;
+    &__slogan {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
 
@@ -106,9 +119,11 @@ $opacity-green-40: rgb(from $green-40 r g b / 60%);
       margin-top: 10px;
       height: 42px;
     }
+
     &_input {
       position: relative;
     }
+
     &_inputError {
       position: absolute;
       left: 4px;
@@ -129,10 +144,12 @@ $opacity-green-40: rgb(from $green-40 r g b / 60%);
       font-weight: 600;
       text-align: center;
     }
+
     &_login {
       text-align: center;
       cursor: pointer;
       transition: 0.3s;
+
       &:hover {
         color: $green-70;
       }
