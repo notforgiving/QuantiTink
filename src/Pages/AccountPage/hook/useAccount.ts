@@ -75,6 +75,11 @@ export const useAccount: TUseAccount = (accountId) => {
         return formatMoney(account.totalAmountPortfolio)
     }, [account]);
 
+    const totalAssets = useMemo(() => {
+        if(!account) return formatMoney(0)
+         return formatMoney(portfolioValue.value + formatMoney(account.totalAmountCurrencies).value * -1)    
+    },[account, portfolioValue.value])
+
     const { totalDeposits, firstDepositDate, totalPaidTaxes, totalCommissions, totalCoupons, totalDividends, totalPayouts } = useMemo(() => {
         const operations = account?.operations ?? [];
 
@@ -177,22 +182,22 @@ export const useAccount: TUseAccount = (accountId) => {
     const portfolioShare = useMemo(() => {
         let sharesValue = formatMoney(0);
 
-        if (!account?.totalAmountShares || !portfolioValue) {
+        if (!account?.totalAmountShares || !totalAssets) {
             return { value: sharesValue, percent: 0 }; // или null
         }
 
         sharesValue = formatMoney(account.totalAmountShares);
 
         const percent =
-            portfolioValue.value > 0
-                ? Number(((sharesValue.value / portfolioValue.value) * 100).toFixed(2))
+            totalAssets.value > 0
+                ? Number(((sharesValue.value / totalAssets.value) * 100).toFixed(2))
                 : 0;
 
         return {
             value: sharesValue,
             percent,
         };
-    }, [account?.totalAmountShares, portfolioValue]);
+    }, [account?.totalAmountShares, totalAssets]);
 
     const portfolioBonds = useMemo(() => {
         if (!account || !account.positions) return null;
@@ -201,9 +206,9 @@ export const useAccount: TUseAccount = (accountId) => {
             "bond",
             (pos) => pos.initialNominal?.currency as TBondCurrency | undefined,
             (pos) => getBondName(pos.initialNominal!.currency as TBondCurrency),
-            portfolioValue.value
+            totalAssets.value
         );
-    }, [account, portfolioValue.value]);
+    }, [account, totalAssets.value]);
 
     const portfolioEtf = useMemo(() => {
         if (!account || !account.positions) return null;
@@ -212,9 +217,9 @@ export const useAccount: TUseAccount = (accountId) => {
             "etf",
             (pos) => pos.ticker,
             (pos) => ({ name: pos.name, icon: "" }),
-            portfolioValue.value
+            totalAssets.value
         );
-    }, [account, portfolioValue.value]);
+    }, [account, totalAssets.value]);
 
     return {
         account,
