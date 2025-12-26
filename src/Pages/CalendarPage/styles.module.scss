@@ -27,21 +27,21 @@
     flex-wrap: wrap;
     gap: 10px;
 
-    &_item {
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid $green-40;
-      cursor: pointer;
-      transition: 0.3s;
+    // &_item {
+    //   padding: 10px;
+    //   border-radius: 10px;
+    //   border: 1px solid $green-40;
+    //   cursor: pointer;
+    //   transition: 0.3s;
 
-      &:hover {
-        transform: scale(1.05);
-      }
+    //   &:hover {
+    //     transform: scale(1.05);
+    //   }
 
-      &:global(._isActive) {
-        background: $green-40;
-      }
-    }
+    //   &:global(._isActive) {
+    //     background: $green-40;
+    //   }
+    // }
   }
   &__grid {
     display: flex;

@@ -2,7 +2,22 @@ import { ReactComponent as RubbondsSvg } from "assets/rubbonds.svg";
 import { ReactComponent as UsdbondsSvg } from "assets/usdbonds.svg";
 
 export type TTariff = 'investor' | 'trader'; // и т.д.
-export type TRiskLevel = 'STANDARD' | 'LOW' | 'HIGH'; // если знаешь другие
+// export type TRiskLevel = 'RISK_LEVEL_MODERATE' | 'RISK_LEVEL_LOW' | 'RISK_LEVEL_HIGH';
+export const RiskLevelMap = {
+  RISK_LEVEL_UNSPECIFIED: 'Не определён',
+  RISK_LEVEL_LOW: 'Низкий уровень риска',
+  RISK_LEVEL_MODERATE: 'Средний уровень риска',
+  RISK_LEVEL_HIGH: 'Высокий уровень риска',
+} as const;
+export type TRiskLevel = keyof typeof RiskLevelMap;
+export const RISK_ORDER: TRiskLevel[] = [
+  'RISK_LEVEL_LOW',
+  'RISK_LEVEL_MODERATE',
+  'RISK_LEVEL_HIGH',
+  'RISK_LEVEL_UNSPECIFIED',
+];
+
+
 export type TWorkInstrument =
   | 'bond'
   | 'leverage'

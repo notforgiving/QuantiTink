@@ -9,12 +9,12 @@ import React, {
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCalendarRequest } from "api/features/calendar/calendarSlice";
-import cn from "classnames";
 import moment from "moment";
 import BackHeader from "UI/components/BackHeader";
 import FuturePayoutsCard from "UI/components/FuturePayoutsCard";
 import Input from "UI/components/Input";
 import LineBlock from "UI/components/LineBlock";
+import Tab from "UI/components/Tab";
 
 import { formatMoney } from "utils/formatMoneyAmount";
 
@@ -22,14 +22,10 @@ import { TCalendarEventUi, useCalendarUI } from "./hooks/useCalendar";
 
 import css from "./styles.module.scss";
 
-
-export type TTabKey= "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL";
+export type TTabKey = "ALL" | "DIV" | "OA" | "OM" | "NOT_CALL";
 
 // ---------- Фильтры ----------
-export const filterByTab = (
-  event: TCalendarEventUi,
-  tab: TTabKey
-) => {
+export const filterByTab = (event: TCalendarEventUi, tab: TTabKey) => {
   switch (tab) {
     case "DIV":
       return event.eventType === "dividend";
@@ -154,17 +150,15 @@ const CalendarPage: FC = () => {
         <div className={css.calendar__actions}>
           <div className={css.calendar__tabs}>
             {tabs.map((tab) => (
-              <div
+              <Tab
                 key={tab.key}
-                className={cn(css.calendar__tabs_item, {
-                  _isActive: currentTab === tab.key,
-                })}
+                active={currentTab === tab.key}
                 onClick={() =>
                   setCurrentTab(currentTab === tab.key ? "ALL" : tab.key)
                 }
               >
                 {tab.label}
-              </div>
+              </Tab>
             ))}
           </div>
 

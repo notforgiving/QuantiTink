@@ -1,4 +1,4 @@
-import { InstrumentType, TBrand, TMoneyValue, TTrade } from "types/common";
+import { InstrumentType, TBrand, TMoneyValue, TRiskLevel, TTrade } from "types/common";
 
 export type TPortfolioPosition = {
   figi: string;
@@ -99,7 +99,7 @@ export type TBondInstrument = {
   dlongMin: TMoneyValue;
   klong: TMoneyValue;
   kshort: TMoneyValue;
-
+  riskLevel: TRiskLevel;
   maturityDate?: string;
   sellAvailableFlag: boolean;
   first1dayCandleDate?: string;

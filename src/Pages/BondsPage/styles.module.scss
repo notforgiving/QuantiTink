@@ -3,7 +3,8 @@
 
 [data-theme="dark"] {
   .bonds {
-    &__item {
+    &__item,
+    &__risk {
       background: opacity-color($green-70, 0.2);
       box-shadow: 0px 0px 10px opacity-color($white-10, 0.1);
     }
@@ -14,7 +15,14 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  &__item {
+  &__tabs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  &__item,
+  &__risk {
     @include whiteBlock;
     padding: 20px 20px;
 
@@ -24,12 +32,17 @@
         margin-top: 10px;
       }
     }
-
     &_header {
       @include flex-center;
       justify-content: flex-start;
       gap: 16px;
       cursor: pointer;
+    }
+    &_name {
+      strong {
+        font-weight: 500;
+        font-size: 16px;
+      }
     }
     &_img {
       flex: none;

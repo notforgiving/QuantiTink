@@ -1,0 +1,20 @@
+@use "UI/styles/variables" as *;
+@use "UI/styles/mixines" as *;
+
+.tab {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid $green-40;
+  cursor: pointer;
+  transition: 0.3s;
+  flex: 1;
+  text-wrap-mode: nowrap;
+
+  &:hover {
+    transform: scale(1.025);
+  }
+
+  &:global(._isActive) {
+    background: $green-40;
+  }
+}
