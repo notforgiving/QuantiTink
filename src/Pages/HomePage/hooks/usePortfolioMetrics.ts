@@ -14,8 +14,11 @@ type TAccountMetric = {
 export const usePortfolioMetrics = () => {
   const { data: accounts = [] } = useAccounts();
 
+  // Исключаем скрытые аккаунты из расчётов
+  const visibleAccounts = accounts.filter((a) => !a.hidden);
+
   const accountMetrics = useMemo<TAccountMetric[]>(() => {
-    return accounts.map((account) => {
+    return visibleAccounts.map((account) => {
       const formattedPortfolio = formatMoney(account.totalAmountPortfolio);
 
       const investedValue = account.operations?.reduce((acc, operation) => {
@@ -40,7 +43,7 @@ export const usePortfolioMetrics = () => {
         returnPercent,
       };
     });
-  }, [accounts]);
+  }, [visibleAccounts]);
 
   const totalPortfolio = useMemo<TFormatMoney>(() => {
     const totalValue = accountMetrics.reduce((acc, item) => acc + item.formattedPortfolio.value, 0);

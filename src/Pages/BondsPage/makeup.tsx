@@ -24,7 +24,6 @@ const BondsPageMakeup: FC = () => {
   }, [currency, dispatch, id]);
 
   const { issuer, riskStat } = useBonds(id || "0", currency || "rub");
-  console.log(riskStat, "riskStat");
 
   return (
     <div>

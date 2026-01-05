@@ -5,8 +5,8 @@ export type TTariff = 'investor' | 'trader'; // и т.д.
 // export type TRiskLevel = 'RISK_LEVEL_MODERATE' | 'RISK_LEVEL_LOW' | 'RISK_LEVEL_HIGH';
 export const RiskLevelMap = {
   RISK_LEVEL_UNSPECIFIED: 'Не определён',
-  RISK_LEVEL_LOW: 'Низкий уровень риска',
-  RISK_LEVEL_MODERATE: 'Средний уровень риска',
+  RISK_LEVEL_LOW: 'Надежные облигации',
+  RISK_LEVEL_MODERATE: 'Средняя надежность',
   RISK_LEVEL_HIGH: 'Высокий уровень риска',
 } as const;
 export type TRiskLevel = keyof typeof RiskLevelMap;

@@ -150,7 +150,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
     const operations = useMemo(() => {
         const now = moment();
 
-        return etfOperations.map(item => {
+        return etfOperations.map((item, idx) => {
             const quantity = Number(item.quantity) || 0;
 
             const monthsPassed = moment(now).diff(item.date, "months");
@@ -180,7 +180,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
                     : "0";
 
             return {
-                id: Number(Math.random().toString(36).substring(2, 9)),
+                id: idx,
                 dateFormatted: moment(item.date).format("DD.MM.YYYY"),
                 quantity,
                 time: monthsPassed,

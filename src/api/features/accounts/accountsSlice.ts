@@ -15,6 +15,7 @@ export type TAccount = {
   openedDate: string;
   closedDate: string;
   accessLevel: 'ACCOUNT_ACCESS_LEVEL_UNSPECIFIED' | 'ACCOUNT_ACCESS_LEVEL_FULL_ACCESS' | 'ACCOUNT_ACCESS_LEVEL_READ_ONLY' | 'ACCOUNT_ACCESS_LEVEL_NO_ACCESS';
+  hidden?: boolean;
   operations?: TFlattenedOperations['operations'];
   goals?: Record<string, number>; // ✅ добавлено
 } & TFlattenedPortfolio;
@@ -40,7 +41,15 @@ const accountsSlice = createSlice({
       state.loading = true;
     },
     fetchAccountsSuccess(state, action: PayloadAction<TAccount[]>) {
-      state.data = action.payload;
+      // Ensure hidden flag exists for all accounts (default false)
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('hiddenAccounts') : null;
+      let hiddenIds: string[] = [];
+      try {
+        hiddenIds = saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        hiddenIds = [];
+      }
+      state.data = action.payload.map((a) => ({ ...a, hidden: a.hidden ?? hiddenIds.includes(a.id) }));
       state.loading = false;
     },
     accountsSliceFailure(state, action: PayloadAction<string | null>) {
@@ -234,6 +243,22 @@ const accountsSlice = createSlice({
       );
       state.loading = false;
     },
+    toggleHideAccount(state, action: PayloadAction<{ accountId: TAccount['id'] }>) {
+      const { accountId } = action.payload;
+      state.data = state.data.map((acc) =>
+        acc.id === accountId ? { ...acc, hidden: !acc.hidden } : acc
+      );
+
+      // Persist hidden ids to localStorage for reliability
+      try {
+        if (typeof window !== 'undefined') {
+          const ids = state.data.filter((a) => a.hidden).map((a) => a.id);
+          localStorage.setItem('hiddenAccounts', JSON.stringify(ids));
+        }
+      } catch (e) {
+        // ignore
+      }
+    },
   },
 });
 
@@ -257,6 +282,7 @@ export const {
   setGoalsForAccount,
   saveGoalsRequest,
   saveGoalsSuccess,
+  toggleHideAccount,
 } = accountsSlice.actions;
 
 

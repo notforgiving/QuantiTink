@@ -149,7 +149,7 @@ const HomePage = () => {
       </div>
 
       <div className={css.accounts}>
-        {accounts?.map((account: TAccount) => {
+        {accounts?.filter((a) => !a.hidden).map((account: TAccount) => {
           const metric = accountMetricMap.get(account.id);
           return (
             <Account
@@ -159,6 +159,7 @@ const HomePage = () => {
               invested={metric?.invested ?? zeroMoney}
               formattedPortfolio={metric?.formattedPortfolio ?? zeroMoney}
               returnPercent={metric?.returnPercent ?? "0.00"}
+              hidden={account.hidden}
             />
           );
         })}

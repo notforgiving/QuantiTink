@@ -56,8 +56,10 @@
   }
 
   &:global(._isDisabled) {
-    pointer-events: none;
     cursor: not-allowed;
+    & > *:not(.account_eye) {
+      pointer-events: none;
+    }
   }
 
   &_icon {
@@ -87,6 +89,21 @@
     }
     span {
       color: $orange-20;
+    }
+  }
+
+  &_eye {
+    margin-left: auto;
+    margin-right: 8px;
+    svg {
+      color: $gray-20;
+      width: 18px;
+      height: 18px;
+    }
+    &:hover {
+      svg {
+        color: $green-70;
+      }
     }
   }
 }
