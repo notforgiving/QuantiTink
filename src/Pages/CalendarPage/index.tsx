@@ -86,6 +86,7 @@ const CalendarPage: FC = () => {
   const { result } = useCalendarUI(id || "0");
 
   const [viewMode, setViewMode] = useState<"LIST" | "CALENDAR">("LIST");
+  
   useEffect(() => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
@@ -208,6 +209,7 @@ const CalendarPage: FC = () => {
     },
     [selectedMonth, monthBounds]
   );
+
   const renderCalendar = useCallback(() => {
     if (!selectedMonth) return null;
 
