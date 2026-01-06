@@ -13,11 +13,12 @@ import moment from "moment";
 import BackHeader from "UI/components/BackHeader";
 import FuturePayoutsCard from "UI/components/FuturePayoutsCard";
 import Input from "UI/components/Input";
-import LineBlock from "UI/components/LineBlock";
 import Tab from "UI/components/Tab";
 
 import { formatMoney } from "utils/formatMoneyAmount";
 
+import Grid from "./components/Grid";
+import List from "./components/List";
 import { TCalendarEventUi, useCalendarUI } from "./hooks/useCalendar";
 
 import css from "./styles.module.scss";
@@ -84,6 +85,7 @@ const CalendarPage: FC = () => {
 
   const { result } = useCalendarUI(id || "0");
 
+  const [viewMode, setViewMode] = useState<"LIST" | "CALENDAR">("LIST");
   useEffect(() => {
     dispatch(fetchCalendarRequest({ accountId: id || "0" }));
   }, [dispatch, id]);
@@ -139,6 +141,102 @@ const CalendarPage: FC = () => {
     return sorted;
   }, [result, currentTab, searchQuery, selectedMonth]);
 
+  // Выбираем месяц ближайший по выплатам, если не выбран
+  useEffect(() => {
+    if (selectedMonth || !result.length) return;
+
+    const today = moment().startOf("day");
+    // Получаем все события в один массив
+    const flat = result.flat();
+    if (!flat.length) return;
+
+    // Находим ближайшую дату >= сегодня, иначе ближайшую вообще
+    let candidate = flat
+      .map((e) => ({ e, m: moment(e.correctDate, "DD.MM.YYYY") }))
+      .filter((x) => x.m.isValid())
+      .sort((a, b) => a.m.unix() - b.m.unix());
+
+    let nearest = candidate.find((c) => c.m.isSameOrAfter(today));
+    if (!nearest) nearest = candidate[0];
+    if (nearest) {
+      setSelectedMonth(nearest.m.format("MM-YYYY"));
+    }
+  }, [result, selectedMonth]);
+
+  const buildDayMap = useMemo(() => {
+    // map: 'DD.MM.YYYY' => { total: number, events: TCalendarEventUi[] }
+    const map: Record<string, { total: number; events: TCalendarEventUi[] }> =
+      {};
+    result.flat().forEach((ev) => {
+      const key = ev.correctDate; // 'DD.MM.YYYY'
+      if (!map[key]) map[key] = { total: 0, events: [] } as any;
+      map[key].total += ev.moneyAmount.value;
+      map[key].events.push(ev as any);
+    });
+    return map;
+  }, [result]);
+
+  // Определяем минимальный и максимальный месяцы, доступные в данных
+  const monthBounds = useMemo(() => {
+    const flat = result.flat();
+    if (!flat.length) return null;
+    const moments = flat
+      .map((e) => moment(e.correctDate, "DD.MM.YYYY"))
+      .filter((m) => m.isValid());
+    if (!moments.length) return null;
+    const min = moments
+      .reduce((a, b) => (a.isBefore(b) ? a : b))
+      .startOf("month");
+    const max = moments
+      .reduce((a, b) => (a.isAfter(b) ? a : b))
+      .startOf("month");
+    return { min, max };
+  }, [result]);
+
+  const changeMonth = useCallback(
+    (diff: number) => {
+      if (!selectedMonth) return;
+      const m = moment(selectedMonth, "MM-YYYY").add(diff, "months");
+      if (monthBounds) {
+        if (
+          m.isBefore(monthBounds.min, "month") ||
+          m.isAfter(monthBounds.max, "month")
+        )
+          return;
+      }
+      setSelectedMonth(m.format("MM-YYYY"));
+    },
+    [selectedMonth, monthBounds]
+  );
+  const renderCalendar = useCallback(() => {
+    if (!selectedMonth) return null;
+
+    const monthMoment = moment(selectedMonth, "MM-YYYY").startOf("month");
+    // Начинаем с понедельника недели, в которую попадает первый день месяца
+    const start = monthMoment.clone().isoWeekday(1);
+    const days: moment.Moment[] = [];
+    for (let i = 0; i < 42; i++) days.push(start.clone().add(i, "days"));
+
+    const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+
+    const today = moment().startOf("day");
+    const canPrev =
+      !monthBounds || monthMoment.isAfter(monthBounds.min, "month");
+    const canNext =
+      !monthBounds || monthMoment.isBefore(monthBounds.max, "month");
+    return (
+      <Grid
+        monthMoment={monthMoment}
+        weekDays={weekDays}
+        changeMonth={changeMonth}
+        canPrev={canPrev}
+        canNext={canNext}
+        days={days}
+        buildDayMap={buildDayMap}
+        today={today}
+      />
+    );
+  }, [selectedMonth, monthBounds, buildDayMap, changeMonth]);
   return (
     <div>
       <BackHeader
@@ -161,17 +259,17 @@ const CalendarPage: FC = () => {
               </Tab>
             ))}
           </div>
-
-          <Input
-            label=""
-            inputAttributes={{
-              placeholder: "Поиск...",
-              value: searchQuery,
-              onChange: handleSearch,
-            }}
-          />
+          {viewMode === "LIST" && (
+            <Input
+              label=""
+              inputAttributes={{
+                placeholder: "Поиск...",
+                value: searchQuery,
+                onChange: handleSearch,
+              }}
+            />
+          )}
         </div>
-
         <div className={css.chart}>
           <FuturePayoutsCard
             eventData={result}
@@ -180,67 +278,32 @@ const CalendarPage: FC = () => {
             currentTab={currentTab}
           />
         </div>
-
+        <div className={css.calendar__viewToggle}>
+          <button
+            className={css.calendar__viewToggle_btn}
+            onClick={() =>
+              setViewMode(viewMode === "LIST" ? "CALENDAR" : "LIST")
+            }
+          >
+            {viewMode === "LIST" ? "Календарь" : "Список"}
+          </button>
+        </div>
         <div className={css.calendar__grid}>
-          {filteredResult.length ? (
+          {viewMode === "CALENDAR" ? (
+            renderCalendar()
+          ) : filteredResult.length ? (
             filteredResult.map((group) => {
               const total = formatMoney(
                 group.reduce((acc, el) => acc + el.moneyAmount.value, 0)
               );
               const groupDate = group[0].textCorrectDate;
-
               return (
-                <div
-                  className={css.calendar__group}
+                <List
                   key={`${groupDate}-${total.value}`}
-                >
-                  <div className={css.calendar__group_info}>
-                    <div className={css.calendar__group_date}>{groupDate}</div>
-                    <div className={css.calendar__group_total}>
-                      <span>Итого:</span>
-                      <strong>{total.formatted}</strong>
-                    </div>
-                  </div>
-
-                  {group.map((event, i) => (
-                    <LineBlock
-                      key={`${event.raw.eventNumber}-${event.name}-${i}`}
-                      greenLine={
-                        event.eventType !== "dividend" ||
-                        (event.raw.eventType === "EVENT_TYPE_MTY" &&
-                          event.raw.operationType === "OM")
-                      }
-                    >
-                      <div className={css.calendar__payout_type}>
-                        {event.eventType === "dividend" && "Дивиденды"}
-                        {event.eventType === "coupon" &&
-                          event.raw.eventType === "EVENT_TYPE_CPN" &&
-                          !["OA", "OM"].includes(event.raw.operationType) &&
-                          "Купон"}
-                        {event.eventType === "coupon" &&
-                          event.raw.eventType === "EVENT_TYPE_MTY" &&
-                          event.raw.operationType === "OA" &&
-                          "Амортизация"}
-                        {event.eventType === "coupon" &&
-                          event.raw.eventType === "EVENT_TYPE_MTY" &&
-                          event.raw.operationType === "OM" &&
-                          "Погашение"}
-                        {event.eventType === "coupon" &&
-                          event.raw.eventType === "EVENT_TYPE_CALL" &&
-                          event.raw.operationType === "A" &&
-                          "Оъявлено досрочное погашение по запросу"}
-                      </div>
-                      <div className={css.calendar__payout}>
-                        <div className={css.calendar__payout_name}>
-                          {event.name}
-                        </div>
-                        <div className={css.calendar__payout_value}>
-                          {event.moneyAmount.formatted}
-                        </div>
-                      </div>
-                    </LineBlock>
-                  ))}
-                </div>
+                  groupDate={groupDate}
+                  total={total}
+                  group={group}
+                />
               );
             })
           ) : (

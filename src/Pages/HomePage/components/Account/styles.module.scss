@@ -93,8 +93,7 @@
   }
 
   &_eye {
-    margin-left: auto;
-    margin-right: 8px;
+    @include flex-center;
     svg {
       color: $gray-20;
       width: 18px;

@@ -5,6 +5,10 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  @include phone {
+    gap: 10px;
+  }
   &__actions {
     display: flex;
     align-items: center;
@@ -26,22 +30,6 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-
-    // &_item {
-    //   padding: 10px;
-    //   border-radius: 10px;
-    //   border: 1px solid $green-40;
-    //   cursor: pointer;
-    //   transition: 0.3s;
-
-    //   &:hover {
-    //     transform: scale(1.05);
-    //   }
-
-    //   &:global(._isActive) {
-    //     background: $green-40;
-    //   }
-    // }
   }
   &__grid {
     display: flex;
@@ -104,5 +92,93 @@
         color: $orange-20;
       }
     }
+  }
+  &__viewToggle {
+    display: flex;
+    align-items: center;
+
+    &__btn,
+    &_btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid $green-40;
+      background: white;
+      cursor: pointer;
+    }
+  }
+
+  &__monthNav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 10px;
+    button {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid $gray-20;
+      background: white;
+      cursor: pointer;
+    }
+  }
+
+  &__monthLabel {
+    text-transform: capitalize;
+    font-weight: 600;
+  }
+
+  &__monthGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+
+    @include phone {
+      gap: 4px;
+    }
+  }
+
+  &__day {
+    min-height: 50px;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid $gray-10;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+
+    @include phone {
+      padding: 4px;
+      font-size: 10px;
+      justify-content: space-between;
+    }
+  }
+
+  &__dayNumber {
+    font-weight: 700;
+  }
+
+  &__dayTotal {
+    font-weight: 700;
+    color: $green-80;
+    text-wrap-mode: nowrap;
+  }
+
+  &__weekday {
+    text-align: center;
+    font-weight: 600;
+    padding: 6px 0;
+  }
+
+  ._outMonth {
+    opacity: 0.35;
+  }
+  ._inMonth {
+    opacity: 1;
+  }
+  ._today {
+    border: 2px solid $green-40;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.02);
+    background: rgba($green-40, 0.04);
   }
 }
