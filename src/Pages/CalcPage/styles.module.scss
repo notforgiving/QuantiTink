@@ -73,6 +73,7 @@
     grid-template-columns: 1fr 1fr;
 
     @include phone {
+      gap: 20px;
       grid-template-columns: 1fr;
     }
   }
