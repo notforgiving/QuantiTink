@@ -26,7 +26,10 @@ const CalcPageMakup: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isinInput, setIsinInput] = useState<string>("");
+  // Сортировка по годовой доходности
   const [sortOrder, setSortOrder] = useState<SortOrder>(null);
+  // Сортировка по купонной доходности
+  const [couponSortOrder, setCouponSortOrder] = useState<SortOrder>(null);
 
   const { data: bondsData, loading: loadingAllBonds } = useBonds();
   const { data: info, loading: loadingInfo } = useInfo();
@@ -71,18 +74,39 @@ const CalcPageMakup: FC = () => {
     return () => clearTimeout(timer);
   }, [error, dispatch]);
 
-  // 🔹 Сортировка результата по annualProfitabilityWithTax
+  // 🔹 Сортировка результата по annualProfitability или couponeYeild
   const sortedResult = useMemo(() => {
-    if (!sortOrder) return result;
+    // Если оба фильтра не выбраны, возвращаем исходный массив
+    if (!sortOrder && !couponSortOrder) return result;
 
+    // Если выбран только фильтр по годовой доходности
+    if (sortOrder && !couponSortOrder) {
+      return [...result].sort((a, b) => {
+        const aVal = Number(a.annualProfitability) ?? 0;
+        const bVal = Number(b.annualProfitability) ?? 0;
+        if (sortOrder === "asc") return aVal - bVal;
+        return bVal - aVal;
+      });
+    }
+
+    // Если выбран только фильтр по купонной доходности
+    if (!sortOrder && couponSortOrder) {
+      return [...result].sort((a, b) => {
+        const aVal = Number(a.couponeYeild) ?? 0;
+        const bVal = Number(b.couponeYeild) ?? 0;
+        if (couponSortOrder === "asc") return aVal - bVal;
+        return bVal - aVal;
+      });
+    }
+
+    // Если выбраны оба фильтра, приоритет — годовая доходность
     return [...result].sort((a, b) => {
       const aVal = Number(a.annualProfitability) ?? 0;
       const bVal = Number(b.annualProfitability) ?? 0;
-
       if (sortOrder === "asc") return aVal - bVal;
-      return bVal - aVal; // desc
+      return bVal - aVal;
     });
-  }, [result, sortOrder]);
+  }, [result, sortOrder, couponSortOrder]);
 
   return (
     <div>
@@ -111,8 +135,21 @@ const CalcPageMakup: FC = () => {
         <div className={css.calc_page_sort}>
           <SortArrows
             order={sortOrder}
-            label="Сортировать по доходности"
-            onChange={setSortOrder}
+            label="По годовой доходности"
+            onChange={(order) => {
+              setSortOrder(order);
+              // Сбросить купонную сортировку при выборе годовой
+              if (order) setCouponSortOrder(null);
+            }}
+          />
+          <SortArrows
+            order={couponSortOrder}
+            label="По купонной доходности"
+            onChange={(order) => {
+              setCouponSortOrder(order);
+              // Сбросить сортировку по годовой доходности при выборе купонной
+              if (order) setSortOrder(null);
+            }}
           />
         </div>
         <div

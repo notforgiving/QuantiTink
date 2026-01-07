@@ -62,6 +62,10 @@
     }
   }
 
+  @include phone {
+    padding: 12px;
+  }
+
   &_icon {
     svg {
       width: 24px;

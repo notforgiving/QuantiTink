@@ -198,12 +198,25 @@
     display: flex;
     gap: 8px;
     align-items: flex-start;
-    padding: 6px 4px;
+    padding: 6px 0;
     border-bottom: 1px dashed rgba($gray-20, 0.25);
     font-size: 13px;
   }
   &__tooltip_item:last-child {
     border-bottom: none;
+  }
+
+  &__tooltip_section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 0;
+  }
+
+  &__tooltip_header {
+    font-weight: 700;
+    font-size: 13px;
+    color: $gray-10;
   }
 
   &__tooltip_type {

@@ -46,7 +46,11 @@
   &_sort {
     @include flex-center;
     justify-content: flex-start;
-    gap: 5px;
+    gap: 10px;
+
+    @include phone {
+      justify-content: space-between;
+    }
   }
   &_error {
     color: $red-10;

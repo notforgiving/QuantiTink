@@ -52,12 +52,12 @@ const Grid: FC<IGridProps> = ({
   }, []);
 
   const getEventLabel = (ev: TCalendarEventUi) => {
-    if (ev.eventType === "dividend") return "Дивиденд";
-    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_CPN") return "Купон";
-    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_MTY" && ev.raw.operationType === "OA") return "Амортизация";
-    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_MTY" && ev.raw.operationType === "OM") return "Погашение";
-    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_CALL") return "Досрочное погашение";
-    return "Выплата";
+    if (ev.eventType === "dividend") return "Дивиденды";
+    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_CPN") return "Купоны";
+    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_MTY" && ev.raw.operationType === "OA") return "Амортизации";
+    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_MTY" && ev.raw.operationType === "OM") return "Погашения";
+    if (ev.eventType === "coupon" && ev.raw.eventType === "EVENT_TYPE_CALL") return "Досрочные погашения";
+    return "Выплаты";
   };
   return (
     <div className={css.calendar__month} ref={gridRef}>
@@ -109,13 +109,44 @@ const Grid: FC<IGridProps> = ({
 
               {activeKey === key && data && data.events && data.events.length > 0 ? (
                 <div className={css.calendar__tooltip}>
-                  {data.events.map((ev, i) => (
-                    <div key={`${ev.raw.eventNumber}-${i}`} className={css.calendar__tooltip_item}>
-                      <span className={css.calendar__tooltip_type}>{getEventLabel(ev)}</span>
-                      <span className={css.calendar__tooltip_name}>{ev.name}</span>
-                      <span className={css.calendar__tooltip_amount}>{ev.moneyAmount.formatted}</span>
-                    </div>
-                  ))}
+                  {(() => {
+                    const groups: Record<string, TCalendarEventUi[]> = {};
+                    (data.events || []).forEach((ev) => {
+                      const label = getEventLabel(ev);
+                      if (!groups[label]) groups[label] = [];
+                      groups[label].push(ev);
+                    });
+
+                    const preferredOrder = [
+                      "Дивиденды",
+                      "Купоны",
+                      "Амортизации",
+                      "Погашения",
+                      "Досрочные погашения",
+                      "Выплаты",
+                    ];
+
+                    const renderedOrder = [
+                      ...preferredOrder.filter((k) => groups[k]),
+                      ...Object.keys(groups).filter((k) => !preferredOrder.includes(k)),
+                    ];
+
+                    return (
+                      <>
+                        {renderedOrder.map((label) => (
+                          <div key={label} className={css.calendar__tooltip_section}>
+                            <div className={css.calendar__tooltip_header}>{label}</div>
+                            {groups[label].map((ev, i) => (
+                              <div key={`${ev.raw.eventNumber}-${i}`} className={css.calendar__tooltip_item}>
+                                <span className={css.calendar__tooltip_name}>{ev.name}</span>
+                                <span className={css.calendar__tooltip_amount}>{ev.moneyAmount?.formatted}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </>
+                    );
+                  })()}
                 </div>
               ) : null}
             </div>
