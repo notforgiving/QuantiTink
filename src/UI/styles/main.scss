@@ -24,6 +24,9 @@ body {
   font-size: 14px;
   color: $green-70;
   background: $green-0;
+  &.noScroll {
+    overflow: hidden !important;
+  }
 }
 
 * {

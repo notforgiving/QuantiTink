@@ -7,6 +7,17 @@
       transform: translateX(0);
     }
   }
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(20, 20, 20, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 20000;
+    transition: opacity 0.2s;
+  }
 
   &__main {
     background: #00af86;
@@ -22,12 +33,20 @@
     position: fixed;
     right: 0;
     top: 180px;
-    transform: translateX(50%);
+    transform: translateX(10%);
     transition: 0.3s;
     z-index: 1;
+    writing-mode: sideways-lr;
 
     &:hover {
       transform: translateX(0);
+    }
+
+    @include phone {
+      font-size: 14px;
+      letter-spacing: 2px;
+      padding: 17px 4px;
+      top: 267px;
     }
   }
   &__body {
@@ -37,16 +56,16 @@
     box-shadow: -5px 0 20px 3px rgba(42, 57, 79, 0.751);
     display: flex;
     flex-direction: column;
-    gap: 50px;
-    min-height: 100vh;
-    padding: 66px 20px 20px;
+    gap: 20px;
+    height: 100vh;
+    padding: 20px;
     position: fixed;
     right: 0;
     top: 0;
     transform: translateX(110%);
     transition: 0.3s;
     width: 50vw;
-    z-index: 20;
+    z-index: 20000;
     @include phone {
       width: 100vw;
     }
@@ -55,6 +74,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-y: scroll;
+    padding-right: 20px;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
     &_item {
       display: flex;
       flex-direction: column;
@@ -66,8 +92,12 @@
   }
   &__actions {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 10px;
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    flex: 1;
   }
 }

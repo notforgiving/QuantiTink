@@ -42,6 +42,18 @@ const Goals: FC<IGoalsProps> = ({ shares, bond, etfs, account }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allKeys.join(","), account?.goals]);
 
+  // --- Блокировка скролла body при открытии целей ---
+  useEffect(() => {
+    if (open) {
+      document.body.classList.add("noScroll");
+    } else {
+      document.body.classList.remove("noScroll");
+    }
+    return () => {
+      document.body.classList.remove("noScroll");
+    };
+  }, [open]);
+
   // --- Обновление значения ---
   const handleChange = (key: string, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -101,7 +113,9 @@ const Goals: FC<IGoalsProps> = ({ shares, bond, etfs, account }) => {
       goalsData[key] = Number(val);
     }
 
-    dispatch(saveGoalsRequest({ accountId: account?.id || '0', goals: goalsData }));
+    dispatch(
+      saveGoalsRequest({ accountId: account?.id || "0", goals: goalsData })
+    );
     setOpen(false);
   };
 
@@ -126,12 +140,14 @@ const Goals: FC<IGoalsProps> = ({ shares, bond, etfs, account }) => {
         Цели
       </div>
 
+      {open && (
+        <div className={css.goals__backdrop} onClick={() => setOpen(false)} />
+      )}
       <div className={css.goals__body}>
         <div className={css.goals__form}>
           {shares && renderItem("shares", "Акции")}
           {bond?.map(([key, item]) => renderItem(key, item.name))}
           {etfs?.map(([key, item]) => renderItem(key, item.name))}
-
           {error && (
             <div
               style={{
