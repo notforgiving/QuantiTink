@@ -24,14 +24,25 @@ export type TRiskLevelStat = {
     percent: number;
 }
 
-type TUseBonds = (accountId: string, currency: string) => {
-    issuer: TIssuerGroup[];
-    riskStat: TRiskLevelStat[];
+type TBondByRisk = {
+    [riskLevel in TRiskLevel]?: {
+        figi: string;
+        name: string;
+        quantity: number;
+    }[];
 };
+
+type TUseBonds = (accountId: string, currency: string) => {
+        issuer: TIssuerGroup[];
+        riskStat: TRiskLevelStat[];
+        bondsByRiskLevel: TBondByRisk;
+};
+
 
 export const useBonds: TUseBonds = (accountId, currency) => {
     const [issuer, setIssuer] = useState<TIssuerGroup[]>([]);
     const [riskStat, setRiskStat] = useState<TRiskLevelStat[]>([]);
+    const [bondsByRiskLevel, setBondsByRiskLevel] = useState<TBondByRisk>({});
     const accounts = useAccounts();
 
     const account = useMemo(
@@ -126,6 +137,19 @@ export const useBonds: TUseBonds = (accountId, currency) => {
             if (allAssetsLoaded) {
                 calculationsBondsForIssuer(targetBonds)
                 calculationByRisk(targetBonds)
+
+                // Группировка облигаций по уровню риска
+                const grouped: TBondByRisk = {};
+                targetBonds.forEach(bond => {
+                  const riskLevel = bond.riskLevel ?? 'RISK_LEVEL_UNSPECIFIED';
+                  if (!grouped[riskLevel]) grouped[riskLevel] = [];
+                  grouped[riskLevel]!.push({
+                    figi: bond.figi,
+                    name: bond.name,
+                    quantity: Number(bond.quantity.units),
+                  });
+                });
+                setBondsByRiskLevel(grouped);
             }
         }
     }, [accounts.loading, account, currency]);
@@ -133,5 +157,6 @@ export const useBonds: TUseBonds = (accountId, currency) => {
     return {
         issuer,
         riskStat,
+        bondsByRiskLevel,
     }
 }

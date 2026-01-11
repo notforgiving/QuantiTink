@@ -11,11 +11,15 @@ import { useBonds } from "./hooks/useBonds";
 
 import css from "./styles.module.scss";
 
+
 const BondsPageMakeup: FC = () => {
   const { id, currency } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [tab, setTab] = useState<"BASE" | "RISK">("BASE");
+
+  // Состояние для раскрытых элементов по уровню риска
+  const [openedRisk, setOpenedRisk] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(
@@ -23,7 +27,12 @@ const BondsPageMakeup: FC = () => {
     );
   }, [currency, dispatch, id]);
 
-  const { issuer, riskStat } = useBonds(id || "0", currency || "rub");
+  const { issuer, riskStat, bondsByRiskLevel } = useBonds(id || "0", currency || "rub");
+
+  // Обработчик для раскрытия/скрытия по уровню риска
+  const handleRiskClick = (label: string) => {
+    setOpenedRisk((prev) => (prev === label ? null : label));
+  };
 
   return (
     <div>
@@ -34,10 +43,10 @@ const BondsPageMakeup: FC = () => {
         backCallback={() => navigate(-1)}
       />
       <div className={css.bonds__tabs}>
-        <Tab active={tab === "BASE"} onClick={() => setTab("BASE")}>
+        <Tab active={tab === "BASE"} onClick={() => setTab("BASE")}> 
           Доли в портфеле
         </Tab>
-        <Tab active={tab === "RISK"} onClick={() => setTab("RISK")}>
+        <Tab active={tab === "RISK"} onClick={() => setTab("RISK")}> 
           По уровню риска
         </Tab>
       </div>
@@ -56,7 +65,13 @@ const BondsPageMakeup: FC = () => {
         ) : (
           <>
             {riskStat.map((item) => (
-              <RiskProfile key={item.label} data={item} />
+              <RiskProfile
+                key={item.label}
+                data={item}
+                opened={openedRisk === item.label}
+                onClick={() => handleRiskClick(item.label)}
+                bonds={bondsByRiskLevel[item.riskLevel] || []}
+              />
             ))}
           </>
         )}
