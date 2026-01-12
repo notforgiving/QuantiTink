@@ -1,0 +1,76 @@
+@use "src/UI/styles/variables" as *;
+@use "src/UI/styles/mixines" as *;
+
+.accordion {
+  @include whiteBlock;
+  padding: 20px 20px;
+
+  &:global(._isOpen) {
+    .accordion_list {
+      opacity: 1;
+      margin-top: 10px;
+    }
+  }
+  &_header {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: 16px;
+    cursor: pointer;
+  }
+  &_name {
+    strong {
+      font-weight: 500;
+      font-size: 16px;
+    }
+  }
+  &_img {
+    flex: none;
+    @include square(40px);
+    border-radius: 8px;
+    background: #d9d9d9;
+    @include flex-center;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  &_precent {
+    flex: 1;
+    text-align: right;
+    white-space: nowrap;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  &_list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.35s ease;
+    opacity: 0;
+
+    &_item {
+      @include flex-center;
+      justify-content: space-between;
+      padding: 5px 0;
+      cursor: pointer;
+      position: relative;
+
+      &::before {
+        @include before;
+        width: 100%;
+        height: 1px;
+        background: $color-0;
+        top: auto;
+        bottom: 0;
+        transition: $transition;
+      }
+
+      &:hover {
+        &::before {
+          background: $green-90;
+        }
+      }
+    }
+  }
+}

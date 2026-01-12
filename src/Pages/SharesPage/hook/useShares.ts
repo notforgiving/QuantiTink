@@ -9,8 +9,35 @@ type TShareWithPercent = (TPortfolioPosition & TBondInstrument & TShareInstrumen
     percent: string;  // доля в портфеле
 };
 
+type TSectorGroup = {
+    sectorKey: string;
+    sectorname: string;
+    percent: number;
+    positions: { figi:string; name: string; quantity: number }[];
+};
+
 type TUseShares = (accountId: string) => {
     shares: TShareWithPercent[];
+    sectors: TSectorGroup[];
+};
+
+export const SECTOR_LABELS = {
+    materials: "Сырьевые материалы",
+    energy: "Энергетика",
+    financials: "Финансовый сектор",
+    information_technology: "Информационные технологии",
+    communication_services: "Коммуникационные услуги",
+    consumer_discretionary: "Товары ежедневного спроса",
+    consumer_staples: "Потребительские товары первой необходимости",
+    health_care: "Здравоохранение",
+    industrials: "Промышленность",
+    utilities: "Коммунальные услуги",
+    real_estate: "Недвижимость",
+    // Альтернативные/редкие сектора
+    basic_resources: "Базовые ресурсы",
+    telecommunications: "Телекоммуникации",
+    // Если sector приходит пустым/неизвестным
+    unknown: "Неизвестный сектор"
 };
 
 export const useShares: TUseShares = (accountId) => {
@@ -48,5 +75,41 @@ export const useShares: TUseShares = (accountId) => {
             .sort((a, b) => b.amount - a.amount);
     }, [account]);
 
-    return { shares };
+    // Группировка по секторам
+    const sectors = useMemo(() => {
+        if (!account?.positions) return [];
+        const rawShares = account.positions.filter(
+            (pos) => pos.instrumentType === "share"
+        );
+        const totalAmount = rawShares.reduce((acc, share) => {
+            const amount = formatMoney(share.currentPrice).value * Number(share.quantity.units);
+            return acc + amount;
+        }, 0);
+
+        // Группируем акции по sector
+        const sectorMap: Record<string, { amount: number; positions: { figi: string; name: string; quantity: number }[] }> = {};
+        rawShares.forEach((share) => {
+            const sectorKey = share.sector || "unknown";
+            const amount = formatMoney(share.currentPrice).value * Number(share.quantity.units);
+            if (!sectorMap[sectorKey]) {
+                sectorMap[sectorKey] = { amount: 0, positions: [] };
+            }
+            sectorMap[sectorKey].amount += amount;
+            sectorMap[sectorKey].positions.push({
+                figi: share.figi,
+                name: share.name,
+                quantity: Number(share.quantity.units),
+            });
+        });
+
+        // Формируем массив для вывода
+        return Object.entries(sectorMap).map(([sectorKey, { amount, positions }]) => ({
+            sectorKey,
+            sectorname: SECTOR_LABELS[sectorKey as keyof typeof SECTOR_LABELS] || SECTOR_LABELS.unknown,
+            percent: totalAmount ? Number(((amount / totalAmount) * 100).toFixed(2)) : 0,
+            positions,
+        })).sort((a, b) => b.percent - a.percent);
+    }, [account]);
+
+    return { shares, sectors };
 };
