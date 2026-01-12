@@ -22,20 +22,20 @@ type TUseShares = (accountId: string) => {
 };
 
 export const SECTOR_LABELS = {
-    materials: "Сырьевые материалы",
+    materials: "Сырьевая промышленность",
     energy: "Энергетика",
-    financials: "Финансовый сектор",
+    financial: "Финансовый сектор",
     information_technology: "Информационные технологии",
     communication_services: "Коммуникационные услуги",
     consumer_discretionary: "Товары ежедневного спроса",
     consumer_staples: "Потребительские товары первой необходимости",
     health_care: "Здравоохранение",
     industrials: "Промышленность",
-    utilities: "Коммунальные услуги",
+    utilities: "Электроэнергетика",
     real_estate: "Недвижимость",
     // Альтернативные/редкие сектора
     basic_resources: "Базовые ресурсы",
-    telecommunications: "Телекоммуникации",
+    telecom: "Телекоммуникации",
     // Если sector приходит пустым/неизвестным
     unknown: "Неизвестный сектор"
 };

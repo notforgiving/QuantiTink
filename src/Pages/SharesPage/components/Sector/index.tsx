@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import cn from "classnames";
 
@@ -8,20 +8,40 @@ interface ISectorProps {
   sectorname: string;
   percent: number;
   positions?: any[];
+  opened?: boolean;
+  onClick?: () => void;
+  colorKey?: string;
 }
 
-const Sector: FC<ISectorProps> = ({ sectorname, positions, percent }) => {
+const Sector: FC<ISectorProps> = ({ sectorname, positions, percent, opened, onClick, colorKey }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const colorMap: Record<string, string> = {
+    materials: "#8D5524", // коричневый, цвет земли и материалов
+    energy: "#FFD600", // ярко-жёлтый, ассоциация с энергией, светом
+    financial: "#00695C", // насыщенный зелёный, цвет денег
+    information_technology: "#1976D2", // синий, технологичный, цифровой
+    communication_services: "#00B0FF", // голубой, связь, коммуникации
+    consumer_discretionary: "#FF7043", // оранжево-красный, динамичный, покупки
+    consumer_staples: "#43A047", // зелёный, базовые товары, натуральность
+    health_care: "#E91E63", // розовый, ассоциация с медициной, заботой
+    industrials: "#757575", // серый, индустриальный, металл
+    utilities: "#90CAF9", // светло-голубой, вода, электричество
+    real_estate: "#8D6E63", // тёплый коричневый, цвет домов, земли
+    basic_resources: "#BDB76B", // оливковый, природные ресурсы
+    telecom: "#7C4DFF", // фиолетовый, связь, технологии
+    unknown: "#D3D3D3", // светло-серый, неизвестно
+  };
+  const color = colorKey && colorMap[colorKey] ? colorMap[colorKey] : "#D3D3D3";
   return (
     <div
       className={cn(css.accordion, {
-        _isOpen: open,
+        _isOpen: opened,
       })}
     >
-      <div className={css.accordion_header} onClick={() => setOpen(!open)}>
+      <div className={css.accordion_header} onClick={onClick}>
+        <div className={css.accordion_color} style={{ backgroundColor: color }}></div>
         <div className={css.accordion_name}>
           <strong>{sectorname}</strong>
         </div>
@@ -31,7 +51,7 @@ const Sector: FC<ISectorProps> = ({ sectorname, positions, percent }) => {
         className={css.accordion_list}
         ref={contentRef}
         style={{
-          maxHeight: open ? `${contentRef.current?.scrollHeight}px` : "0px",
+          maxHeight: opened ? `${contentRef.current?.scrollHeight}px` : "0px",
         }}
       >
         {positions &&

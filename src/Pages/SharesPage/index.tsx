@@ -13,7 +13,11 @@ const SharesPage: FC = () => {
   const navigate = useNavigate();
   const { shares, sectors } = useShares(id ?? "");
   const [tab, setTab] = useState<"BASE" | "SECTOR">("BASE");
-  console.log(tab, "tab");
+  const [openedSector, setOpenedSector] = useState<string | null>(null);
+
+  const handleSectorClick = (label: string | null) => {
+    setOpenedSector((prev) => (prev === label ? null : label));
+  };
 
   return (
     <div>
@@ -59,6 +63,13 @@ const SharesPage: FC = () => {
                 positions={sector.positions}
                 sectorname={sector.sectorname}
                 percent={sector.percent}
+                onClick={() =>
+                  handleSectorClick(
+                    openedSector === sector.sectorKey ? null : sector.sectorKey
+                  )
+                }
+                colorKey={sector.sectorKey}
+                opened={openedSector === sector.sectorKey}
               />
             ))}
           </>

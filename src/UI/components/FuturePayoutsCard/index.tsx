@@ -57,8 +57,6 @@ const FuturePayoutsCard: FC<TFuturePayoutsCardProps> = ({
     return monthKey === selectedMonth ? 1 : 0.5;
   };
 
-  console.log(chartData, "chartData");
-
   return (
     <div className={css.card}>
       <div className={css.card__header}>

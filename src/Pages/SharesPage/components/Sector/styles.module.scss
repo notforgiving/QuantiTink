@@ -17,6 +17,11 @@
     gap: 16px;
     cursor: pointer;
   }
+  &_color {
+    @include square(12px);
+    border-radius: 100%;
+    background: $red-10;
+  }
   &_name {
     strong {
       font-weight: 500;
@@ -49,12 +54,23 @@
     transition: max-height 0.35s ease, opacity 0.35s ease;
     opacity: 0;
 
+    @include phone {
+      gap: 4px;
+    }
+
     &_item {
       @include flex-center;
       justify-content: space-between;
       padding: 5px 0;
       cursor: pointer;
       position: relative;
+
+      @include phone {
+        display: grid;
+        align-items: start;
+        gap: 10px;
+        grid-template-columns: 1fr 50px;
+      }
 
       &::before {
         @include before;
