@@ -123,9 +123,9 @@ const AccountPageMakeup: FC = () => {
             </div>
           )}
         </div>
-        {totalPayouts.value !== 0 &&
-          totalCoupons.value !== 0 &&
-          totalDividends.value !== 0 && (
+        {(totalPayouts.value !== 0 ||
+          totalCoupons.value !== 0 ||
+          totalDividends.value !== 0) && (
             <div className={css.portfolio_block}>
               <div className={css.portfolio_blockItem}>
                 <ServerSvg />
