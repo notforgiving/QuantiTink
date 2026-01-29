@@ -16,6 +16,15 @@
       color: $green-90;
     }
   }
+  &__invested {
+    strong {
+      font-size: 14px;
+    }
+    span {
+      font-size: 12px;
+      font-weight: bold
+    }
+  }
   &__info {
     @include flex-center;
     justify-content: flex-start;

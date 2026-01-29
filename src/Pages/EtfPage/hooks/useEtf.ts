@@ -21,6 +21,7 @@ type TUseEtf = (accountId: string, ticker: string) => {
     operations: IProfitabilityLineProps[];
     incomeTax: boolean;
     setIncomeTax: React.Dispatch<React.SetStateAction<boolean>>;
+    amountOfPurchases: TFormatMoney;
 };
 
 export const useEtf: TUseEtf = (accountId, ticker) => {
@@ -62,8 +63,7 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
                 default:
                     break;
             }
-        }
-
+        }   
         return result;
     }, [account?.operations, etf?.assetUid, etf?.quantity]);
 
@@ -77,6 +77,9 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
 
         return formatMoney(total);
     }, [etfOperations]);
+
+    console.log(amountOfPurchases,'amountOfPurchases');
+    
 
     // текущая стоимость позиции
     const currentPrice = useMemo(() => {
@@ -208,5 +211,6 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
         operations,
         incomeTax,
         setIncomeTax,
+        amountOfPurchases,
     };
 };

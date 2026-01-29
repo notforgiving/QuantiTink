@@ -27,6 +27,7 @@ const EtfPage: FC = () => {
     operations,
     incomeTax,
     setIncomeTax,
+    amountOfPurchases,
   } = useEtf(id || "0", ticker || "0");
 
   const recommendation = recommendBuyToReduceAvg(1); // снизить среднюю на 1 рубль
@@ -92,6 +93,10 @@ const EtfPage: FC = () => {
           >
             <strong>Годовая доходность:</strong>
             <span>{annualPercentageYield}%</span>
+          </div>
+          <div className={css.etf__invested}>
+            <strong>Вложено: </strong>
+            <span>{amountOfPurchases.formatted}</span>
           </div>
           {recommendation && (
             <div className={cn(css.share__info)}>
