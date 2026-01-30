@@ -133,7 +133,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             isBold: collapse,
           })}
         >
-          <span>Купонная доходность, %</span>
+          <span>Купонная доходность (годовая), %</span>
           <span>{bond.couponeYeild}%</span>
         </div>
         <div
