@@ -132,6 +132,18 @@
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
 
+    & > div {
+      &:nth-child(7n - 1),
+      &:nth-child(7n) {
+        &.calendar__day {
+          background: $orange-10;
+        }
+      }
+      &:first-child {
+        background: none;
+      }
+    }
+
     @include phone {
       gap: 4px;
     }
