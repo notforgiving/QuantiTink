@@ -190,7 +190,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             isShow: collapse,
           })}
         >
-          <span>Цена самих облигаций</span>
+          <span>Цена тела облигации</span>
           <span>{bond.currentFormatPrice.formatted}</span>
         </div>
         <div
@@ -207,7 +207,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             isShow: collapse,
           })}
         >
-          <span>Цена покупки выше номинала</span>
+          <span>Цена тела выше номинала</span>
           <span>{bond.aboveNominal ? "Да" : "Нет"}</span>
         </div>
         <div
@@ -247,7 +247,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             isShow: collapse,
           })}
         >
-          <span>Погашение</span>
+          <span>Сумма погашения</span>
           <span>{bond.nominalValue.formatted}</span>
         </div>
         <div
@@ -266,7 +266,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
         </div>
         <div className={css.card__result_item}>
           <strong>{annualProfitabilityWithTax}%</strong>
-          <span>Годовая доходность</span>
+          <span>Годовая доходность к погашению</span>
         </div>
       </div>
     </div>
