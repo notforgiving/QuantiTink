@@ -125,7 +125,7 @@ const BondYieldCard: FC<TBondYieldCardProps> = (bond) => {
             isBold: collapse,
           })}
         >
-          <span>Купон по облигации (ближайший) руб</span>
+          <span>Купон (ближайший) руб</span>
           <span>{bond.payOneBond.formatted}</span>
         </div>
         <div
