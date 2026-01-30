@@ -97,6 +97,7 @@ const Grid: FC<IGridProps> = ({
               className={classes.join(" ")}
               onClick={(e) => {
                 e.stopPropagation();
+                if(inMonth)
                 setActiveKey(activeKey === key ? null : key);
               }}
             >
