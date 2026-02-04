@@ -24,6 +24,8 @@ export type TPortfolioItem = {
 type TUseAccount = (props: string) => {
     /** Объект портфолио */
     account: TAccount | null;
+    /** Свободный объем денежных средств */
+    freeAccoutnMoney: TFormatMoney | null;
     /** Стоимость тела портфолио */
     totalAmountPortfolio: TFormatMoney;
     /** Сумма вложенных денег */
@@ -199,6 +201,11 @@ export const useAccount: TUseAccount = (accountId) => {
         };
     }, [account?.totalAmountShares, totalAssets]);
 
+    const freeAccoutnMoney = useMemo(() => {
+        if (!account) return null;
+        return formatMoney(formatMoney(account.totalAmountCurrencies).value + 5000);
+    }, [account]);
+
     const portfolioBonds = useMemo(() => {
         if (!account || !account.positions) return null;
         return groupPortfolio(
@@ -223,6 +230,7 @@ export const useAccount: TUseAccount = (accountId) => {
 
     return {
         account,
+        freeAccoutnMoney,
         totalAmountPortfolio: portfolioValue,
         totalDeposits,
         portfolioGrowth,

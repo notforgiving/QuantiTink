@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReactComponent as CalendarSvg } from "assets/calendar.svg";
 import { ReactComponent as CashSvg } from "assets/cash.svg";
@@ -28,6 +28,7 @@ const AccountPageMakeup: FC = () => {
 
   const {
     account,
+    freeAccoutnMoney,
     totalAmountPortfolio,
     totalDeposits,
     portfolioGrowth,
@@ -59,6 +60,8 @@ const AccountPageMakeup: FC = () => {
 
   const goalsUi = useGoals(goalsProps);
 
+  const [flipped, setFlipped] = useState(false);
+
   return (
     <div>
       <BackHeader
@@ -81,6 +84,21 @@ const AccountPageMakeup: FC = () => {
             <span>
               {portfolioGrowth.amount.formatted} / {portfolioGrowth.percent}%
             </span>
+            {!!freeAccoutnMoney && (
+              <div
+                className={cn(css.freeValue, {
+                  isOpen: flipped,
+                })}
+                onClick={() => setFlipped(!flipped)}
+              >
+                <div className={css.freeValue_inner}>
+                  <div className={css.freeValue_front}>Свободные средства</div>
+                  <div className={css.freeValue_back}>
+                    {freeAccoutnMoney.formatted}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className={css.portfolio_actions}>
             {accountAge && (
@@ -126,28 +144,28 @@ const AccountPageMakeup: FC = () => {
         {(totalPayouts.value !== 0 ||
           totalCoupons.value !== 0 ||
           totalDividends.value !== 0) && (
-            <div className={css.portfolio_block}>
-              <div className={css.portfolio_blockItem}>
-                <ServerSvg />
-                <strong>Получено всего выплат</strong>
-                <span>{totalPayouts.formatted}</span>
-              </div>
-              <div className={css.portfolio_blockItem}>
-                <CashSvg />
-                <strong>Получено купонов / дивидендов</strong>
-                <span>
-                  {totalCoupons.formatted} / {totalDividends.formatted}
-                </span>
-              </div>
-              <div className={css.portfolio_blockItem}>
-                <PodiumSvg />
-                <strong>Доходность / в год</strong>
-                <span>
-                  {`${currentYield}%`} / {`${yearlyYield}%`}
-                </span>
-              </div>
+          <div className={css.portfolio_block}>
+            <div className={css.portfolio_blockItem}>
+              <ServerSvg />
+              <strong>Получено всего выплат</strong>
+              <span>{totalPayouts.formatted}</span>
             </div>
-          )}
+            <div className={css.portfolio_blockItem}>
+              <CashSvg />
+              <strong>Получено купонов / дивидендов</strong>
+              <span>
+                {totalCoupons.formatted} / {totalDividends.formatted}
+              </span>
+            </div>
+            <div className={css.portfolio_blockItem}>
+              <PodiumSvg />
+              <strong>Доходность / в год</strong>
+              <span>
+                {`${currentYield}%`} / {`${yearlyYield}%`}
+              </span>
+            </div>
+          </div>
+        )}
         <div className={css.portfolio_block}>
           <div className={css.portfolio_blockItem}>
             <PodiumSvg />
