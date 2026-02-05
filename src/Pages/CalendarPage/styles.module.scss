@@ -183,7 +183,7 @@
     bottom: calc(100% + 10px);
     z-index: 40;
     transform: translateX(-50%);
-    min-width: 160px;
+    min-width: 260px;
     max-width: 260px;
     background: white;
     border: 1px solid $green-60;
@@ -192,6 +192,7 @@
     padding: 8px;
 
     @include phone {
+      min-width: 160px;
       position: fixed;
       left: auto;
       right: 0;
