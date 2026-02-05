@@ -2,22 +2,25 @@ import { TAccount } from "api/features/accounts/accountsSlice";
 import { TPortfolioItem } from "Pages/AccountPage/hook/useAccount";
 
 interface IUseGoalsProps {
+  goalsProps: {
     shares: number;
     bonds: [string, TPortfolioItem][];
     etfs: [string, TPortfolioItem][];
     account: TAccount | null;
+  } | null
+  SIZE_LINE: number;
 }
 
-type TUseGoals = (props: IUseGoalsProps | null) => Record<string, number>;
+type TUseGoals = (props: IUseGoalsProps) => Record<string, number>;
 
 export const useGoals: TUseGoals = (props) => {
   const result: Record<string, number> = {};
-  if (!props) return result;
+  if (!props.goalsProps) return result;
 
-  const { shares, bonds, etfs } = props;
+  const { goalsProps: { account, shares, bonds, etfs } } = props;
 
   // ⚙️ Берём цели из Redux
-  const accountGoals = props.account?.goals || {};
+  const accountGoals = account?.goals || {};
 
   // --- Shares ---
   if (typeof shares === "number" && !isNaN(shares)) {
@@ -25,7 +28,7 @@ export const useGoals: TUseGoals = (props) => {
     if (goal && !isNaN(goal)) {
       const percent = shares;
       const diff = percent >= goal ? 100 : (percent / goal) * 100;
-      result["shares"] = Math.floor(diff / 10);
+      result["shares"] = Math.floor((diff / 100) * props.SIZE_LINE);
     }
   }
 
@@ -36,7 +39,7 @@ export const useGoals: TUseGoals = (props) => {
 
     const percent = bond.percent ?? 0;
     const diff = percent >= goal ? 100 : (percent / goal) * 100;
-    result[key] = Math.floor(diff / 10);
+    result[key] = Math.floor((diff / 100) * props.SIZE_LINE);
   });
 
   // --- ETFs ---
@@ -46,7 +49,7 @@ export const useGoals: TUseGoals = (props) => {
 
     const percent = etf.percent ?? 0;
     const diff = percent >= goal ? 100 : (percent / goal) * 100;
-    result[key] = Math.floor(diff / 10);
+    result[key] = Math.floor((diff / 100) * props.SIZE_LINE);
   });
 
   return result;

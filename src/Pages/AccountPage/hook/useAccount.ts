@@ -78,9 +78,9 @@ export const useAccount: TUseAccount = (accountId) => {
     }, [account]);
 
     const totalAssets = useMemo(() => {
-        if(!account) return formatMoney(0)
-         return formatMoney(portfolioValue.value + formatMoney(account.totalAmountCurrencies).value * -1)    
-    },[account, portfolioValue.value])
+        if (!account) return formatMoney(0)
+        return formatMoney(portfolioValue.value + formatMoney(account.totalAmountCurrencies).value * -1)
+    }, [account, portfolioValue.value])
 
     const { totalDeposits, firstDepositDate, totalPaidTaxes, totalCommissions, totalCoupons, totalDividends, totalPayouts } = useMemo(() => {
         const operations = account?.operations ?? [];

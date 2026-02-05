@@ -25,7 +25,8 @@ import css from "./styles.module.scss";
 const AccountPageMakeup: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  // Длина линии целей
+  const SIZE_LINE = 15;
   const {
     account,
     freeAccoutnMoney,
@@ -58,7 +59,10 @@ const AccountPageMakeup: FC = () => {
     };
   }, [portfolioShare, portfolioBonds, portfolioEtf, account]);
 
-  const goalsUi = useGoals(goalsProps);
+  const goalsUi = useGoals({
+    goalsProps,
+    SIZE_LINE,
+  });
 
   const [flipped, setFlipped] = useState(false);
 
@@ -188,6 +192,7 @@ const AccountPageMakeup: FC = () => {
                   <GoalProgress
                     size={goalsUi["shares"]}
                     loading={!goalsUi["shares"]}
+                     total={SIZE_LINE}
                   />
                 )}
                 <span>{portfolioShare.value.formatted}</span>{" "}
@@ -211,6 +216,7 @@ const AccountPageMakeup: FC = () => {
                       <GoalProgress
                         size={goalsUi[key]}
                         loading={!goalsUi[key]}
+                        total={SIZE_LINE}
                       />
                     )}
                     <span>{bond.value.formatted}</span>
@@ -232,10 +238,7 @@ const AccountPageMakeup: FC = () => {
                   <strong>Фонд {etf.name}</strong>
                   <span className={css.blockItem__value}>
                     {goal !== undefined && (
-                      <GoalProgress
-                        size={goalsUi[key]}
-                        loading={!goalsUi[key]}
-                      />
+                      <GoalProgress size={goal} loading={!goal} total={SIZE_LINE}/>
                     )}
                     <span>{etf.value.formatted}</span>
                     <span>({etf.percent}%)</span>

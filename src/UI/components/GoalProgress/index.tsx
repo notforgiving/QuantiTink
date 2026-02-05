@@ -17,7 +17,7 @@ const GoalProgress = ({
   return (
     <div
       className={cn(css.goal__progress, {
-        _isMore: size === 10,
+        _isMore: size === total,
         _isLow: size <= 5 && size !== 0,
         _isLoading: loading,
       })}
