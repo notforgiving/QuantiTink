@@ -203,7 +203,8 @@ export const useAccount: TUseAccount = (accountId) => {
 
     const freeAccoutnMoney = useMemo(() => {
         if (!account) return null;
-        return formatMoney(formatMoney(account.totalAmountCurrencies).value + 5000);
+        const totalAmountCurrencies = formatMoney(account.totalAmountCurrencies);
+        return totalAmountCurrencies.value > 0 ? totalAmountCurrencies : formatMoney(formatMoney(account.totalAmountCurrencies).value + 5000);
     }, [account]);
 
     const portfolioBonds = useMemo(() => {
