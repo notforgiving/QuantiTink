@@ -14,7 +14,7 @@ export function resivedDividends(events: TCalendarEvent[], operations: TOperatio
   // 2. Собираем операции по каждому figi
   const figiOpearions = uniqueByFigiArray.map(figi => ({
     figi,
-    opeartions: operations.filter(op => op.figi === figi).reverse()
+    operations: operations.filter(op => op.figi === figi).reverse()
   }))
 
   // 3. Превращаем в объект { [figi]: Operation[] }
@@ -64,30 +64,48 @@ export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPo
   // 1. Получаем уникальные figi
   const uniqueByFigiArray = uniqueFigis(events);
 
-  // 2. Собираем операции по каждому figi
+  // 2. Собираем операции по каждому figi (операции уже отсортированы, можно reverse если надо)
   const figiOpearions = uniqueByFigiArray.map(figi => ({
     figi,
-    opeartions: operations.filter(op => op.figi === figi).reverse()
-  }))
+    operations: operations.filter(op => op.figi === figi).reverse()
+  }));
 
   // 3. Превращаем в объект { [figi]: Operation[] }
-  const uniqueByFigiObject: Record<string, TOperation[]> = mapOperationsByFigi(figiOpearions)
+  const uniqueByFigiObject: Record<string, TOperation[]> = mapOperationsByFigi(figiOpearions);
 
-  // 4.  Проверяем в операциях по счету получен ли купон и убираем его из списка, если уже пришел
-  
-  return events.filter(event => formatMoney(event?.raw.payOneBond).value !== 0).map(event => {
-    const position = positions.find(pos => pos.figi === event.figi);
-    const quantity = Number(position?.quantity?.units || 0);
-    const received = uniqueByFigiObject[event.figi].some(op =>
-      op.type === 'Выплата купонов' &&
-      moment(op.date).isSameOrAfter(moment(event?.raw.payDate))
-    );
-    return {
-      ...event,
-      quantity,
-      received,
-    };
-  }).filter(ev => !ev.received);
+  // 4. Фильтруем события купонов
+  return events
+    .filter(event => formatMoney(event?.raw.payOneBond).value !== 0)
+    .map(event => {
+      const position = positions.find(pos => pos.figi === event.figi);
+      const quantity = Number(position?.quantity?.units || 0);
+
+      const operationsForFigi = uniqueByFigiObject[event.figi] || [];
+      
+      // Дата фиксации события (fixDate)
+      const fixDate = event?.raw.fixDate ? moment(event.raw.fixDate) : null;
+
+      // Проверяем, была ли покупка до или на fixDate
+      const hasBoughtBeforeFixDate = fixDate
+        ? operationsForFigi.some(op =>
+          op.type === 'Покупка ценных бумаг' &&
+          moment(op.date).isSameOrBefore(fixDate)
+        )
+        : false;
+
+      // Проверяем, выплачен ли уже купон
+      const received = operationsForFigi.some(op =>
+        op.type === 'Выплата купонов' &&
+        moment(op.date).isSameOrAfter(moment(event?.raw.payDate))
+      );
+
+      return {
+        ...event,
+        quantity: hasBoughtBeforeFixDate ? quantity : 0,  // Обнуляем количество, если покупок до fixDate не было
+        received,
+      };
+    })
+    .filter(ev => !ev.received && ev.quantity > 0);  // Убираем уже выплаченные и те, на которые нет покупок
 }
 // Готовим итоговый массив для вывода в UI
 export function formatteEventsForUi(
@@ -169,11 +187,11 @@ export function groupByCorrectDate(
 export function uniqueFigis(events: TCalendarEvent[]): string[] {
   return Array.from(new Set(events.map(e => e.figi)));
 }
-export function mapOperationsByFigi<T extends { figi: string; opeartions: any[] }>(
+export function mapOperationsByFigi<T extends { figi: string; operations: any[] }>(
   items: T[]
 ): Record<string, any[]> {
   return items.reduce((acc, item) => {
-    acc[item.figi] = item.opeartions;
+    acc[item.figi] = item.operations;
     return acc;
   }, {} as Record<string, any[]>);
 }

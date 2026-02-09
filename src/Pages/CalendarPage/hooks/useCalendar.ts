@@ -39,9 +39,9 @@ export const useCalendarUI: TUseCalendarUI = (accountId) => {
     ) ?? [];
   }, [account?.operations]);
 
-    const bondsOperations = useMemo(() => {
+  const bondsOperations = useMemo(() => {
     return account?.operations?.filter(
-      (op) => (op.instrumentType === 'bond') && (op.type === 'Выплата купонов')
+      (op) => (op.instrumentType === 'bond') && (op.type === 'Выплата купонов' || op.type === 'Покупка ценных бумаг')
     ) ?? [];
   }, [account?.operations]);
 
@@ -49,7 +49,7 @@ export const useCalendarUI: TUseCalendarUI = (accountId) => {
   const notResivedDividends = resivedDividends(events.filter(el => el.eventType === 'dividend'), sharesOperations)
 
   // Нужен массив купонов с указанием количества бондов для получения выплаты
-  const notResivedCoupons = resivedCoupons(events.filter(el => el.eventType === 'coupon'), account?.positions || [],bondsOperations)
+  const notResivedCoupons = resivedCoupons(events.filter(el => el.eventType === 'coupon'), account?.positions || [], bondsOperations)
 
   // Единый массив
   const unionEventsWithQantity = [...notResivedDividends, ...notResivedCoupons]
