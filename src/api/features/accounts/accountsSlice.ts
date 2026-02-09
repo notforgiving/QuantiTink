@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import { IGetBondCouponsEvents } from "../favoritesBonds/favoritesBondsTypes";
+
 import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 
 type TFlattenedPortfolio = Omit<TPortfolioResponse, 'accountId'>;
@@ -148,7 +150,6 @@ const accountsSlice = createSlice({
               ...acc,
               positions: acc.positions.map((pos) => {
                 if (pos.instrumentType === instrumentType && pos.figi === figi) {
-                  // const { figi: _f, ticker: _t, ...rest } = instrument;
                   return { ...pos, ...instrument };
                 }
                 return pos;
@@ -171,6 +172,29 @@ const accountsSlice = createSlice({
     fetchAssetFailure(
       state,
       action: PayloadAction<{ accountId: TAccount["id"], error: string }>
+    ) {
+      state.loading = false;
+      state.error = action.payload.error;
+    },
+    fetchEventsForBond(state, action: PayloadAction<{ accountId: TAccount["id"], figi: string, startPeriod: string, finishPeriod: string }>) {
+      state.loading = true;
+    },
+    fetchEventsForBondSuccess(state, action: PayloadAction<{ accountId: TAccount["id"], figi: string, events: IGetBondCouponsEvents[] }>) {
+      state.loading = false;
+
+      const { accountId, figi, events } = action.payload;
+
+      const account = state.data.find(acc => acc.id === accountId);
+      if (!account) return;
+
+      const position = account.positions.find(pos => pos.figi === figi);
+      if (!position) return;
+
+      position.events = events;
+    },
+    fetchEventsForBondFailure(
+      state,
+      action: PayloadAction<{ error: string }>
     ) {
       state.loading = false;
       state.error = action.payload.error;
@@ -265,6 +289,9 @@ const accountsSlice = createSlice({
 export const {
   fetchAccountsRequest,
   fetchAccountsSuccess,
+  fetchEventsForBond,
+  fetchEventsForBondSuccess,
+  fetchEventsForBondFailure,
   accountsSliceFailure,
   setPortfolioForAccount,
   setOperationsForAccount,

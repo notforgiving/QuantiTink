@@ -1,14 +1,16 @@
 import { fetchGetAccountsAPI, fetchGetAssetByAPI, fetchGetOperationsAPI, fetchGetPortfolioAPI, fetchGetPositionBondAPI, fetchGetPositionEtfAPI, fetchGetPositionShareAPI } from "api/requests/accountsApi";
+import { fetchGetBondCouponsAPI } from "api/requests/favoritesBondsApi";
 import { getUserGoals, saveUserGoals } from "api/requests/goalsApi";
 import { RootState } from "api/store";
 import { all, call, fork, put, select, take, takeEvery, takeLatest } from "redux-saga/effects";
 import { InstrumentType } from "types/common";
 
+import { IGetBondCouponsEvents } from "../favoritesBonds/favoritesBondsTypes";
 import { TTokenState } from "../token/tokenSlice";
 import { selectTokenData } from "../token/useToken";
 import { User } from "../user/userTypes";
 
-import { accountsSliceFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchGoalsRequest, fetchGoalsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, saveGoalsRequest, saveGoalsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
+import { accountsSliceFailure, fetchAccountsRequest, fetchAccountsSuccess, fetchAssetFailure, fetchAssetRequest, fetchAssetSuccess, fetchEventsForBond, fetchEventsForBondFailure, fetchEventsForBondSuccess, fetchGoalsRequest, fetchGoalsSuccess, fetchPositionsFailure, fetchPositionsRequest, fetchPositionsSuccess, saveGoalsRequest, saveGoalsSuccess, setAssetForAccount, setInstrumentPositionForAccount, setOperationsForAccount, setPortfolioForAccount, setShareInstrumentPositionForAccount, TAccount } from "./accountsSlice";
 import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "./accountsTypes";
 import { selectAccountById } from "./useAccounts";
 
@@ -365,6 +367,39 @@ function* saveGoalsSaga(action: ReturnType<typeof saveGoalsRequest>) {
   }
 }
 
+function* loadEventByBondWorker(action: ReturnType<typeof fetchEventsForBond>) {
+  try {
+    const targetFigi = action.payload.figi;
+    const startPeriod = action.payload.startPeriod;
+    const finishPeriod = action.payload.finishPeriod;
+
+    if (!targetFigi && !finishPeriod && !startPeriod) {
+      return;
+    }
+    const tokenState: { data: string } = yield select(selectTokenData);
+    const token = tokenState.data;
+
+    const eventsArray: IGetBondCouponsEvents[] = [];
+
+    try {
+      const { events } = yield call(fetchGetBondCouponsAPI, { token, figi: targetFigi, from: startPeriod, to: finishPeriod });
+      eventsArray.push(...events);
+    } catch (e) {
+      console.warn(`Не удалось получить данные для ${targetFigi}:`, e);
+    }
+
+    yield put(fetchEventsForBondSuccess({
+      accountId: action.payload.accountId,
+      figi: targetFigi,
+      events: eventsArray
+    }));
+
+  } catch (error: any) {
+    console.error("Ошибка загрузки избранных облигаций:", error);
+    yield put(fetchEventsForBondFailure(error));
+  }
+}
+
 export function* accountsSaga() {
   yield takeLatest(fetchAccountsRequest.type, fetchAccountsWorker);
   yield takeLatest(fetchAssetRequest.type, fetchAssetSaga);
@@ -379,6 +414,7 @@ export function* watchAccountsLoaded() {
 function* watchAccountsAndPositions() {
   yield take(fetchAccountsSuccess.type); // ждём пока аккаунты загрузятся
   yield takeEvery(fetchPositionsRequest.type, fetchAccountByIdSaga);
+  yield takeEvery(fetchEventsForBond.type, loadEventByBondWorker);
 }
 
 export function* watchGoalsSaga() {

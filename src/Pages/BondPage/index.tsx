@@ -31,6 +31,7 @@ const BondPage: FC = () => {
     annualPercentageYield,
     operations,
   } = useBondPage(id || "0", currency || "rub", figi || "");
+  
   return (
     <div>
       <BackHeader title={name} backCallback={() => navigate(-1)} />

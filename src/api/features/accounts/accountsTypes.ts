@@ -1,5 +1,7 @@
 import { InstrumentType, TBrand, TMoneyValue, TRiskLevel, TTrade } from "types/common";
 
+import { IGetBondCouponsEvents } from "../favoritesBonds/favoritesBondsTypes";
+
 export type TPortfolioPosition = {
   figi: string;
   instrumentType: InstrumentType;
@@ -29,6 +31,8 @@ export type TPortfolioPositionFull =
     & TShareInstrument
   ) & {
     asset?: TAsset; // добавляем позже
+  } & {
+    events?: IGetBondCouponsEvents[];
   };
 
 export type TPortfolioResponse = {
