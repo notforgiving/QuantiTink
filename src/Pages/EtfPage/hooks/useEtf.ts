@@ -78,9 +78,6 @@ export const useEtf: TUseEtf = (accountId, ticker) => {
         return formatMoney(total);
     }, [etfOperations]);
 
-    console.log(amountOfPurchases,'amountOfPurchases');
-    
-
     // текущая стоимость позиции
     const currentPrice = useMemo(() => {
         if (!etf?.currentPrice || !etf?.quantity?.units) return null;
