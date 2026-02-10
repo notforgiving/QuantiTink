@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { TPortfolioPositionFull } from "api/features/accounts/accountsTypes";
 import { useAccounts } from "api/features/accounts/useAccounts";
 import { RISK_ORDER, RiskLevelMap, TBrand, TMoneyValue, TRiskLevel } from "types/common";
 
 import { formatMoney } from "utils/formatMoneyAmount";
+import { getYearsToMaturity } from "utils/getYearsToMaturity";
 
 export type TIssuerGroup = {
     name: string; // имя эмитента
@@ -24,6 +25,18 @@ export type TRiskLevelStat = {
     percent: number;
 }
 
+export type TDurationGroup = {
+    duration: 'SHORT' | 'MEDIUM' | 'LONG';
+    label: string;
+    positions: {
+        figi: string;
+        name: string;
+        quantity: number;
+    }[];
+    count: number;
+    percent: number;
+};
+
 type TBondByRisk = {
     [riskLevel in TRiskLevel]?: {
         figi: string;
@@ -32,17 +45,21 @@ type TBondByRisk = {
     }[];
 };
 
+const DURATION_GROUPS = {
+    SHORT: { label: 'Короткие', min: 0, max: 2 },
+    MEDIUM: { label: 'Средние', min: 2, max: 5 },
+    LONG: { label: 'Длинные', min: 5, max: Infinity },
+} as const;
+
 type TUseBonds = (accountId: string, currency: string) => {
-        issuer: TIssuerGroup[];
-        riskStat: TRiskLevelStat[];
-        bondsByRiskLevel: TBondByRisk;
+    issuer: TIssuerGroup[];
+    riskStat: TRiskLevelStat[];
+    bondsByRiskLevel: TBondByRisk;
+    durationGroup: TDurationGroup[];
 };
 
 
 export const useBonds: TUseBonds = (accountId, currency) => {
-    const [issuer, setIssuer] = useState<TIssuerGroup[]>([]);
-    const [riskStat, setRiskStat] = useState<TRiskLevelStat[]>([]);
-    const [bondsByRiskLevel, setBondsByRiskLevel] = useState<TBondByRisk>({});
     const accounts = useAccounts();
 
     const account = useMemo(
@@ -50,50 +67,38 @@ export const useBonds: TUseBonds = (accountId, currency) => {
         [accounts?.data, accountId]
     );
 
-    const calculationByRisk = (targetBonds: TPortfolioPositionFull[]) => {
+    const targetBonds = useMemo<TPortfolioPositionFull[]>(() => {
+        if (!account?.positions?.length) return [];
+
+        return account.positions.filter(
+            (p) =>
+                p.instrumentType === 'bond' &&
+                p.initialNominal?.currency === currency &&
+                Boolean(p.asset)
+        );
+    }, [account, currency]);
+
+    /* ---------------- issuer ---------------- */
+
+    const issuer = useMemo<TIssuerGroup[]>(() => {
         if (!targetBonds.length) return [];
-        const counters: Record<TRiskLevel, number> = {
-            RISK_LEVEL_LOW: 0,
-            RISK_LEVEL_MODERATE: 0,
-            RISK_LEVEL_HIGH: 0,
-            RISK_LEVEL_UNSPECIFIED: 0,
-        };
-        // Сяитаем количество облигаций
-        const totalQty = targetBonds.reduce((acc, bond) => {
-            const quantity = Number(bond.quantity.units);
-            const riskLevel = bond.riskLevel ?? 'RISK_LEVEL_UNSPECIFIED';
-            counters[riskLevel] += quantity;
-            return acc + quantity;
-        }, 0);
 
-        const result = RISK_ORDER
-            .filter((level) => counters[level] > 0)
-            .map((level) => ({
-                riskLevel: level,
-                label: RiskLevelMap[level],
-                count: counters[level],
-                percent: totalQty > 0 ? Number(((counters[level] / totalQty) * 100).toFixed(2)) : 0,
-            }));
+        const totalAmount = targetBonds.reduce(
+            (sum, b) =>
+                sum +
+                formatMoney(b.currentPrice).value *
+                Number(b.quantity.units),
+            0
+        );
 
-        setRiskStat(result)
-    }
+        const map = new Map<string, TIssuerGroup>();
 
-    const calculationsBondsForIssuer = (targetBonds: TPortfolioPositionFull[]) => {
-        if (!targetBonds.length) return [];
-        // считаем общий объём всех облигаций
-        const totalQty = targetBonds.reduce((acc, bond) => {
-            const amountMoney = formatMoney(bond.currentPrice).value * Number(bond.quantity.units)
-            return acc + amountMoney;
-        }, 0);
-
-        const issuerMap = new Map<string, TIssuerGroup>();
-
-        for (const bond of targetBonds) {
-            const issuerName = bond.asset?.brand?.company ?? "Без эмитента";
+        targetBonds.forEach((bond) => {
+            const issuerName = bond.asset?.brand?.company ?? 'Без эмитента';
             const qty = Number(bond.quantity.units);
 
-            if (!issuerMap.has(issuerName)) {
-                issuerMap.set(issuerName, {
+            if (!map.has(issuerName)) {
+                map.set(issuerName, {
                     name: issuerName,
                     positions: [],
                     percent: 0,
@@ -101,62 +106,156 @@ export const useBonds: TUseBonds = (accountId, currency) => {
                 });
             }
 
-            const group = issuerMap.get(issuerName)!;
-            group.positions.push({
+            map.get(issuerName)!.positions.push({
                 figi: bond.figi,
                 name: bond.name,
                 quantity: qty,
                 currentPrice: bond.currentPrice,
-
             });
-        }
-        issuerMap.forEach((group) => {
-            const issuerTotal = group.positions.reduce((acc, bond) => {
-                const amountMoney =
-                    formatMoney(bond.currentPrice).value * Number(bond.quantity);
-                return acc + amountMoney;
-            }, 0);
+        });
+
+        map.forEach((group) => {
+            const issuerTotal = group.positions.reduce(
+                (sum, p) =>
+                    sum +
+                    formatMoney(p.currentPrice).value * p.quantity,
+                0
+            );
 
             group.percent =
-                totalQty > 0
-                    ? Number(((issuerTotal / totalQty) * 100).toFixed(2))
+                totalAmount > 0
+                    ? Number(((issuerTotal / totalAmount) * 100).toFixed(2))
                     : 0;
         });
 
-        const sortedIssuers = Array.from(issuerMap.values()).sort(
+        return Array.from(map.values()).sort(
             (a, b) => b.percent - a.percent
         );
-        setIssuer(sortedIssuers);
+    }, [targetBonds]);
 
-    }
+    /* ---------------- risk stat ---------------- */
 
-    useEffect(() => {
-        if (!accounts.loading && account?.positions?.length) {
-            const targetBonds = account?.positions?.filter(el => el.initialNominal && el.initialNominal.currency === currency && el.instrumentType === 'bond') || []
-            const allAssetsLoaded = targetBonds.every((p) => !!p.asset);
-            if (allAssetsLoaded) {
-                calculationsBondsForIssuer(targetBonds)
-                calculationByRisk(targetBonds)
+    const riskStat = useMemo<TRiskLevelStat[]>(() => {
+        if (!targetBonds.length) return [];
 
-                // Группировка облигаций по уровню риска
-                const grouped: TBondByRisk = {};
-                targetBonds.forEach(bond => {
-                  const riskLevel = bond.riskLevel ?? 'RISK_LEVEL_UNSPECIFIED';
-                  if (!grouped[riskLevel]) grouped[riskLevel] = [];
-                  grouped[riskLevel]!.push({
-                    figi: bond.figi,
-                    name: bond.name,
-                    quantity: Number(bond.quantity.units),
-                  });
-                });
-                setBondsByRiskLevel(grouped);
-            }
-        }
-    }, [accounts.loading, account, currency]);
+        const counters: Record<TRiskLevel, number> = {
+            RISK_LEVEL_LOW: 0,
+            RISK_LEVEL_MODERATE: 0,
+            RISK_LEVEL_HIGH: 0,
+            RISK_LEVEL_UNSPECIFIED: 0,
+        };
+
+        const totalQty = targetBonds.reduce((sum, bond) => {
+            const qty = Number(bond.quantity.units);
+            counters[bond.riskLevel ?? 'RISK_LEVEL_UNSPECIFIED'] += qty;
+            return sum + qty;
+        }, 0);
+
+        return RISK_ORDER
+            .filter((level) => counters[level] > 0)
+            .map((level) => ({
+                riskLevel: level,
+                label: RiskLevelMap[level],
+                count: counters[level],
+                percent:
+                    totalQty > 0
+                        ? Number(
+                            ((counters[level] / totalQty) * 100).toFixed(2)
+                        )
+                        : 0,
+            }));
+    }, [targetBonds]);
+
+    /* ---------------- bonds by risk ---------------- */
+
+    const bondsByRiskLevel = useMemo<TBondByRisk>(() => {
+        const result: TBondByRisk = {};
+
+        targetBonds.forEach((bond) => {
+            const level = bond.riskLevel ?? 'RISK_LEVEL_UNSPECIFIED';
+
+            if (!result[level]) result[level] = [];
+
+            result[level]!.push({
+                figi: bond.figi,
+                name: bond.name,
+                quantity: Number(bond.quantity.units),
+            });
+        });
+
+        return result;
+    }, [targetBonds]);
+
+    /* ---------------- duration group ---------------- */
+
+    const durationGroup = useMemo<TDurationGroup[]>(() => {
+        if (!targetBonds.length) return [];
+
+        const groups: Record<'SHORT' | 'MEDIUM' | 'LONG', TDurationGroup> = {
+            SHORT: {
+                duration: 'SHORT',
+                label: DURATION_GROUPS.SHORT.label,
+                positions: [],
+                count: 0,
+                percent: 0,
+            },
+            MEDIUM: {
+                duration: 'MEDIUM',
+                label: DURATION_GROUPS.MEDIUM.label,
+                positions: [],
+                count: 0,
+                percent: 0,
+            },
+            LONG: {
+                duration: 'LONG',
+                label: DURATION_GROUPS.LONG.label,
+                positions: [],
+                count: 0,
+                percent: 0,
+            },
+        };
+
+        let totalQty = 0;
+
+        targetBonds.forEach((bond) => {
+            const qty = Number(bond.quantity.units);
+            const yearsToMaturity = getYearsToMaturity(bond.maturityDate);
+
+            if (yearsToMaturity === null) return;
+
+            let key: 'SHORT' | 'MEDIUM' | 'LONG';
+
+            if (yearsToMaturity < 2) key = 'SHORT';
+            else if (yearsToMaturity < 5) key = 'MEDIUM';
+            else key = 'LONG';
+
+            groups[key].positions.push({
+                figi: bond.figi,
+                name: bond.name,
+                quantity: qty,
+            });
+
+            groups[key].count += qty;
+            totalQty += qty;
+        });
+
+        return (Object.values(groups))
+            .filter((group) => group.count > 0)
+            .map((group) => ({
+                ...group,
+                percent:
+                    totalQty > 0
+                        ? Number(((group.count / totalQty) * 100).toFixed(2))
+                        : 0,
+            }));
+    }, [targetBonds]);
+
+
 
     return {
         issuer,
         riskStat,
         bondsByRiskLevel,
-    }
-}
+        durationGroup,
+    };
+};

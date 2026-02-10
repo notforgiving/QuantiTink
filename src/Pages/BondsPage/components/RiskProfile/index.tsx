@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import cn from "classnames";
 import { TRiskLevelStat } from "Pages/BondsPage/hooks/useBonds";
 
@@ -11,7 +12,10 @@ interface IBondShort {
 }
 
 interface IRiskProfileProps {
-  data: TRiskLevelStat;
+  data: {
+    label: TRiskLevelStat['label'];
+    percent: TRiskLevelStat['percent'];
+  };
   opened?: boolean;
   onClick?: () => void;
   bonds: IBondShort[];
@@ -23,7 +27,9 @@ const RiskProfile: FC<IRiskProfileProps> = ({
   onClick,
   bonds,
 }) => {
+  const { id, currency } = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   useEffect(() => {
     if (!opened && contentRef.current) {
       contentRef.current.scrollTop = 0;
@@ -54,7 +60,7 @@ const RiskProfile: FC<IRiskProfileProps> = ({
       >
         {bonds.length > 0 &&
           bonds.map((bond) => (
-            <div className={css.bonds__list_item} key={bond.figi}>
+            <div className={css.bonds__list_item} key={bond.figi}  onClick={() => navigate(`/${id}/bonds/${currency}/${bond.figi}`)}>
               <strong>{bond.name}</strong>
               <span>{bond.quantity} шт</span>
             </div>

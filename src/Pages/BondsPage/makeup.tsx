@@ -11,12 +11,11 @@ import { useBonds } from "./hooks/useBonds";
 
 import css from "./styles.module.scss";
 
-
 const BondsPageMakeup: FC = () => {
   const { id, currency } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [tab, setTab] = useState<"BASE" | "RISK">("BASE");
+  const [tab, setTab] = useState<"BASE" | "RISK" | "DURATION">("BASE");
 
   // Состояние для раскрытых элементов по уровню риска
   const [openedRisk, setOpenedRisk] = useState<string | null>(null);
@@ -27,7 +26,10 @@ const BondsPageMakeup: FC = () => {
     );
   }, [currency, dispatch, id]);
 
-  const { issuer, riskStat, bondsByRiskLevel } = useBonds(id || "0", currency || "rub");
+  const { issuer, riskStat, bondsByRiskLevel, durationGroup } = useBonds(
+    id || "0",
+    currency || "rub"
+  );
 
   // Обработчик для раскрытия/скрытия по уровню риска
   const handleRiskClick = (label: string) => {
@@ -43,15 +45,18 @@ const BondsPageMakeup: FC = () => {
         backCallback={() => navigate(-1)}
       />
       <div className={css.bonds__tabs}>
-        <Tab active={tab === "BASE"} onClick={() => setTab("BASE")}> 
+        <Tab active={tab === "BASE"} onClick={() => setTab("BASE")}>
           Доли в портфеле
         </Tab>
-        <Tab active={tab === "RISK"} onClick={() => setTab("RISK")}> 
+        <Tab active={tab === "RISK"} onClick={() => setTab("RISK")}>
           По уровню риска
+        </Tab>
+        <Tab active={tab === "DURATION"} onClick={() => setTab("DURATION")}>
+          По дюрации
         </Tab>
       </div>
       <div className={css.bonds}>
-        {tab === "BASE" ? (
+        {tab === "BASE" && (
           <>
             {issuer &&
               issuer.map((item) => (
@@ -62,19 +67,33 @@ const BondsPageMakeup: FC = () => {
                 />
               ))}
           </>
-        ) : (
+        )}
+        {tab === "DURATION" && durationGroup && (
           <>
-            {riskStat.map((item) => (
+            {durationGroup.map((item) => (
               <RiskProfile
                 key={item.label}
-                data={item}
+                data={{
+                  label: item.label,
+                  percent: item.percent,
+                }}
                 opened={openedRisk === item.label}
                 onClick={() => handleRiskClick(item.label)}
-                bonds={bondsByRiskLevel[item.riskLevel] || []}
+                bonds={item.positions}
               />
             ))}
           </>
         )}
+        {tab === "RISK" &&
+          riskStat.map((item) => (
+            <RiskProfile
+              key={item.label}
+              data={item}
+              opened={openedRisk === item.label}
+              onClick={() => handleRiskClick(item.label)}
+              bonds={bondsByRiskLevel[item.riskLevel] || []}
+            />
+          ))}
       </div>
     </div>
   );
