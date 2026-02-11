@@ -184,7 +184,7 @@ const AccountPageMakeup: FC = () => {
             <div
               className={cn(css.portfolio_blockItem, "isShare")}
               onClick={() => navigate(`/${account?.id}/shares`)}
-              title={goalsUi["shares"].amount.formatted}
+              title={goalsUi["shares"]?.amount?.formatted}
             >
               <SharesSvg />
               <strong>Акции:</strong>
@@ -213,7 +213,7 @@ const AccountPageMakeup: FC = () => {
                   className={cn(css.portfolio_blockItem, "isBond")}
                   onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
                   key={key}
-                  title={goal.amount.formatted}
+                  title={goal?.amount?.formatted}
                 >
                   {bond.icon}
                   <strong>{bond.name}</strong>
@@ -243,7 +243,7 @@ const AccountPageMakeup: FC = () => {
                   className={cn(css.portfolio_blockItem, "isBond")}
                   onClick={() => navigate(`/${account?.id}/etf/${key}`)}
                   key={key}
-                  title={goal.amount.formatted}
+                  title={goal?.amount?.formatted}
                 >
                   <CubeSvg />
                   <strong>Фонд {etf.name}</strong>
