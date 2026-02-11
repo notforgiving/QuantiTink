@@ -22,7 +22,6 @@
       }
 
       .freeValue {
-        
         .freeValue_front {
           background: rgba(255, 255, 255, 0.7);
           color: #001c18;
@@ -44,7 +43,6 @@
   @include phone {
     gap: 16px;
   }
-
   &:global(._isGreen) {
     .portfolio {
       &_data {
@@ -57,13 +55,11 @@
       }
     }
   }
-
   &__title {
     font-weight: 600;
     font-size: 22px;
     padding-block: 15px;
   }
-
   &_data {
     @include whiteBlock;
     @include flex-center;
@@ -96,7 +92,10 @@
           gap: 10px;
           justify-items: flex-end;
           position: relative;
-          margin-top: 6px;
+
+          &:global(.isGoal) {
+            margin-top: 6px;
+          }
 
           @include phone {
             grid-template-columns: 1fr 70px;

@@ -53,7 +53,7 @@ const AccountPageMakeup: FC = () => {
 
     return {
       account, // 👈 добавляем
-      shares: portfolioShare.percent,
+      shares: portfolioShare,
       bonds: Object.entries(portfolioBonds),
       etfs: Object.entries(portfolioEtf),
     };
@@ -184,15 +184,20 @@ const AccountPageMakeup: FC = () => {
             <div
               className={cn(css.portfolio_blockItem, "isShare")}
               onClick={() => navigate(`/${account?.id}/shares`)}
+              title={goalsUi["shares"].amount.formatted}
             >
               <SharesSvg />
               <strong>Акции:</strong>
-              <span className={css.blockItem__value}>
-                {goalsUi["shares"] !== undefined && (
+              <span
+                className={cn(css.blockItem__value, {
+                  isGoal: !!goalsUi["shares"],
+                })}
+              >
+                {!!goalsUi["shares"] && (
                   <GoalProgress
-                    size={goalsUi["shares"]}
+                    size={goalsUi["shares"].size}
                     loading={!goalsUi["shares"]}
-                     total={SIZE_LINE}
+                    total={SIZE_LINE}
                   />
                 )}
                 <span>{portfolioShare.value.formatted}</span>{" "}
@@ -208,13 +213,18 @@ const AccountPageMakeup: FC = () => {
                   className={cn(css.portfolio_blockItem, "isBond")}
                   onClick={() => navigate(`/${account?.id}/bonds/${key}`)}
                   key={key}
+                  title={goal.amount.formatted}
                 >
                   {bond.icon}
                   <strong>{bond.name}</strong>
-                  <span className={css.blockItem__value}>
-                    {goal !== undefined && (
+                  <span
+                    className={cn(css.blockItem__value, {
+                      isGoal: !!goal,
+                    })}
+                  >
+                    {!!goal && (
                       <GoalProgress
-                        size={goalsUi[key]}
+                        size={goalsUi[key].size}
                         loading={!goalsUi[key]}
                         total={SIZE_LINE}
                       />
@@ -233,12 +243,21 @@ const AccountPageMakeup: FC = () => {
                   className={cn(css.portfolio_blockItem, "isBond")}
                   onClick={() => navigate(`/${account?.id}/etf/${key}`)}
                   key={key}
+                  title={goal.amount.formatted}
                 >
                   <CubeSvg />
                   <strong>Фонд {etf.name}</strong>
-                  <span className={css.blockItem__value}>
-                    {goal !== undefined && (
-                      <GoalProgress size={goal} loading={!goal} total={SIZE_LINE}/>
+                  <span
+                    className={cn(css.blockItem__value, {
+                      isGoal: !!goal,
+                    })}
+                  >
+                    {!!goal && (
+                      <GoalProgress
+                        size={goal.size}
+                        loading={!goal}
+                        total={SIZE_LINE}
+                      />
                     )}
                     <span>{etf.value.formatted}</span>
                     <span>({etf.percent}%)</span>
