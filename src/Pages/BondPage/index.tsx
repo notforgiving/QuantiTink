@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { FiExternalLink } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReactComponent as ArrowSvg } from "assets/arrow-forward.svg";
 import cn from "classnames";
@@ -30,17 +31,32 @@ const BondPage: FC = () => {
     currentPercentageYield,
     annualPercentageYield,
     operations,
+    isin,
   } = useBondPage(id || "0", currency || "rub", figi || "");
-  
+
   return (
     <div>
       <BackHeader title={name} backCallback={() => navigate(-1)} />
-      <LineBlock greenLine={expectedYield.value > 0}>
+      <LineBlock
+        greenLine={expectedYield.value > 0}
+        className={css.bond__wrapper}
+      >
         <div
           className={cn(css.bond, {
             _isGreen: expectedYield.value > 0,
           })}
         >
+          {isin && (
+            <a
+              href={`https://www.tbank.ru/invest/bonds/${isin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={css.bond__link}
+            >
+              <FiExternalLink />
+            </a>
+          )}
+
           <div className={cn(css.bond__info, "isColor")}>
             <strong>Текущая цена:</strong>
             <span>

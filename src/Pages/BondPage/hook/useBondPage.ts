@@ -33,6 +33,7 @@ type TUseBond = (accountId: string, currency: string, figi: string) => {
     currentPercentageYield: string;
     annualPercentageYield: number;
     operations: TResultOperation[];
+    isin: string
 };
 
 export const useBondPage: TUseBond = (accountId, currency, figi) => {
@@ -260,5 +261,6 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
         currentPercentageYield,
         annualPercentageYield,
         operations: purchases,
+        isin: bond?.isin || "",
     }
 }

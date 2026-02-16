@@ -13,6 +13,24 @@
       }
     }
   }
+  &__wrapper {
+    position: relative;
+  }
+  &__link {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    @include phone {
+      display: inline-block;
+      position: static;
+      margin-left: auto;
+    }
+    svg {
+      width: 20px;
+      height: auto;
+      color: $green-90;
+    }
+  }
   &__info {
     @include flex-center;
     justify-content: flex-start;
