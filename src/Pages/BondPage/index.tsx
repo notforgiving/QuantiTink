@@ -99,57 +99,63 @@ const BondPage: FC = () => {
       </LineBlock>
       <div className={css.bond__purchases}>
         {operations &&
-          operations.map((item, index) => (
-            <LineBlock
-              greenLine={expectedYield.value > 0}
-              key={`${item.date}${index}`}
-            >
-              <div
-                className={cn(css.bond__item, {
-                  _isGreen: Number(item.yield) > 0,
-                })}
+          operations.map((item, index) => {
+            const allmonth = Number(item.time);
+            const years = Math.floor(allmonth / 12);
+            const months = allmonth - years * 12;
+            return (
+              <LineBlock
+                greenLine={expectedYield.value > 0}
+                key={`${item.date}${index}`}
               >
-                <div className={css.bond__header}>
-                  <span>{item.date}</span>
-                  <span title="Прошло времени с даты покупки">
-                    {pluralize(Number(item.time), "месяц", "месяца", "месяцев")}
-                  </span>
-                </div>
-                <div className={css.bond__body}>
-                  <div className={css.bond__quantity}>
-                    <span>Количество: </span>
-                    <span>{item.quantity} шт</span>
-                  </div>
-                  <div className={css.bond__oneLot}>
-                    <span>Цена покупки / Текущая цена: </span>
-                    <span>
-                      <PriceLine
-                        leftPrice={item.oneLote}
-                        rightPrice={currentPriceOneLot}
-                        color={
-                          item.oneLote.value < currentPriceOneLot.value
-                            ? "GREEN"
-                            : "YELLOW"
-                        }
-                      />
+                <div
+                  className={cn(css.bond__item, {
+                    _isGreen: Number(item.yield) > 0,
+                  })}
+                >
+                  <div className={css.bond__header}>
+                    <span>{item.date}</span>
+                    <span title="Прошло времени с даты покупки">
+                      {years !== 0 && pluralize(years, "год", "года", "лет")}{" "}
+                      {pluralize(months, "месяц", "месяца", "месяцев")}
                     </span>
                   </div>
-                  <div
-                    className={css.bond__yield}
-                    title="С учетом потраченных комиссий на покупку"
-                  >
-                    <span>Ткущая доходность</span>
-                    <strong>
-                      <span className={css.small}>
-                        ({item.coupons.formatted})
-                      </span>{" "}
-                      {item.yield}%
-                    </strong>
+                  <div className={css.bond__body}>
+                    <div className={css.bond__quantity}>
+                      <span>Количество: </span>
+                      <span>{item.quantity} шт</span>
+                    </div>
+                    <div className={css.bond__oneLot}>
+                      <span>Цена покупки / Текущая цена: </span>
+                      <span>
+                        <PriceLine
+                          leftPrice={item.oneLote}
+                          rightPrice={currentPriceOneLot}
+                          color={
+                            item.oneLote.value < currentPriceOneLot.value
+                              ? "GREEN"
+                              : "YELLOW"
+                          }
+                        />
+                      </span>
+                    </div>
+                    <div
+                      className={css.bond__yield}
+                      title="С учетом потраченных комиссий на покупку"
+                    >
+                      <span>Ткущая доходность</span>
+                      <strong>
+                        <span className={css.small}>
+                          ({item.coupons.formatted})
+                        </span>{" "}
+                        {item.yield}%
+                      </strong>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </LineBlock>
-          ))}
+              </LineBlock>
+            );
+          })}
       </div>
     </div>
   );

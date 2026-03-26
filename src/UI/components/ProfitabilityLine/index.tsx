@@ -35,6 +35,10 @@ const ProfitabilityLine: FC<IProfitabilityLineProps> = ({
   totalPurchasePrice,
   totalPriceNow,
 }) => {
+  const allmonth = time || 0;
+  const years = Math.floor(allmonth / 12);
+  const months = allmonth - years * 12;
+
   return (
     <LineBlock
       className={css.purchases}
@@ -43,9 +47,8 @@ const ProfitabilityLine: FC<IProfitabilityLineProps> = ({
       {dateFormatted && (
         <div className={css.purchases__top}>
           <span>{dateFormatted}</span>
-          {time !== undefined && (
-            <span>{pluralize(time, "месяц", "месяца", "месяцев")}</span>
-          )}
+          {years !== 0 && pluralize(years, "год", "года", "лет")}{" "}
+          {pluralize(months, "месяц", "месяца", "месяцев")}
         </div>
       )}
       <div className={css.purchases__bottom}>

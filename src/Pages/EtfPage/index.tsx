@@ -77,12 +77,13 @@ const EtfPage: FC = () => {
                     "года",
                     "лет"
                   )}{" "}
-                {pluralize(
-                  firstPurchaseAge.months(),
-                  "месяц",
-                  "месяца",
-                  "месяцев"
-                )}
+                {firstPurchaseAge.months() !== 0 &&
+                  pluralize(
+                    firstPurchaseAge.months(),
+                    "месяц",
+                    "месяца",
+                    "месяцев"
+                  )}
               </div>
             )}
           </div>
