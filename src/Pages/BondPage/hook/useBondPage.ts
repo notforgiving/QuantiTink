@@ -85,7 +85,8 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
     const firstBuyOperation = useMemo(() => {
         return [...bondOperations]
             .sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf())
-            .find(op => op.type === "Покупка ценных бумаг");
+            .find(op => op.type === "OPERATION_TYPE_BUY" ||
+    op.type === "OPERATION_TYPE_BUY_CARD");
     }, [bondOperations]);
 
     useEffect(() => {
@@ -115,9 +116,9 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
 
         bondOperations.forEach(op => {
             const value = formatMoney(op.payment).value;
-            if (op.type === "Удержание комиссии за операцию") commissions += value;
-            if (op.type === "Выплата купонов") coupons += value;
-            if (op.type === "Покупка ценных бумаг") purchase += value;
+if (op.type === "OPERATION_TYPE_BROKER_FEE") commissions += value;
+if (op.type === "OPERATION_TYPE_COUPON") coupons += value;
+if (op.type === "OPERATION_TYPE_BUY") purchase += value;
         });
 
         return {
@@ -180,7 +181,8 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
         );
 
         sortedOps.forEach(op => {
-            if (op.type === "Покупка ценных бумаг") {
+            if (  op.type === "OPERATION_TYPE_BUY" ||
+    op.type === "OPERATION_TYPE_BUY_CARD") {
                 const qty = op.trades
                     ? op.trades.reduce((s, t) => s + Number(t.quantity), 0)
                     : Number(op.quantity);
@@ -198,7 +200,7 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
                 });
             }
 
-            if (op.type === "Удержание комиссии за операцию" && result.length) {
+            if (op.type === "OPERATION_TYPE_BROKER_FEE" && result.length) {
                 const last = result[result.length - 1];
                 last.commissions = formatMoney(
                     last.commissions.value + -formatMoney(op.payment).value,
@@ -209,7 +211,7 @@ export const useBondPage: TUseBond = (accountId, currency, figi) => {
 
         // ---- РАСПРЕДЕЛЕНИЕ КУПОНОВ ПО FIX DATE ----
         const couponOps = bondOperations.filter(
-            op => op.type === "Выплата купонов"
+            op => op.type === "OPERATION_TYPE_COUPON"
         );
 
         couponOps.forEach(couponOp => {

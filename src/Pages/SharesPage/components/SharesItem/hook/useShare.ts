@@ -79,7 +79,7 @@ export const useShare: TUseShare = ({ id, figi }) => {
         let firstBuy: any = null;
 
         for (let i = shareOperations.length - 1; i >= 0; i--) {
-            if (shareOperations[i].type === "Покупка ценных бумаг") {
+            if (shareOperations[i].type === "OPERATION_TYPE_BUY") {
                 firstBuy = shareOperations[i];
                 break;
             }
@@ -101,11 +101,12 @@ export const useShare: TUseShare = ({ id, figi }) => {
         for (const op of shareOperations) {
             const value = formatMoney(op.payment).value;
             switch (op.type) {
-                case "Удержание комиссии за операцию":
+                case "OPERATION_TYPE_BROKER_FEE":
                     commissions += value;
                     break;
-                case "Выплата дивидендов":
-                case "Выплата дивидендов на карту":
+
+                case "OPERATION_TYPE_DIVIDEND":
+                case "OPERATION_TYPE_DIV_EXT":
                     dividends += value;
                     break;
             }
@@ -134,41 +135,41 @@ export const useShare: TUseShare = ({ id, figi }) => {
         for (const op of operations) {
             const value = formatMoney(op.payment).value;
 
-            switch (op.type) {
-                case "Удержание комиссии за операцию":
-                    commissions += value;
-                    break;
+switch (op.type) {
+    case "OPERATION_TYPE_BROKER_FEE":
+        commissions += value;
+        break;
 
-                case "Выплата дивидендов":
-                case "Выплата дивидендов на карту":
-                    dividends += value * 0.87;
-                    break;
+    case "OPERATION_TYPE_DIVIDEND":
+    case "OPERATION_TYPE_DIV_EXT":
+        dividends += value * 0.87;
+        break;
 
-                case "Покупка ценных бумаг":
-                case "Покупка ценных бумаг с карты": {
-                    const q = Number(op.quantity);
-                    avgPrice = (avgPrice * qty + -value) / (qty + q);
-                    qty += q;
+    case "OPERATION_TYPE_BUY":
+    case "OPERATION_TYPE_BUY_CARD": {
+        const q = Number(op.quantity);
+        avgPrice = (avgPrice * qty + -value) / (qty + q);
+        qty += q;
 
-                    if (!firstBuyDate) {
-                        firstBuyDate = new Date(op.date);
-                    }
-                    break;
-                }
+        if (!firstBuyDate) {
+            firstBuyDate = new Date(op.date);
+        }
+        break;
+    }
 
-                case "Продажа ценных бумаг": {
-                    const q = Number(op.quantity);
-                    realized += value - avgPrice * q;
-                    qty -= q;
+    case "OPERATION_TYPE_SELL": {
+        const q = Number(op.quantity);
+        realized += value - avgPrice * q;
+        qty -= q;
 
-                    if (qty === 0) {
-                        // если всё продали — обнуляем среднюю цену
-                        avgPrice = 0;
-                        firstBuyDate = null;
-                    }
-                    break;
-                }
-            }
+        if (qty === 0) {
+            // если всё продали — обнуляем среднюю цену
+            avgPrice = 0;
+            firstBuyDate = null;
+        }
+        break;
+    }
+}
         }
 
         // нереализованная прибыль
@@ -231,8 +232,8 @@ export const useShare: TUseShare = ({ id, figi }) => {
         let collected = 0;
         for (const op of shareOperations) {
             if (
-                op.type === "Покупка ценных бумаг" ||
-                op.type === "Покупка ценных бумаг с карты"
+                op.type === "OPERATION_TYPE_BUY" ||
+                op.type === "OPERATION_TYPE_BUY_CARD"
             ) {
                 result.push(op);
                 collected += Number(op.quantity);

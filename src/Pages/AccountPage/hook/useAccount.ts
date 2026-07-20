@@ -96,32 +96,55 @@ export const useAccount: TUseAccount = (accountId) => {
             const value = formatMoney(op.payment).value
             const absValue = Math.abs(value);
             switch (op.type) {
-                case 'Вывод денежных средств': {
+                case "OPERATION_TYPE_OUTPUT": {
+                    // Вывод денежных средств
                     deposits += value;
                     break;
                 }
-                case "Пополнение брокерского счёта": {
+
+                case "OPERATION_TYPE_INPUT": {
+                    // Пополнение брокерского счета
                     deposits += absValue;
+
                     const opDate = moment(op.date);
                     if (!firstDate || opDate.isBefore(firstDate)) {
                         firstDate = opDate;
                     }
+
                     break;
                 }
-                case 'Удержание комиссии за операцию': {
+
+                case "OPERATION_TYPE_BROKER_FEE": {
+                    // Комиссия за сделку
                     commissions += absValue;
                     break;
                 }
-                case "Удержание налога": {
+
+                case "OPERATION_TYPE_TAX":
+                case "OPERATION_TYPE_BOND_TAX":
+                case "OPERATION_TYPE_DIVIDEND_TAX":
+                case "OPERATION_TYPE_TAX_CORRECTION":
+                case "OPERATION_TYPE_BENEFIT_TAX":
+                case "OPERATION_TYPE_TAX_PROGRESSIVE":
+                case "OPERATION_TYPE_BOND_TAX_PROGRESSIVE":
+                case "OPERATION_TYPE_DIVIDEND_TAX_PROGRESSIVE":
+                case "OPERATION_TYPE_BENEFIT_TAX_PROGRESSIVE":
+                case "OPERATION_TYPE_TAX_CORRECTION_PROGRESSIVE":
+                case "OPERATION_TYPE_TAX_CORRECTION_COUPON": {
+                    // Все удержания налогов
                     taxes += absValue;
                     break;
                 }
-                case 'Выплата купонов': {
+
+                case "OPERATION_TYPE_COUPON": {
+                    // Выплата купонов
                     coupons += absValue;
                     break;
                 }
-                case 'Выплата дивидендов':
-                case 'Выплата дивидендов на карту': {
+
+                case "OPERATION_TYPE_DIVIDEND":
+                case "OPERATION_TYPE_DIV_EXT": {
+                    // Выплата дивидендов / Выплата дивидендов на карту
                     dividends += absValue * 0.87;
                     break;
                 }

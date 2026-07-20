@@ -22,9 +22,12 @@ export const usePortfolioMetrics = () => {
       const formattedPortfolio = formatMoney(account.totalAmountPortfolio);
 
       const investedValue = account.operations?.reduce((acc, operation) => {
-        if (operation.type === 'Пополнение брокерского счёта' || operation.type === 'Вывод денежных средств') {
-          return acc + formatMoney(operation.payment).value;
-        }
+if (
+  operation.type === "OPERATION_TYPE_INPUT" ||
+  operation.type === "OPERATION_TYPE_OUTPUT"
+) {
+  return acc + formatMoney(operation.payment).value;
+}
         return acc;
       }, 0) ?? 0;
 

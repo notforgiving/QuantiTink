@@ -35,14 +35,27 @@ export const useCalendarUI: TUseCalendarUI = (accountId) => {
 
   const sharesOperations = useMemo(() => {
     return account?.operations?.filter(
-      (op) => (op.instrumentType === 'share') && (op.type === 'Покупка ценных бумаг' || op.type === 'Покупка ценных бумаг с карты' || op.type === 'Продажа ценных бумаг' || op.type === 'Выплата дивидендов' || op.type === 'Выплата дивидендов на карту')
+      (op) =>
+        op.instrumentType === "share" &&
+        (
+          op.type === "OPERATION_TYPE_BUY" ||
+          op.type === "OPERATION_TYPE_BUY_CARD" ||
+          op.type === "OPERATION_TYPE_SELL" ||
+          op.type === "OPERATION_TYPE_DIVIDEND" ||
+          op.type === "OPERATION_TYPE_DIV_EXT"
+        )
     ) ?? [];
   }, [account?.operations]);
 
   const bondsOperations = useMemo(() => {
-    return account?.operations?.filter(
-      (op) => (op.instrumentType === 'bond') && (op.type === 'Выплата купонов' || op.type === 'Покупка ценных бумаг')
-    ) ?? [];
+return account?.operations?.filter(
+  (op) =>
+    op.instrumentType === "bond" &&
+    (
+      op.type === "OPERATION_TYPE_COUPON" ||
+      op.type === "OPERATION_TYPE_BUY"
+    )
+) ?? [];
   }, [account?.operations]);
 
   // Массив без дивидендов

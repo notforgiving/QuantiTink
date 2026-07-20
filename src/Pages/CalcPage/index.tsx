@@ -31,9 +31,9 @@ const CalcPageWrapper: FC = () => {
     dispatch(getComissionRequest());
 
     const operations = firstAccount.operations || [];
-    const commissionOp = operations.find(
-      (op) => op.type === "Удержание комиссии за операцию"
-    );
+const commissionOp = operations.find(
+  (op) => op.type === "OPERATION_TYPE_BROKER_FEE"
+);
 
     if (commissionOp) {
       const parentOp = operations.find(

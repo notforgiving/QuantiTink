@@ -54,7 +54,7 @@ export async function fetchGetBondCouponsAPI({
     events?: IGetBondCouponsEvents[]
 }> {
     const response = await fetch(
-        "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons",
+        "https://invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons",
         {
             method: "POST",
             headers: {
@@ -63,8 +63,8 @@ export async function fetchGetBondCouponsAPI({
             },
             body: JSON.stringify({
                 figi,
-                from: from ?? moment().toISOString(),
-                to: to ?? moment().add(10, "years").toISOString(), // по умолчанию +10 лет
+                from: from || moment().toISOString(),
+                to: to || moment().add(10, "years").toISOString(), // по умолчанию +10 лет
             }),
         }
     );

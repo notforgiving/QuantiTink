@@ -33,20 +33,26 @@ export function resivedDividends(events: TCalendarEvent[], operations: TOperatio
         const opDate = moment(op.date);
 
         if (opDate.isSameOrBefore(lastBuyDate)) {
-          if (op.type === 'Покупка ценных бумаг' || op.type === 'Покупка ценных бумаг с карты') {
-            quantity += Number(op.quantity);
-          } else if (op.type === 'Продажа ценных бумаг') {
-            quantity -= Number(op.quantity);
-          }
+if (
+  op.type === "OPERATION_TYPE_BUY" ||
+  op.type === "OPERATION_TYPE_BUY_CARD"
+) {
+  quantity += Number(op.quantity);
+} else if (op.type === "OPERATION_TYPE_SELL") {
+  quantity -= Number(op.quantity);
+}
         }
       }
 
       // 5. Проверяем, получены ли уже дивиденды
-      const received = ops.some(
-        (op) =>
-          (op.type === 'Выплата дивидендов' || op.type === 'Выплата дивидендов на карту') &&
-          moment(op.date).isSameOrAfter(lastBuyDate)
-      );
+const received = ops.some(
+  (op) =>
+    (
+      op.type === "OPERATION_TYPE_DIVIDEND" ||
+      op.type === "OPERATION_TYPE_DIV_EXT"
+    ) &&
+    moment(op.date).isSameOrAfter(lastBuyDate)
+);
 
       // 6. Возвращаем обновлённое событие
       return {
@@ -88,14 +94,14 @@ export function resivedCoupons(events: TCalendarEvent[], positions: TPortfolioPo
       // Проверяем, была ли покупка до или на fixDate
       const hasBoughtBeforeFixDate = fixDate
         ? operationsForFigi.some(op =>
-          op.type === 'Покупка ценных бумаг' &&
+          op.type === 'OPERATION_TYPE_BUY' &&
           moment(op.date).isSameOrBefore(fixDate)
         )
         : false;
 
       // Проверяем, выплачен ли уже купон
       const received = operationsForFigi.some(op =>
-        op.type === 'Выплата купонов' &&
+        op.type === 'OPERATION_TYPE_COUPON' &&
         moment(op.date).isSameOrAfter(moment(event?.raw.payDate))
       );
 

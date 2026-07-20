@@ -1,5 +1,5 @@
 import { TAccount } from "api/features/accounts/accountsSlice";
-import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TOperationsResponse, TPortfolioResponse, TSharesInstrumentResponse } from "api/features/accounts/accountsTypes";
+import { TAssetResponse, TBondsInstrumentResponse, TEtfsInstrumentResponse, TPortfolioResponse, TSharesInstrumentResponse } from "api/features/accounts/accountsTypes";
 import { TTokenState } from "api/features/token/tokenSlice";
 import moment from "moment";
 
@@ -65,35 +65,61 @@ export async function fetchGetOperationsAPI({
   accountId: string;
   from?: string;
   to?: string;
-}): Promise<TOperationsResponse> {
+}): Promise<any> {
   return fetchWithCache(
-    `operations:${accountId}`, // уникальный ключ для кэша
+    `operations:${accountId}:${from ?? ""}:${to ?? ""}`,
     async () => {
-      const response = await fetch(
-        "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.OperationsService/GetOperations",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            accountId,
-            from: moment(from).toISOString() ?? moment().add(-1, "y").utc().toISOString(),
-            to: moment(to).toISOString() ?? moment().utc().toISOString(),
-            state: "OPERATION_STATE_EXECUTED",
-          }),
+      const allItems: any[] = [];
+
+      let cursor: string | undefined;
+
+      do {
+        const body: Record<string, any> = {
+          accountId,
+          limit: 1000,
+          state: "OPERATION_STATE_EXECUTED",
+        };
+
+        if (cursor) {
+          body.cursor = cursor;
+        } else {
+          body.from = from
+            ? moment(from).utc().toISOString()
+            : moment().subtract(10, "years").utc().toISOString();
+
+          body.to = to
+            ? moment(to).utc().toISOString()
+            : moment().utc().toISOString();
         }
-      );
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error?.message || "Ошибка загрузки операций");
-      }
+        const response = await fetch(
+          "https://invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1.OperationsService/GetOperationsByCursor",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          }
+        );
 
-      return data as TOperationsResponse;
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Ошибка загрузки операций");
+        }
+
+        allItems.push(...(data.items ?? []));
+
+        cursor = data.hasNext ? data.nextCursor : undefined;
+      } while (cursor);
+
+      return {
+        operations: allItems,
+      };
     },
-    { ttl: 30 * 60 * 1000 } // кэш 10 минут
+    { ttl: 30 * 60 * 1000 }
   );
 }
 
