@@ -89,13 +89,17 @@ export const useCalcBonds: TUseCalcBonds = ({ favoritesBonds, comission, rates }
             const currentFormatPrice = rates[key] ? formatMoney(currentPercentPrice / 100 * nominalValue.value) : formatMoney(currentPercentPrice / 100 * nominalValue.value)
 
             // Комиссия при покупке
-            const comissionFullPrice = formatMoney(currentFormatPrice.value * comission / 100)
+            const comissionFullPrice = formatMoney((currentFormatPrice.value + nkd.value) * (comission / 100));
+
             // Полная цена покупки с учетом комиссии
             const currentPriceWithComission = formatMoney(comissionFullPrice.value + currentFormatPrice.value + nkd.value);
+
             // Размер одного купона
             const payOneBond = events ? formatMoney(formatMoney(events[0].payOneBond).value * correctByCurrency) : formatMoney(0);
+
             // Купонная доходность
-            const couponeYeild = ((payOneBond.value * couponQuantityPerYear) / currentPriceWithComission.value * 100).toFixed(1)
+            const couponeYeild = (((payOneBond.value * couponQuantityPerYear) / currentFormatPrice.value) * 100).toFixed(1);
+
             // Колиечство выплат до погашения
             const couponesFromMaturityDate = events?.length || 0;
             // Отформатированая дата погашения

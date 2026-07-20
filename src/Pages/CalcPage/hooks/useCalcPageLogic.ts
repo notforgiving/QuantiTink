@@ -35,7 +35,6 @@ export function useCalcPageLogic() {
   }, [bondsData?.length, dispatch, loadingAllBonds]);
 
   const loadingPreData = loadingFavoritesBonds || loadingAllBonds || loadingInfo;
-
   const { result } = useCalcBonds({
     favoritesBonds: !loadingPreData ? favoritesBonds : [],
     comission: info?.comission || 0,

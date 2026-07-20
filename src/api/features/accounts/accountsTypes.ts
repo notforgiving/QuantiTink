@@ -61,6 +61,7 @@ export type TOperation = {
   currency: string;
   payment: TMoneyValue;
   price: TMoneyValue;
+  commission: TMoneyValue;
   state: 'OPERATION_STATE_UNSPECIFIED' | 'OPERATION_STATE_EXECUTED' | 'OPERATION_STATE_CANCELED';
   quantity: string;
   quantityRest: string;

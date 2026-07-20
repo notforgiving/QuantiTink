@@ -9,6 +9,8 @@ import {
   getComissionSuccess,
 } from "api/features/info/infoSlice";
 
+import { formatMoney } from "utils/formatMoneyAmount";
+
 const CalcPageWrapper: FC = () => {
   const dispatch = useDispatch();
   const accounts = useAccounts();
@@ -31,25 +33,24 @@ const CalcPageWrapper: FC = () => {
     dispatch(getComissionRequest());
 
     const operations = firstAccount.operations || [];
-const commissionOp = operations.find(
-  (op) => op.type === "OPERATION_TYPE_BROKER_FEE"
-);
+    const commissionOp = operations.find(
+      (op) =>
+        op.type === "OPERATION_TYPE_BUY" &&
+        (op.instrumentType === "bond" || op.instrumentType === "share"),
+    );
 
     if (commissionOp) {
-      const parentOp = operations.find(
-        (op) => op.id === commissionOp.parentOperationId
+      const comission = formatMoney(
+        Math.abs(formatMoney(commissionOp.commission).value),
       );
 
-      if (parentOp) {
-        const toNumber = (payment: any) =>
-          Number(payment.units) + payment.nano / 1_000_000_000;
+      const payment = formatMoney(
+        Math.abs(formatMoney(commissionOp.payment).value),
+      );
 
-        const commissionValue = Math.abs(toNumber(commissionOp.payment));
-        const buyValue = Math.abs(toNumber(parentOp.payment));
+      const percent = (comission.value / payment.value) * 100;
 
-        const percent = (commissionValue / buyValue) * 100;
-        dispatch(getComissionSuccess(Number(percent.toFixed(1))));
-      }
+      dispatch(getComissionSuccess(Number(percent.toFixed(2))));
     }
   }, [accounts.data, dispatch]);
 
