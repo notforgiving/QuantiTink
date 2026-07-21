@@ -13,7 +13,7 @@ const AccountPageWrapper: FC = () => {
 
   const account = useMemo(
     () => accounts?.data.find((el) => el.id === id) ?? null,
-    [accounts?.data, id]
+    [accounts?.data, id],
   );
 
   const dispatch = useDispatch();
@@ -23,6 +23,13 @@ const AccountPageWrapper: FC = () => {
     dispatch(fetchPositionsRequest({ accountId: account.id }));
     dispatch(fetchGoalsRequest({ accountId: account.id }));
   }, [account?.id, dispatch]);
+
+  useEffect(() => {
+    fetch("/api/test-tbank")
+      .then((r) => r.text())
+      .then(console.log)
+      .catch(console.error);
+  }, []);
 
   return <Outlet />;
 };
